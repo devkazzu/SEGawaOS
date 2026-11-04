@@ -1,6 +1,6 @@
-import androidx.compose.foundation.lazy.grid.*
 package com.segawa.os.ui
 
+import androidx.compose.foundation.lazy.grid.*
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ApplicationInfo
