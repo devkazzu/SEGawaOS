@@ -1,3 +1,4 @@
+import androidx.compose.foundation.lazy.grid.*
 package com.segawa.os.ui
 
 import android.content.Context
