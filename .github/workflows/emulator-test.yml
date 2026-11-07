@@ -71,7 +71,12 @@ jobs:
         run: |
           git config user.name "MIO CI"
           git config user.email "ci@mio.os"
+          set -x
           git add -f ci/emulator-report.txt 2>/dev/null || true
           git add -f ci/shots 2>/dev/null || true
           git diff --cached --quiet || git commit -m "ci: emulator report + screenshots [skip ci]"
-          git push origin HEAD:${{ github.ref_name }} || echo "push failed"
+          for i in 1 2 3 4 5 6; do
+            git fetch origin ${GITHUB_REF_NAME} && git rebase FETCH_HEAD || git rebase --abort
+            git push origin HEAD:${GITHUB_REF_NAME} && break
+            sleep 10
+          done

@@ -58,9 +58,14 @@ jobs:
       - name: Publish outputs back to branch
         if: always()
         run: |
+          set -x
           git config user.name "MIO CI"
           git config user.email "ci@mio.os"
           git add -f ci/build.log 2>/dev/null || true
           git add -f dist 2>/dev/null || true
           git diff --cached --quiet || git commit -m "ci: build log + APKs [skip ci]"
-          git push origin HEAD:${{ github.ref_name }} || echo "push failed"
+          for i in 1 2 3 4 5 6; do
+            git fetch origin ${GITHUB_REF_NAME} && git rebase FETCH_HEAD || git rebase --abort
+            git push origin HEAD:${GITHUB_REF_NAME} && break
+            sleep 10
+          done
