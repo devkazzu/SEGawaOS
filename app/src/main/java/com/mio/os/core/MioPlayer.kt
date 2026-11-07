@@ -10,6 +10,7 @@ import android.media.session.PlaybackState
 import android.net.Uri
 import android.os.Build
 import androidx.compose.ui.graphics.asAndroidBitmap
+import com.mio.os.service.MusicService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -89,7 +90,7 @@ object MioPlayer {
                         .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
                         .build()
                 )
-                setOnPreparedListener { player ->
+                setOnPreparedListener(MediaPlayer.OnPreparedListener { player ->
                     durationMsInternal = player.duration.toLong()
                     _duration.value = durationMsInternal
                     player.start()
@@ -97,13 +98,13 @@ object MioPlayer {
                     MioEqualizer.attach(player.audioSessionId)
                     startTicker()
                     publishState()
-                }
-                setOnCompletionListener { next(context, auto = true) }
-                setOnErrorListener { _, _, _ ->
+                })
+                setOnCompletionListener(MediaPlayer.OnCompletionListener { next(context, auto = true) })
+                setOnErrorListener(MediaPlayer.OnErrorListener { _, _, _ ->
                     _playing.value = false
                     publishState()
                     true
-                }
+                })
                 if (track.isDemo) {
                     setDataSource(Mio.media.ensureDemoFile().absolutePath)
                 } else {

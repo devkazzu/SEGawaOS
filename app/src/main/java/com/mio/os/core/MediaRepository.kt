@@ -197,7 +197,7 @@ object MioEqualizer {
         val eq = fx ?: return emptyList()
         val n = eq.numberOfBands.toInt()
         (0 until n).map { i ->
-            val b = eq.getBand(i.toShort())
+            val b = eq.getBand(i)
             Band(
                 label = "${(eq.getCenterFreq(b).toInt() / 1000)}Hz",
                 levelMb = eq.getBandLevel(b).toInt(),

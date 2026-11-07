@@ -221,8 +221,8 @@ fun MioLogo(modifier: Modifier = Modifier, color: Color = LocalAccent.current) {
 fun Modifier.bounceClick(
     enabled: Boolean = true,
     scaleDown: Float = 0.94f,
-    onClick: () -> Unit,
     onLongClick: (() -> Unit)? = null,
+    onClick: () -> Unit,
 ): Modifier {
     val interaction = remember { MutableInteractionSource() }
     val pressed by interaction.collectIsPressedAsState()

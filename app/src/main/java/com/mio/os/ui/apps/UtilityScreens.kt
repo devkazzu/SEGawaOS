@@ -59,6 +59,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.graphics.drawable.toBitmap
 import coil.compose.AsyncImage
 import com.mio.os.core.DeviceStats
 import com.mio.os.core.Mio
@@ -417,7 +418,7 @@ object WallpaperSetter {
     fun setFromDrawable(context: android.content.Context, resId: Int) {
         runCatching {
             val drawable = androidx.core.content.res.ResourcesCompat.getDrawable(context.resources, resId, null)
-            val bmp = drawable?.let { androidx.core.graphics.drawable.toBitmap(it, 1080, 1920) }
+            val bmp = drawable?.toBitmap(1080, 1920)
             if (bmp != null) {
                 android.app.WallpaperManager.getInstance(context).setBitmap(bmp)
                 com.mio.os.core.LauncherHelper.toast(context, "Wallpaper applied to Android")

@@ -83,13 +83,14 @@ fun AiScreen() {
     var busy by remember { mutableStateOf(false) }
     var showSetup by remember { mutableStateOf(false) }
 
+    var pendingVoice by remember { mutableStateOf(false) }
     val voiceLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
         val spoken = result.data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)?.firstOrNull()
         if (!spoken.isNullOrBlank()) {
             input = spoken
-            send()
+            pendingVoice = true
         }
     }
 
@@ -117,6 +118,13 @@ fun AiScreen() {
             persist(updated)
             busy = false
             listState.animateScrollToItem((updated.size - 1).coerceAtLeast(0))
+        }
+    }
+
+    LaunchedEffect(pendingVoice) {
+        if (pendingVoice) {
+            pendingVoice = false
+            send()
         }
     }
 
