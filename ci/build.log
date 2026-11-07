@@ -1,8 +1,8 @@
 Starting a Gradle Daemon (subsequent builds will be faster)
 > Task :wrapper
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run-1794062288820.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run-1794062476587.json
 
-BUILD SUCCESSFUL in 12s
+BUILD SUCCESSFUL in 17s
 1 actionable task: 1 executed
 > Task :app:preBuild UP-TO-DATE
 > Task :app:preDebugBuild UP-TO-DATE
@@ -20,28 +20,28 @@ BUILD SUCCESSFUL in 12s
 > Task :app:parseDebugLocalResources
 > Task :app:processDebugMainManifest
 > Task :app:processDebugManifest
-> Task :app:processDebugManifestForPackage
 > Task :app:javaPreCompileDebug
 > Task :app:mergeDebugShaders
 > Task :app:compileDebugShaders NO-SOURCE
 > Task :app:generateDebugAssets UP-TO-DATE
 > Task :app:mergeDebugAssets
+> Task :app:processDebugManifestForPackage
 > Task :app:compressDebugAssets
 > Task :app:desugarDebugFileDependencies
 > Task :app:processDebugResources
 > Task :app:checkDebugDuplicateClasses
-> Task :app:mergeLibDexDebug
 > Task :app:mergeDebugJniLibFolders
+> Task :app:mergeLibDexDebug
 > Task :app:mergeDebugNativeLibs
 > Task :app:validateSigningDebug
 > Task :app:writeDebugAppMetadata
+> Task :app:writeDebugSigningConfigVersions
+> Task :app:preReleaseBuild UP-TO-DATE
+> Task :app:mergeReleaseJniLibFolders
 
 > Task :app:stripDebugDebugSymbols
 Unable to strip the following libraries, packaging them as they are: libandroidx.graphics.path.so.
 
-> Task :app:writeDebugSigningConfigVersions
-> Task :app:preReleaseBuild UP-TO-DATE
-> Task :app:mergeReleaseJniLibFolders
 > Task :app:mergeReleaseNativeLibs
 > Task :app:checkReleaseDuplicateClasses
 
@@ -52,24 +52,26 @@ Unable to strip the following libraries, packaging them as they are: libandroidx
 > Task :app:generateReleaseBuildConfig
 > Task :app:extractReleaseNativeSymbolTables
 > Task :app:mergeReleaseNativeDebugMetadata NO-SOURCE
-> Task :app:checkReleaseAarMetadata
 > Task :app:generateReleaseResValues
+> Task :app:checkReleaseAarMetadata
 > Task :app:mapReleaseSourceSetPaths
 > Task :app:generateReleaseResources
 > Task :app:packageReleaseResources
+> Task :app:compileDebugKotlin
 > Task :app:parseReleaseLocalResources
 > Task :app:createReleaseCompatibleScreenManifests
 > Task :app:extractDeepLinksRelease
 > Task :app:processReleaseMainManifest
 > Task :app:processReleaseManifest
+> Task :app:mergeReleaseResources
 > Task :app:processReleaseManifestForPackage
 > Task :app:javaPreCompileRelease
-> Task :app:mergeReleaseResources
 > Task :app:desugarReleaseFileDependencies
-> Task :app:mergeReleaseStartupProfile
 > Task :app:processReleaseResources
-> Task :app:compileDebugKotlin
+> Task :app:mergeReleaseStartupProfile
 > Task :app:mergeExtDexDebug
+> Task :app:compileReleaseKotlin
+> Task :app:mergeExtDexRelease
 
 > Task :app:compileDebugKotlin
 w: file:///home/runner/work/SEGawaOS/SEGawaOS/app/src/main/java/com/mio/os/ui/apps/AiScreen.kt:157:40 'val Icons.Rounded.ArrowBack: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Rounded.ArrowBack.
@@ -77,30 +79,6 @@ w: file:///home/runner/work/SEGawaOS/SEGawaOS/app/src/main/java/com/mio/os/ui/ap
 w: file:///home/runner/work/SEGawaOS/SEGawaOS/app/src/main/java/com/mio/os/ui/apps/MusicScreen.kt:114:40 'val Icons.Rounded.ArrowBack: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Rounded.ArrowBack.
 w: file:///home/runner/work/SEGawaOS/SEGawaOS/app/src/main/java/com/mio/os/ui/control/ControlCenter.kt:251:44 'val Icons.Rounded.VolumeUp: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Rounded.VolumeUp.
 w: file:///home/runner/work/SEGawaOS/SEGawaOS/app/src/main/java/com/mio/os/ui/settings/SettingsScreen.kt:116:40 'val Icons.Rounded.ArrowBack: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Rounded.ArrowBack.
-
-> Task :app:mergeExtDexRelease
-> Task :app:compileDebugJavaWithJavac
-> Task :app:dexBuilderDebug
-> Task :app:mergeDebugGlobalSynthetics
-> Task :app:processDebugJavaRes
-> Task :app:mergeProjectDexDebug
-> Task :app:mergeReleaseShaders
-> Task :app:compileReleaseShaders NO-SOURCE
-> Task :app:generateReleaseAssets UP-TO-DATE
-> Task :app:mergeReleaseArtProfile
-> Task :app:mergeReleaseAssets
-> Task :app:compressReleaseAssets
-> Task :app:extractReleaseVersionControlInfo
-> Task :app:collectReleaseDependencies
-> Task :app:optimizeReleaseResources
-> Task :app:sdkReleaseDependencyData
-> Task :app:validateSigningRelease
-> Task :app:writeReleaseAppMetadata
-> Task :app:writeReleaseSigningConfigVersions
-> Task :app:mergeDebugJavaResource
-> Task :app:packageDebug
-> Task :app:createDebugApkListingFileRedirect
-> Task :app:assembleDebug
 
 > Task :app:compileReleaseKotlin
 w: file:///home/runner/work/SEGawaOS/SEGawaOS/app/src/main/java/com/mio/os/ui/apps/AiScreen.kt:157:40 'val Icons.Rounded.ArrowBack: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Rounded.ArrowBack.
@@ -109,17 +87,39 @@ w: file:///home/runner/work/SEGawaOS/SEGawaOS/app/src/main/java/com/mio/os/ui/ap
 w: file:///home/runner/work/SEGawaOS/SEGawaOS/app/src/main/java/com/mio/os/ui/control/ControlCenter.kt:251:44 'val Icons.Rounded.VolumeUp: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Rounded.VolumeUp.
 w: file:///home/runner/work/SEGawaOS/SEGawaOS/app/src/main/java/com/mio/os/ui/settings/SettingsScreen.kt:116:40 'val Icons.Rounded.ArrowBack: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Rounded.ArrowBack.
 
+> Task :app:compileDebugJavaWithJavac
+> Task :app:dexBuilderDebug
+> Task :app:mergeDebugGlobalSynthetics
+> Task :app:processDebugJavaRes
+> Task :app:mergeProjectDexDebug
 > Task :app:compileReleaseJavaWithJavac
+> Task :app:mergeDebugJavaResource
 > Task :app:dexBuilderRelease
+> Task :app:mergeReleaseArtProfile
+> Task :app:mergeReleaseShaders
 > Task :app:mergeReleaseGlobalSynthetics
+> Task :app:compileReleaseShaders NO-SOURCE
+> Task :app:generateReleaseAssets UP-TO-DATE
+> Task :app:mergeReleaseAssets
+> Task :app:compressReleaseAssets
+> Task :app:extractReleaseVersionControlInfo
 > Task :app:processReleaseJavaRes
+> Task :app:packageDebug
+> Task :app:optimizeReleaseResources
+> Task :app:createDebugApkListingFileRedirect
+> Task :app:assembleDebug
+> Task :app:collectReleaseDependencies
+> Task :app:sdkReleaseDependencyData
+> Task :app:validateSigningRelease
+> Task :app:writeReleaseAppMetadata
+> Task :app:writeReleaseSigningConfigVersions
 > Task :app:mergeReleaseJavaResource
 > Task :app:mergeDexRelease
 > Task :app:compileReleaseArtProfile
 > Task :app:packageRelease
 > Task :app:createReleaseApkListingFileRedirect
 > Task :app:assembleRelease
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/assemble-1794062298398.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/assemble-1794062490575.json
 
-BUILD SUCCESSFUL in 1m 28s
+BUILD SUCCESSFUL in 2m 19s
 82 actionable tasks: 82 executed
