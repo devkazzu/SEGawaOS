@@ -5,6 +5,12 @@ on:
   push:
     branches:
       - main
+      - 'arena/**'
+      - 'feature/**'
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:
@@ -25,12 +31,35 @@ jobs:
         with:
           gradle-version: '8.9'
 
-      - name: Build Debug APK
-        run: gradle assembleDebug
+      - name: Generate Gradle wrapper
+        run: gradle wrapper --gradle-version 8.9 --distribution-type bin
 
-      - name: Upload APK
+      - name: Compile & assemble debug
+        run: gradle assembleDebug --stacktrace
+
+      - name: Assemble release
+        run: gradle assembleRelease --stacktrace
+
+      - name: Upload debug APK
         uses: actions/upload-artifact@v4
         with:
-          name: SEGawaOS-APK
+          name: MIO-OS-debug-apk
           path: app/build/outputs/apk/debug/*.apk
           if-no-files-found: error
+
+      - name: Upload release APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: MIO-OS-release-apk
+          path: app/build/outputs/apk/release/*.apk
+          if-no-files-found: warn
+
+      - name: Upload gradle wrapper
+        uses: actions/upload-artifact@v4
+        with:
+          name: gradle-wrapper
+          path: |
+            gradlew
+            gradlew.bat
+            gradle/wrapper/**
+          if-no-files-found: warn

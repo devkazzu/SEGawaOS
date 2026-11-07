@@ -1,0 +1,165 @@
+package com.mio.os.core
+
+import android.app.Application
+import android.content.Context
+import android.content.SharedPreferences
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+
+/**
+ * Every user-visible preference of MIO OS. Persisted in one SharedPreferences
+ * file and exposed as a hot [StateFlow] so Compose recomposes instantly.
+ */
+data class MioSettings(
+    val accent: Int = 0xFF7C5CFF.toInt(),
+    val gridColumns: Int = 4,
+    val iconScale: Float = 1f,
+    val hiddenApps: Set<String> = emptySet(),
+    val dockApps: List<String> = emptyList(),
+    val wallpaperId: String = "mountain",
+    val wallpaperUri: String? = null,
+    val dim: Float = 0.25f,
+    val userName: String = "Creator",
+    val city: String = "Silchar",
+    val showWeather: Boolean = true,
+    val animations: Boolean = true,
+    val glass: Float = 1f,
+    val onboarded: Boolean = false,
+    val showLabels: Boolean = true,
+    val fontScale: Float = 1f,
+    val clock24h: Boolean = true,
+    val showDock: Boolean = true,
+    val sortMode: String = SortMode.ALPHABETICAL.name,
+    val recentApps: List<String> = emptyList(),
+    val aiEndpoint: String = "",
+    val aiKey: String = "",
+    val aiModel: String = "gpt-4o-mini",
+    val aiHistory: String = "",
+    val notes: String = "",
+    val equalizerOn: Boolean = true,
+    val lastSong: String = "",
+    val iconPack: String = "MIO Aurora",
+    val iconShape: String = "squircle",
+    val reduceMotion: Boolean = false,
+) {
+    val sortModeEnum: SortMode get() = runCatching { SortMode.valueOf(sortMode) }.getOrDefault(SortMode.ALPHABETICAL)
+}
+
+enum class SortMode { ALPHABETICAL, RECENT, CATEGORY }
+
+class MioPrefs(context: Context) {
+
+    private val sp: SharedPreferences =
+        context.applicationContext.getSharedPreferences("mio_prefs_v1", Context.MODE_PRIVATE)
+
+    private val _state = MutableStateFlow(load())
+    val state: StateFlow<MioSettings> = _state
+
+    val current: MioSettings get() = _state.value
+
+    fun edit(block: (MioSettings) -> MioSettings) {
+        val next = block(_state.value)
+        _state.value = next
+        save(next)
+    }
+
+    fun setHidden(pkg: String, hidden: Boolean) = edit {
+        it.copy(hiddenApps = if (hidden) it.hiddenApps + pkg else it.hiddenApps - pkg)
+    }
+
+    fun pushRecent(pkg: String) = edit {
+        it.copy(recentApps = (listOf(pkg) + it.recentApps.filter { p -> p != pkg }).take(16))
+    }
+
+    private fun load(): MioSettings {
+        val d = MioSettings()
+        return MioSettings(
+            accent = sp.getInt("accent", d.accent),
+            gridColumns = sp.getInt("cols", d.gridColumns),
+            iconScale = sp.getFloat("iconScale", d.iconScale),
+            hiddenApps = sp.getStringSet("hidden", emptySet())?.toSet() ?: emptySet(),
+            dockApps = sp.getString("dock", null)?.split("|")?.filter { it.isNotBlank() } ?: emptyList(),
+            wallpaperId = sp.getString("wallpaper", d.wallpaperId) ?: d.wallpaperId,
+            wallpaperUri = sp.getString("wallpaperUri", null),
+            dim = sp.getFloat("dim", d.dim),
+            userName = sp.getString("userName", d.userName) ?: d.userName,
+            city = sp.getString("city", d.city) ?: d.city,
+            showWeather = sp.getBoolean("showWeather", d.showWeather),
+            animations = sp.getBoolean("animations", d.animations),
+            glass = sp.getFloat("glass", d.glass),
+            onboarded = sp.getBoolean("onboarded", d.onboarded),
+            showLabels = sp.getBoolean("labels", d.showLabels),
+            fontScale = sp.getFloat("fontScale", d.fontScale),
+            clock24h = sp.getBoolean("clock24", d.clock24h),
+            showDock = sp.getBoolean("showDock", d.showDock),
+            sortMode = sp.getString("sortMode", d.sortMode) ?: d.sortMode,
+            recentApps = sp.getString("recent", null)?.split("|")?.filter { it.isNotBlank() } ?: emptyList(),
+            aiEndpoint = sp.getString("aiEndpoint", d.aiEndpoint) ?: d.aiEndpoint,
+            aiKey = sp.getString("aiKey", d.aiKey) ?: d.aiKey,
+            aiModel = sp.getString("aiModel", d.aiModel) ?: d.aiModel,
+            aiHistory = sp.getString("aiHistory", d.aiHistory) ?: d.aiHistory,
+            notes = sp.getString("notes", d.notes) ?: d.notes,
+            equalizerOn = sp.getBoolean("eq", d.equalizerOn),
+            lastSong = sp.getString("lastSong", d.lastSong) ?: d.lastSong,
+            iconPack = sp.getString("iconPack", d.iconPack) ?: d.iconPack,
+            iconShape = sp.getString("iconShape", d.iconShape) ?: d.iconShape,
+            reduceMotion = sp.getBoolean("reduceMotion", d.reduceMotion),
+        )
+    }
+
+    private fun save(s: MioSettings) {
+        sp.edit().apply {
+            putInt("accent", s.accent)
+            putInt("cols", s.gridColumns)
+            putFloat("iconScale", s.iconScale)
+            putStringSet("hidden", s.hiddenApps)
+            putString("dock", s.dockApps.joinToString("|"))
+            putString("wallpaper", s.wallpaperId)
+            putString("wallpaperUri", s.wallpaperUri)
+            putFloat("dim", s.dim)
+            putString("userName", s.userName)
+            putString("city", s.city)
+            putBoolean("showWeather", s.showWeather)
+            putBoolean("animations", s.animations)
+            putFloat("glass", s.glass)
+            putBoolean("onboarded", s.onboarded)
+            putBoolean("labels", s.showLabels)
+            putFloat("fontScale", s.fontScale)
+            putBoolean("clock24", s.clock24h)
+            putBoolean("showDock", s.showDock)
+            putString("sortMode", s.sortMode)
+            putString("recent", s.recentApps.joinToString("|"))
+            putString("aiEndpoint", s.aiEndpoint)
+            putString("aiKey", s.aiKey)
+            putString("aiModel", s.aiModel)
+            putString("aiHistory", s.aiHistory)
+            putString("notes", s.notes)
+            putBoolean("eq", s.equalizerOn)
+            putString("lastSong", s.lastSong)
+            putString("iconPack", s.iconPack)
+            putString("iconShape", s.iconShape)
+            putBoolean("reduceMotion", s.reduceMotion)
+        }.apply()
+    }
+}
+
+/** Tiny service locator – one process, one launcher, no DI framework needed. */
+object Mio {
+    lateinit var application: Application
+        private set
+    lateinit var prefs: MioPrefs
+        private set
+    lateinit var apps: AppsRepository
+        private set
+    lateinit var media: MediaRepository
+        private set
+
+    val context: Context get() = application.applicationContext
+
+    fun init(app: Application) {
+        application = app
+        prefs = MioPrefs(app)
+        apps = AppsRepository(app)
+        media = MediaRepository(app)
+    }
+}
