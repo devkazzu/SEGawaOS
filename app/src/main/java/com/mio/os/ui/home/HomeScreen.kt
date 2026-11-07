@@ -406,8 +406,8 @@ fun WeatherGlyph(icon: String, size: Dp = 26.dp) {
                 drawLine(Color(0xFFFFC46B).copy(alpha = 0.9f), start, end, strokeWidth = w * 0.045f, cap = StrokeCap.Round)
             }
         }
-        fun drawCloud(alpha: Float = 1f) {
-            val c = Color(0xFFD9DDF5).copy(alpha = alpha)
+        fun drawCloud(color: Color = Color(0xFFD9DDF5)) {
+            val c = color
             drawCircle(c, radius = w * 0.17f, center = Offset(w * 0.42f, h * 0.60f))
             drawCircle(c, radius = w * 0.21f, center = Offset(w * 0.60f, h * 0.56f))
             drawCircle(c, radius = w * 0.15f, center = Offset(w * 0.76f, h * 0.62f))

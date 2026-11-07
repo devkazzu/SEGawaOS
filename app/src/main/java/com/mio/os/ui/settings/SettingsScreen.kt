@@ -146,13 +146,11 @@ fun SettingsIconBadge(icon: ImageVector, tint: Color = LocalAccent.current) {
 }
 
 @Composable
-fun SettingsGroup(content: @Composable ColumnScopeContent) {
+fun SettingsGroup(content: @Composable () -> Unit) {
     GlassCard(Modifier.fillMaxWidth(), corner = 22.dp, alpha = 0.055f) {
         Column(Modifier.padding(6.dp)) { content() }
     }
 }
-
-typealias ColumnScopeContent = @Composable () -> Unit
 
 /* ------------------------------------------------------------------------- */
 /* Main settings                                                             */

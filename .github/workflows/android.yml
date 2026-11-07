@@ -36,7 +36,7 @@ jobs:
           gradle-version: '8.9'
 
       - name: Generate Gradle wrapper
-        run: gradle wrapper --gradle-version 8.9 --distribution-type bin 2>&1 | tee -a ci/build.log || true
+        run: gradle wrapper --gradle-version 8.9 --distribution-type bin 2>&1 | tee ci/build.log || true
 
       - name: Assemble debug + release
         id: assemble

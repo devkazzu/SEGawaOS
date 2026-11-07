@@ -250,7 +250,7 @@ fun AiScreen() {
                 Box(
                     Modifier.size(32.dp).clip(CircleShape)
                         .background(
-                            if (input.isBlank()) Color.White.copy(alpha = 0.10f)
+                            if (input.isBlank()) androidx.compose.ui.graphics.SolidColor(Color.White.copy(alpha = 0.10f))
                             else Brush.linearGradient(listOf(accent, MioColors.PurpleSoft))
                         )
                         .bounceClick(scaleDown = 0.9f) { send() },
