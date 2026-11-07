@@ -1,0 +1,90 @@
+
+=== Environment ===
+List of devices attached
+emulator-5554	device
+
+33
+Physical size: 320x640
+Physical density: 160
+
+=== Install app/build/outputs/apk/debug/app-debug.apk ===
+Performing Streamed Install
+Success
+
+=== 1. Is MIO OS registered as a HOME app? ===
+3 activities found:
+  Activity #0:
+    priority=0 preferredOrder=0 match=0x108000 specificIndex=-1 isDefault=true
+    com.google.android.apps.nexuslauncher/.NexusLauncherActivity
+  Activity #1:
+    priority=0 preferredOrder=0 match=0x108000 specificIndex=-1 isDefault=true
+    com.mio.os.debug/com.mio.os.MainActivity
+  Activity #2:
+    priority=-1000 preferredOrder=0 match=0x108000 specificIndex=-1 isDefault=true
+    com.android.settings/.FallbackHome
+
+=== 2. Make MIO OS the default home app ===
+Success
+Launcher: ComponentInfo{com.google.android.apps.nexuslauncher/com.google.android.apps.nexuslauncher.NexusLauncherActivity}
+Success
+
+=== 3. Cold start ===
+Starting: Intent { cmp=com.mio.os.debug/com.mio.os.MainActivity }
+
+=== 4. Skip onboarding (tap bottom-centre of the setup screen) ===
+screen 320x640
+
+=== 5. HOME key must return to MIO OS ===
+  mCurrentFocus=Window{d007588 u0 com.mio.os.debug/com.mio.os.MainActivity}
+  mFocusedApp=ActivityRecord{7d16e79 u0 com.mio.os.debug/com.mio.os.MainActivity} t10}
+
+=== 6. Swipe up -> app drawer ===
+
+=== 7. Back, then swipe down -> control centre ===
+
+=== 8. Control centre: tap flashlight + brightness area ===
+
+=== 9. Open the drawer and launch a real third-party app (system Settings) ===
+Starting: Intent { cmp=com.mio.os.debug/com.mio.os.MainActivity }
+Warning: Activity not started, intent has been delivered to currently running top-most instance.
+  mCurrentFocus=Window{d007588 u0 com.mio.os.debug/com.mio.os.MainActivity}
+
+=== 10. Settings screen ===
+
+=== 11. MIO AI assistant ===
+Starting: Intent { cmp=com.mio.os.debug/com.mio.os.MainActivity }
+Warning: Activity not started, intent has been delivered to currently running top-most instance.
+
+=== 12. Stability: 400 random UI events ===
+
+=== 13. Reboot: default home app must survive ===
+Launcher: ComponentInfo{com.mio.os.debug/com.mio.os.MainActivity}
+Success
+  mCurrentFocus=Window{d1ef019 u0 com.mio.os.debug/com.mio.os.MainActivity}
+
+=== 14. Crash log ===
+--- java crashes ---
+--- app alive? ---
+1488
+
+=== MIO OS emulator verification finished ===
+
+=== workflow outcome ===
+emulator step: success
+screenshots:
+total 3380
+drwxr-xr-x 2 runner runner   4096 Nov  7 15:00 .
+drwxr-xr-x 3 runner runner   4096 Nov  7 14:57 ..
+-rw-r--r-- 1 runner runner 322356 Nov  7 14:58 01-welcome.png
+-rw-r--r-- 1 runner runner 322457 Nov  7 14:58 02-home.png
+-rw-r--r-- 1 runner runner 322539 Nov  7 14:58 03-after-home-key.png
+-rw-r--r-- 1 runner runner 319345 Nov  7 14:58 04-drawer.png
+-rw-r--r-- 1 runner runner 322945 Nov  7 14:58 05-control-center.png
+-rw-r--r-- 1 runner runner 322569 Nov  7 14:58 06-control-center-torch.png
+-rw-r--r-- 1 runner runner 206882 Nov  7 14:58 07-drawer-launch.png
+-rw-r--r-- 1 runner runner 335301 Nov  7 14:58 08-home-return.png
+-rw-r--r-- 1 runner runner 256566 Nov  7 14:58 09-settings.png
+-rw-r--r-- 1 runner runner  39070 Nov  7 14:59 10-ai.png
+-rw-r--r-- 1 runner runner 335080 Nov  7 14:59 11-after-monkey.png
+-rw-r--r-- 1 runner runner 335172 Nov  7 15:00 12-after-reboot.png
+report bytes: 3281
