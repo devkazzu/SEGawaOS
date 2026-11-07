@@ -64,6 +64,7 @@ import com.mio.os.core.MioNav
 import com.mio.os.core.MioNotifications
 import com.mio.os.core.MioScreen
 import com.mio.os.ui.components.AppIconView
+import com.mio.os.ui.components.FolderPickerSheet
 import com.mio.os.ui.components.GlassCard
 import com.mio.os.ui.components.MioLogo
 import com.mio.os.ui.components.MioWallpaper
@@ -90,6 +91,7 @@ fun AppDrawer() {
     var tab by remember { mutableStateOf(0) }
     var category by remember { mutableStateOf<MioCategory?>(null) }
     var sheetApp by remember { mutableStateOf<MioApp?>(null) }
+    var folderApp by remember { mutableStateOf<MioApp?>(null) }
 
     val filtered = remember(apps, query, category, settings.sortMode, settings.hiddenApps) {
         var list = apps.filter { it.packageName !in settings.hiddenApps }
@@ -253,7 +255,14 @@ fun AppDrawer() {
     }
 
     sheetApp?.let { app ->
-        DrawerAppSheet(app, onDismiss = { sheetApp = null })
+        DrawerAppSheet(
+            app,
+            onDismiss = { sheetApp = null },
+            onMoveToFolder = { folderApp = app; sheetApp = null },
+        )
+    }
+    folderApp?.let { app ->
+        FolderPickerSheet(app = app, onDismiss = { folderApp = null })
     }
 }
 
@@ -424,7 +433,7 @@ fun MioSwitch(checked: Boolean, onCheckedChange: (Boolean) -> Unit) {
 }
 
 @Composable
-private fun DrawerAppSheet(app: MioApp, onDismiss: () -> Unit) {
+private fun DrawerAppSheet(app: MioApp, onDismiss: () -> Unit, onMoveToFolder: () -> Unit) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     ModalBottomSheet(
         onDismissRequest = onDismiss,
@@ -445,6 +454,7 @@ private fun DrawerAppSheet(app: MioApp, onDismiss: () -> Unit) {
             Spacer(Modifier.height(16.dp))
             SheetItem("Open app") { onDismiss(); Mio.apps.launch(app) }
             SheetItem("App info") { onDismiss(); Mio.apps.openAppInfo(app.packageName) }
+            SheetItem("Move to folder") { onMoveToFolder() }
             SheetItem("Hide from drawer") {
                 Mio.prefs.setHidden(app.packageName, true)
                 onDismiss()

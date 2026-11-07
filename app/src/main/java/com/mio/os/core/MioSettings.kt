@@ -36,6 +36,7 @@ data class MioSettings(
     val aiModel: String = "gpt-4o-mini",
     val aiHistory: String = "",
     val notes: String = "",
+    val folders: String = "",
     val equalizerOn: Boolean = true,
     val lastSong: String = "",
     val iconPack: String = "MIO Aurora",
@@ -99,6 +100,7 @@ class MioPrefs(context: Context) {
             aiModel = sp.getString("aiModel", d.aiModel) ?: d.aiModel,
             aiHistory = sp.getString("aiHistory", d.aiHistory) ?: d.aiHistory,
             notes = sp.getString("notes", d.notes) ?: d.notes,
+            folders = sp.getString("folders", d.folders) ?: d.folders,
             equalizerOn = sp.getBoolean("eq", d.equalizerOn),
             lastSong = sp.getString("lastSong", d.lastSong) ?: d.lastSong,
             iconPack = sp.getString("iconPack", d.iconPack) ?: d.iconPack,
@@ -134,6 +136,7 @@ class MioPrefs(context: Context) {
             putString("aiModel", s.aiModel)
             putString("aiHistory", s.aiHistory)
             putString("notes", s.notes)
+            putString("folders", s.folders)
             putBoolean("eq", s.equalizerOn)
             putString("lastSong", s.lastSong)
             putString("iconPack", s.iconPack)

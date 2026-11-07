@@ -69,6 +69,8 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.mio.os.ui.components.AppShortcut
 import com.mio.os.core.DeviceStats
+import com.mio.os.core.FoldersRepo
+import com.mio.os.core.MioFolder
 import com.mio.os.core.Mio
 import com.mio.os.core.MioApp
 import com.mio.os.core.MioNav
@@ -81,6 +83,9 @@ import com.mio.os.core.Weather
 import com.mio.os.core.WeatherRepo
 import com.mio.os.ui.components.AmbientOrb
 import com.mio.os.ui.components.AppIconView
+import com.mio.os.ui.components.FolderContentSheet
+import com.mio.os.ui.components.FolderPickerSheet
+import com.mio.os.ui.components.FolderTile
 import com.mio.os.ui.components.GlassCard
 import com.mio.os.ui.components.MioLogo
 import com.mio.os.ui.components.MioWallpaper
@@ -122,7 +127,12 @@ fun HomeScreen() {
     LaunchedEffect(settings.city) { weather = WeatherRepo.get(context, settings.city) }
 
     val hidden = settings.hiddenApps
-    val visible = remember(apps, hidden) { apps.filter { it.packageName !in hidden } }
+    val folders = remember(settings.folders) { FoldersRepo.all() }
+    val visible = remember(apps, hidden, folders) {
+        apps.filter { app ->
+            app.packageName !in hidden && folders.none { f -> app.packageName in f.apps }
+        }
+    }
     val columns = settings.gridColumns
     val rows = 4
     val perPage = (columns * rows).coerceAtLeast(4)
@@ -133,6 +143,8 @@ fun HomeScreen() {
 
     var showSheet by remember { mutableStateOf(false) }
     var selectedApp by remember { mutableStateOf<MioApp?>(null) }
+    var folderForApp by remember { mutableStateOf<MioApp?>(null) }
+    var openFolder by remember { mutableStateOf<MioFolder?>(null) }
 
     var dragAccum by remember { mutableFloatStateOf(0f) }
 
@@ -178,6 +190,22 @@ fun HomeScreen() {
             if (track != null || playing) {
                 MusicWidget(track = track, playing = playing)
                 Spacer(Modifier.height(12.dp))
+            }
+            if (folders.isNotEmpty()) {
+                Row(
+                    Modifier.fillMaxWidth().padding(bottom = 6.dp),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                ) {
+                    folders.take(4).forEach { folder ->
+                        FolderTile(
+                            folder = folder,
+                            iconSize = (46 * settings.iconScale).dp,
+                            showLabel = settings.showLabels,
+                            onClick = { openFolder = folder },
+                            onLongClick = { openFolder = folder },
+                        )
+                    }
+                }
             }
             HorizontalPager(
                 state = pagerState,
@@ -226,7 +254,17 @@ fun HomeScreen() {
                 Mio.prefs.setHidden(app.packageName, true)
                 selectedApp = null
             },
+            onMoveToFolder = {
+                folderForApp = app
+                selectedApp = null
+            },
         )
+    }
+    folderForApp?.let { app ->
+        FolderPickerSheet(app = app, onDismiss = { folderForApp = null })
+    }
+    openFolder?.let { folder ->
+        FolderContentSheet(folder = folder, onDismiss = { openFolder = null })
     }
 }
 
@@ -690,7 +728,12 @@ private fun HomeAction(title: String, subtitle: String, icon: androidx.compose.u
 }
 
 @Composable
-private fun AppQuickSheet(app: MioApp, onDismiss: () -> Unit, onHide: () -> Unit) {
+private fun AppQuickSheet(
+    app: MioApp,
+    onDismiss: () -> Unit,
+    onHide: () -> Unit,
+    onMoveToFolder: () -> Unit,
+) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val context = LocalContext.current
     ModalBottomSheet(
@@ -718,6 +761,9 @@ private fun AppQuickSheet(app: MioApp, onDismiss: () -> Unit, onHide: () -> Unit
             }
             HomeAction("Hide from home", "Still available in hidden apps", Icons.Rounded.MoreVert) {
                 onHide()
+            }
+            HomeAction("Move to folder", "Group apps into a home-screen folder", Icons.Rounded.Settings) {
+                onMoveToFolder()
             }
             if (!app.isSystem) {
                 HomeAction("Uninstall", "Open the system uninstaller", Icons.Rounded.MoreVert) {
