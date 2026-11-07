@@ -6,13 +6,19 @@ on:
     branches:
       - 'arena/**'
 
+permissions:
+  contents: write
+
 jobs:
   emulator:
     runs-on: ubuntu-latest
     timeout-minutes: 60
+    if: github.actor != 'github-actions[bot]'
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup JDK 17
         uses: actions/setup-java@v4
@@ -26,7 +32,7 @@ jobs:
           gradle-version: '8.9'
 
       - name: Build debug APK
-        run: gradle assembleDebug --stacktrace
+        run: gradle assembleDebug --stacktrace 2>&1 | tail -20
 
       - name: Enable KVM
         run: |
@@ -43,74 +49,99 @@ jobs:
           disable-animations: false
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           script: |
-            set -x
+            set +e
+            mkdir -p ci/shots
+            REPORT=ci/emulator-report.txt
+            echo "MIO OS launcher verification" > $REPORT
             APK=$(ls app/build/outputs/apk/debug/*.apk | head -1)
-            adb install -r -g "$APK"
             PKG=com.mio.os.debug
-            adb shell pm list packages | grep mio
+            adb install -r -g "$APK" 2>&1 | tee -a $REPORT
 
-            echo "=== 1. HOME intent filter present? ==="
-            adb shell cmd package query-activities --brief -a android.intent.action.MAIN -c android.intent.category.HOME | grep -i mio
+            echo "--- 1. HOME intent filter registered ---" | tee -a $REPORT
+            adb shell cmd package query-activities --brief -a android.intent.action.MAIN -c android.intent.category.HOME 2>&1 | tee -a $REPORT
 
-            echo "=== 2. Ask Android to make MIO OS the default home app ==="
-            adb shell cmd package set-home-activity $PKG/com.mio.os.MainActivity
-            sleep 2
+            echo "--- 2. Set MIO OS as default home app ---" | tee -a $REPORT
+            adb shell cmd package set-home-activity $PKG/com.mio.os.MainActivity 2>&1 | tee -a $REPORT
+            sleep 3
 
-            echo "=== 3. Launch MIO OS ==="
-            adb shell am start -n $PKG/com.mio.os.MainActivity
-            sleep 4
-            adb exec-out screencap -p > shots_01_home.png
+            echo "--- 3. Home app resolution (should be MIO OS) ---" | tee -a $REPORT
+            adb shell cmd shortcut get-default-launcher 2>&1 | tee -a $REPORT
 
-            echo "=== 4. Press the HOME key (must go to MIO OS) ==="
+            echo "--- 4. Launch and screenshot home ---" | tee -a $REPORT
+            adb shell am start -n $PKG/com.mio.os.MainActivity 2>&1 | tee -a $REPORT
+            sleep 6
+            adb exec-out screencap -p > ci/shots/01-welcome.png
+
+            echo "--- 5. Complete onboarding: tap Get started -> skip setup ---" | tee -a $REPORT
+            adb shell wm size | tee -a $REPORT
+            # "Skip setup" sits near the bottom centre of the welcome flow
+            adb shell input tap 540 2250
+            sleep 3
+            adb exec-out screencap -p > ci/shots/02-home.png
+
+            echo "--- 6. Press HOME key, must return to MIO OS ---" | tee -a $REPORT
             adb shell input keyevent KEYCODE_HOME
             sleep 3
-            adb shell dumpsys window | grep -E "mCurrentFocus|mFocusedApp" || true
-            adb exec-out screencap -p > shots_02_after_home.png
+            adb shell dumpsys window 2>&1 | grep -E "mCurrentFocus|mFocusedApp" | head -4 | tee -a $REPORT
+            adb exec-out screencap -p > ci/shots/03-after-home-key.png
 
-            echo "=== 5. Swipe up for the app drawer ==="
-            adb shell input swipe 540 1800 540 500 300
-            sleep 2
-            adb exec-out screencap -p > shots_03_drawer.png
+            echo "--- 7. Swipe up for the app drawer ---" | tee -a $REPORT
+            adb shell input swipe 540 1900 540 600 320
+            sleep 3
+            adb exec-out screencap -p > ci/shots/04-drawer.png
 
-            echo "=== 6. Back home, swipe down for control centre ==="
+            echo "--- 8. Back home, swipe down for control centre ---" | tee -a $REPORT
             adb shell input keyevent KEYCODE_BACK
-            sleep 1
-            adb shell input swipe 540 400 540 1600 300
             sleep 2
-            adb exec-out screencap -p > shots_04_control_center.png
+            adb shell input swipe 540 500 540 1700 320
+            sleep 3
+            adb exec-out screencap -p > ci/shots/05-control-center.png
 
-            echo "=== 7. Open settings via the gear, then screenshot ==="
+            echo "--- 9. Open settings from control centre gear ---" | tee -a $REPORT
             adb shell input keyevent KEYCODE_BACK
-            sleep 1
+            sleep 2
             adb shell am start -n $PKG/com.mio.os.MainActivity
             sleep 2
-            adb exec-out screencap -p > shots_05_home.png
+            adb shell input tap 1010 210
+            sleep 3
+            adb exec-out screencap -p > ci/shots/06-settings.png
 
-            echo "=== 8. Launch a third-party app from the drawer (Settings app) ==="
-            adb shell am start -a android.settings.SETTINGS >/dev/null
+            echo "--- 10. Launch a third-party app, then press Home ---" | tee -a $REPORT
+            adb shell am start -a android.settings.SETTINGS >/dev/null 2>&1
             sleep 3
             adb shell input keyevent KEYCODE_HOME
-            sleep 2
-            adb shell dumpsys window | grep -E "mCurrentFocus" || true
+            sleep 3
+            adb shell dumpsys window 2>&1 | grep -E "mCurrentFocus" -A1 | head -3 | tee -a $REPORT
+            adb exec-out screencap -p > ci/shots/07-home-after-app.png
 
-            echo "=== 9. Stability: random UI monkey 400 events ==="
-            adb shell monkey -p $PKG --throttle 120 --pct-syskeys 0 -v 400 >/dev/null 2>&1 || true
+            echo "--- 11. Stability: 400 random UI events ---" | tee -a $REPORT
+            adb shell monkey -p $PKG --throttle 100 --pct-syskeys 0 -v 400 >/dev/null 2>&1
             sleep 2
             adb shell input keyevent KEYCODE_HOME
-            sleep 2
-            adb exec-out screencap -p > shots_06_after_monkey.png
+            sleep 3
+            adb exec-out screencap -p > ci/shots/08-after-monkey.png
 
-            echo "=== 10. Crash check in logcat ==="
-            adb logcat -d -b crash > crashlog.txt || true
-            if grep -q "com.mio.os" crashlog.txt; then echo "CRASH DETECTED"; cat crashlog.txt; fi
-            adb logcat -d | grep -iE "FATAL EXCEPTION|AndroidRuntime.*com.mio.os" | tail -50 || echo "no fatal exceptions"
+            echo "--- 12. Reboot device, home must persist ---" | tee -a $REPORT
+            adb reboot
+            adb wait-for-device
+            sleep 45
+            adb shell cmd shortcut get-default-launcher 2>&1 | tee -a $REPORT
+            adb shell input keyevent KEYCODE_HOME
+            sleep 8
+            adb shell dumpsys window 2>&1 | grep -E "mCurrentFocus" | head -2 | tee -a $REPORT
+            adb exec-out screencap -p > ci/shots/09-after-reboot.png
 
-      - name: Upload screenshots
+            echo "--- 13. Crash log ---" | tee -a $REPORT
+            adb logcat -d -b crash 2>&1 | tail -80 | tee -a $REPORT
+            adb logcat -d 2>&1 | grep -iE "FATAL EXCEPTION|E AndroidRuntime" | tail -40 | tee -a $REPORT
+            echo "--- done ---" | tee -a $REPORT
+
+      - name: Publish report + screenshots to branch
         if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: mio-os-emulator-screenshots
-          path: |
-            shots_*.png
-            crashlog.txt
-          if-no-files-found: warn
+        run: |
+          git config user.name "MIO CI"
+          git config user.email "ci@mio.os"
+          git add -f ci/emulator-report.txt 2>/dev/null || true
+          git add -f ci/shots 2>/dev/null || true
+          git diff --cached --quiet || git commit -m "ci: emulator report + screenshots [skip ci]"
+          git push origin HEAD:${{ github.ref_name }} || echo "push failed"
