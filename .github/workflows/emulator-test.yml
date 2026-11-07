@@ -32,7 +32,9 @@ jobs:
           gradle-version: '8.9'
 
       - name: Build debug APK
-        run: gradle assembleDebug --stacktrace 2>&1 | tail -20
+        run: |
+          set -o pipefail
+          gradle assembleDebug --stacktrace 2>&1 | tail -30
 
       - name: Enable KVM
         run: |

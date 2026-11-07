@@ -8,6 +8,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import com.mio.os.core.Mio
 import com.mio.os.core.MioNav
 import com.mio.os.ui.MioRoot
 
