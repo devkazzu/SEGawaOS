@@ -34,15 +34,13 @@ adb shell am start -n "$ACT"
 sleep 7
 adb exec-out screencap -p > "$SHOTS/01-welcome.png"
 
-step "4. Skip onboarding (tap bottom-centre of the setup screen)"
+step "4. Skip onboarding through the debug test hook"
 SIZE=$(adb shell wm size | tr -d '\r' | awk -F' ' '{print $3}')
 W=${SIZE%x*}
 H=${SIZE#*x}
 echo "screen ${W}x${H}"
-adb shell input tap $((W / 2)) $((H * 88 / 100))
-sleep 1
-adb shell input tap $((W / 2)) $((H * 88 / 100))
-sleep 3
+adb shell am start -n "$ACT" --ez mio_skip_setup true
+sleep 4
 adb exec-out screencap -p > "$SHOTS/02-home.png"
 
 step "5. HOME key must return to MIO OS"

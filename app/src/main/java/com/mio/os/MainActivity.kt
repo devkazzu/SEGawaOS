@@ -21,6 +21,12 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // Debug-build only test hook so automated QA can jump straight to the home
+        // screen: adb shell am start -n <pkg>/com.mio.os.MainActivity --ez mio_skip_setup true
+        if (BuildConfig.DEBUG && intent?.getBooleanExtra("mio_skip_setup", false) == true) {
+            Mio.prefs.edit { it.copy(onboarded = true) }
+            MioNav.home()
+        }
         enableEdgeToEdge(
             statusBarStyle = SystemBarStyle.dark(Color.TRANSPARENT),
             navigationBarStyle = SystemBarStyle.dark(Color.TRANSPARENT),
