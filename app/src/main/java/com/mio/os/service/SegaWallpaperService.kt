@@ -44,7 +44,7 @@ class SegaWallpaperService : WallpaperService() {
         private var player: MediaPlayer? = null
         private var frame = 0L
         private var xOffset = 0.5f
-        private val petals = ArrayList<Petal>()
+        private val petals = ArrayList<SegaPetal>()
         private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
 
         private val drawLoop = object : Runnable {
@@ -61,7 +61,7 @@ class SegaWallpaperService : WallpaperService() {
             setTouchEventsEnabled(false)
             setOffsetNotificationsEnabled(true)
             readSettings()
-            repeat(42) { petals += Petal.random() }
+            repeat(42) { petals += SegaPetal.random() }
         }
 
         override fun onDestroy() {
@@ -207,21 +207,22 @@ class SegaWallpaperService : WallpaperService() {
             paint.alpha = 255
         }
 
-        private data class Petal(
-            var x: Float, var y: Float, val speed: Float, val r: Float,
-            val alpha: Float, val depth: Float, val seed: Int,
-        ) {
-            companion object {
-                fun random() = Petal(
-                    x = Random.nextFloat() * 1080f,
-                    y = Random.nextFloat() * 2000f - 200f,
-                    speed = 1.2f + Random.nextFloat() * 2.4f,
-                    r = 2f + Random.nextFloat() * 5f,
-                    alpha = 0.35f + Random.nextFloat() * 0.5f,
-                    depth = 0.4f + Random.nextFloat() * 0.6f,
-                    seed = Random.nextInt(1000),
-                )
-            }
-        }
+    }
+}
+
+private data class SegaPetal(
+    var x: Float, var y: Float, val speed: Float, val r: Float,
+    val alpha: Float, val depth: Float, val seed: Int,
+) {
+    companion object {
+        fun random() = SegaPetal(
+            x = Random.nextFloat() * 1080f,
+            y = Random.nextFloat() * 2000f - 200f,
+            speed = 1.2f + Random.nextFloat() * 2.4f,
+            r = 2f + Random.nextFloat() * 5f,
+            alpha = 0.35f + Random.nextFloat() * 0.5f,
+            depth = 0.4f + Random.nextFloat() * 0.6f,
+            seed = Random.nextInt(1000),
+        )
     }
 }

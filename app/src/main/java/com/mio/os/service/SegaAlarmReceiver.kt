@@ -74,12 +74,12 @@ class SegaAlarmReceiver : BroadcastReceiver() {
                     if (nm != null && nm.isNotificationPolicyAccessGranted &&
                         nm.currentInterruptionFilter == NotificationManager.INTERRUPTION_FILTER_ALL
                     ) {
-                        nm.interruptionFilter = NotificationManager.INTERRUPTION_FILTER_PRIORITY
+                        nm.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_PRIORITY)
                     }
                 }
                 notify(context, "Focus routine", name)
             }
-            else -> notify(context, "Reminder", payload.ifBlank { name }),
+            else -> notify(context, "Reminder", payload.ifBlank { name })
         }
     }
 
