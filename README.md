@@ -7,7 +7,7 @@ including after a reboot. It is not a mockup, a website or a Figma file.
 ![Home](ci/shots/02-home.png)
 
 **Verified by CI on an Android 13 emulator shaped like a Galaxy A03 (720×1600 @ 270 dpi, 2 GB RAM cap):
-15/15 checks passed — see [`ci/emulator-report.txt`](ci/emulator-report.txt) and the
+16/16 checks passed — see [`ci/emulator-report.txt`](ci/emulator-report.txt) and the
 screenshots in [`ci/shots/`](ci/shots).**
 
 | Check | Result |
@@ -15,6 +15,7 @@ screenshots in [`ci/shots/`](ci/shots).**
 | APK installs on Android 13 | ✅ `Success` |
 | Home intent filter (`MAIN` + `CATEGORY_HOME`) registered | ✅ |
 | MIO OS resolves as the **default launcher** | ✅ after `set-home-activity` |
+| HOME key is actually **routed** to MIO OS | ✅ |
 | Home screen is the foreground window | ✅ |
 | **HOME key** returns to MIO OS from another app | ✅ |
 | Drawer, search, control centre, torch toggle | ✅ (screenshots 04–07) |
