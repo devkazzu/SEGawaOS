@@ -31,9 +31,10 @@ Cold start on the emulator: ~2.5 s debug.
 
 **Performance notes.** The CI emulator has no GPU (swiftshader rasterises on the CPU), so frame
 times there are 3–5× worse than on real hardware; the same run measures Android's own Settings
-app at 16 ms/frame as a baseline. Optimisations that came out of that measurement:
-the wallpaper, vignette, accent glow and dim level are baked into **one texture** (89 ms → 44 ms
-median frame time in the emulator), the clock ticker is isolated so the home screen does not
+app at 16 ms/frame as a baseline, so the emulator renders everything at 3-5x the cost of real
+hardware. Optimisations that came out of that measurement:
+the wallpaper, vignette, accent glow and dim level are baked into **one texture** (median frame
+time 89 ms → 34–65 ms in the emulator, i.e. roughly 2x faster), the clock ticker is isolated so the home screen does not
 recompose every second, icons are decoded once into an LRU bitmap cache, and navigation slides
 instead of cross-fading so no full-screen alpha layer is allocated per frame.
 
@@ -212,7 +213,23 @@ device admin (lock). Nothing is uploaded anywhere; there is no account, analytic
 
 ---
 
-## 7. Credits
+## 7. Screenshot index (`ci/shots`)
+
+| File | Screen |
+|---|---|
+| `01-onboarding-welcome.png` | first-run welcome / set-as-default flow |
+| `02-home.png`, `03-home-after-home-key.png`, `26-home-final.png` | home screen, clock+weather, music widget, app grid, dock |
+| `04-app-drawer.png`, `05-drawer-search.png` | drawer and live search ("set" → 1 result) |
+| `06-control-center.png`, `07-control-center-torch.png` | control centre and torch toggle |
+| `08-settings.png` … `11-about.png` | settings, appearance, privacy, about |
+| `12-ai.png`, `13-ai-reply.png` | MIO AI assistant and a real device query |
+| `14-music.png`, `15-music-playing.png` | player idle and playing |
+| `16-themes.png` … `25-lock-screen.png` | themes, files, gallery, notes, calendar, clock, calculator, weather, gaming, lock screen |
+| `27-after-monkey.png` | still alive after 500 random events |
+| `28-after-reboot.png` | home screen after `adb reboot` |
+| `29-release-home.png`, `30-release-drawer.png` | R8 release build running as the home app |
+
+## 8. Credits
 
 Design language, copy and concept: **RJNX — MIO OS v1.0**. Implementation: this repository.
 Built on Android AOSP APIs with Jetpack Compose. Wallpapers are AI-generated artwork
