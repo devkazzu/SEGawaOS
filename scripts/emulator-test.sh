@@ -108,7 +108,7 @@ sleep 3
 shot 04-app-drawer.png
 
 step "8. Drawer search field + category filter"
-adb shell input tap $((W / 2)) $((H * 22 / 100))
+adb shell input tap $((W / 2)) $((H * 15 / 100))
 sleep 1
 adb shell input text "set"
 sleep 2
@@ -179,7 +179,25 @@ echo "$FOCUS"
 check_contains "$FOCUS" "com.mio.os.debug" "Returning from an app lands on the MIO OS home screen"
 
 step "15. Performance snapshot (frame stats, memory)"
+echo "NOTE: the emulator renders with swiftshader (no GPU), so absolute frame"
+echo "times are CPU-rasterisation bound and much worse than on real hardware."
+adb shell dumpsys gfxinfo "$PKG" reset >/dev/null 2>&1
+adb shell dumpsys gfxinfo "$PKG" | grep -E "Total frames" | head -3
+adb shell am start -n "$ACT" --ez mio_skip_setup true >/dev/null 2>&1
+sleep 3
+# pure home-screen interaction: swipe the pager left/right, open and close the drawer
+adb shell input swipe $((W * 80 / 100)) $((H * 55 / 100)) $((W * 20 / 100)) $((H * 55 / 100)) 200
+sleep 1
+adb shell input swipe $((W * 20 / 100)) $((H * 55 / 100)) $((W * 80 / 100)) $((H * 55 / 100)) 200
+sleep 1
+adb shell input swipe $((W / 2)) $((H * 80 / 100)) $((W / 2)) $((H * 28 / 100)) 300
+sleep 3
+adb shell input keyevent KEYCODE_BACK
+sleep 3
+echo "--- home-screen interaction frames only (gfxinfo reset before the swipes) ---"
 adb shell dumpsys gfxinfo "$PKG" | grep -E "Total frames|Janky frames|50th percentile|90th percentile|95th percentile|99th percentile" | head -8
+echo "--- pipeline breakdown (Draw/Prepare are CPU, GPU is the rasteriser) ---"
+adb shell dumpsys gfxinfo "$PKG" | sed -n '/Draw\|Prepare\|Process\|Execute/,+3p' | head -12
 echo "--- memory ---"
 adb shell dumpsys meminfo "$PKG" | grep -E "TOTAL PSS|Java Heap|Native Heap" | head -6
 echo "--- app startup ---"
