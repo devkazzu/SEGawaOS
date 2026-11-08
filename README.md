@@ -27,7 +27,15 @@ screenshots in [`ci/shots/`](ci/shots).**
 | No `FATAL EXCEPTION` in logcat | ✅ |
 
 Build sizes: debug 18 MB, release **2.3 MB** (R8 + resource shrinking).
-Cold start on the emulator: ~2.5 s debug (software-rendered emulator, no GPU).
+Cold start on the emulator: ~2.5 s debug.
+
+**Performance notes.** The CI emulator has no GPU (swiftshader rasterises on the CPU), so frame
+times there are 3–5× worse than on real hardware; the same run measures Android's own Settings
+app at 16 ms/frame as a baseline. Optimisations that came out of that measurement:
+the wallpaper, vignette, accent glow and dim level are baked into **one texture** (89 ms → 44 ms
+median frame time in the emulator), the clock ticker is isolated so the home screen does not
+recompose every second, icons are decoded once into an LRU bitmap cache, and navigation slides
+instead of cross-fading so no full-screen alpha layer is allocated per frame.
 
 ---
 

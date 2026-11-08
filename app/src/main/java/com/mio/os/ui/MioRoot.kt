@@ -6,7 +6,9 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
@@ -65,14 +67,19 @@ fun MioRoot() {
             LocalApps provides apps,
             LocalDensity provides Density(density.density, (density.fontScale * settings.fontScale).coerceIn(0.7f, 1.6f)),
         ) {
-            Box(Modifier.fillMaxSize().background(MioColors.Bg)) {
+            // No root background fill: every surface paints its own baked wallpaper,
+            // so one fewer full-screen layer is composited each frame.
+            Box(Modifier.fillMaxSize()) {
                 if (MioNav.isHomeLike) {
                     HomeScreen()
                 } else {
                     AnimatedContent(
                         targetState = MioNav.screen,
+                        // Slide instead of cross-fade: an alpha animation over a
+                        // full-screen surface forces an offscreen buffer per frame.
                         transitionSpec = {
-                            fadeIn(tween(180)) togetherWith fadeOut(tween(120))
+                            slideInHorizontally(tween(260)) { it / 6 } togetherWith
+                                slideOutHorizontally(tween(180)) { -it / 12 }
                         },
                         label = "screen",
                     ) { screen ->
