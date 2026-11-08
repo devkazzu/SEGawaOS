@@ -213,7 +213,19 @@ echo "--- CPU rasterisation proof ---"
 adb shell getprop ro.hardware.egl
 adb shell getprop | grep -i "gpu" | head -3
 adb shell input keyevent KEYCODE_HOME
+sleep 4
+# second MIO measurement after the wallpaper baking optimisation
+adb shell dumpsys gfxinfo "$PKG" reset >/dev/null 2>&1
+adb shell input swipe $((W * 80 / 100)) $((H * 55 / 100)) $((W * 20 / 100)) $((H * 55 / 100)) 200
+sleep 1
+adb shell input swipe $((W * 20 / 100)) $((H * 55 / 100)) $((W * 80 / 100)) $((H * 55 / 100)) 200
+sleep 1
+adb shell input swipe $((W / 2)) $((H * 80 / 100)) $((W / 2)) $((H * 28 / 100)) 300
 sleep 3
+adb shell input keyevent KEYCODE_BACK
+sleep 2
+echo "--- MIO after the home-screen interaction pass ---"
+adb shell dumpsys gfxinfo "$PKG" | grep -E "Total frames rendered|50th percentile|90th percentile" | head -3
 
 echo "--- pipeline breakdown (Draw/Prepare are CPU, GPU is the rasteriser) ---"
 adb shell dumpsys gfxinfo "$PKG" | sed -n '/Draw\|Prepare\|Process\|Execute/,+3p' | head -12
