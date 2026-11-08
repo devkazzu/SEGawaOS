@@ -129,7 +129,12 @@ fun AppDrawer() {
                         style = MioType.h1.copy(fontSize = 24.sp),
                     )
                     Text(
-                        "${filtered.size} apps installed",
+                        if (query.isBlank()) {
+                            if (filtered.size == 1) "1 app" else "${filtered.size} apps"
+                        } else {
+                            if (filtered.isEmpty()) "No matches" else "${filtered.size} result" +
+                                if (filtered.size == 1) "" else "s"
+                        },
                         style = MioType.micro.copy(fontSize = 10.sp),
                     )
                 }

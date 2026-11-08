@@ -248,7 +248,7 @@ fun CalendarScreen() {
 
     MioScreenScaffold(
         title = "Calendar",
-        subtitle = DateFormat.format("MMMM yyyy", selectedDay).toString(),
+        subtitle = "Events & reminders",
         scroll = false,
         trailing = {
             Box(

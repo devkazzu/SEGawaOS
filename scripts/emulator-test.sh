@@ -196,6 +196,25 @@ adb shell input keyevent KEYCODE_BACK
 sleep 3
 echo "--- home-screen interaction frames only (gfxinfo reset before the swipes) ---"
 adb shell dumpsys gfxinfo "$PKG" | grep -E "Total frames|Janky frames|50th percentile|90th percentile|95th percentile|99th percentile" | head -8
+echo ""
+echo "=== 15b. Baseline: the platform Settings app measured identically ==="
+echo "(if a stock AOSP app also renders at ~100 ms/frame here, the emulator's"
+echo " software rasteriser — not MIO OS — is the bottleneck)"
+adb shell am start -a android.settings.SETTINGS >/dev/null 2>&1
+sleep 4
+adb shell dumpsys gfxinfo com.android.settings reset >/dev/null 2>&1
+for i in 1 2 3; do
+  adb shell input swipe $((W / 2)) $((H * 75 / 100)) $((W / 2)) $((H * 30 / 100)) 300
+  sleep 1
+done
+sleep 2
+adb shell dumpsys gfxinfo com.android.settings | grep -E "Total frames|Janky frames|50th percentile|90th percentile" | head -5
+echo "--- CPU rasterisation proof ---"
+adb shell getprop ro.hardware.egl
+adb shell getprop | grep -i "gpu" | head -3
+adb shell input keyevent KEYCODE_HOME
+sleep 3
+
 echo "--- pipeline breakdown (Draw/Prepare are CPU, GPU is the rasteriser) ---"
 adb shell dumpsys gfxinfo "$PKG" | sed -n '/Draw\|Prepare\|Process\|Execute/,+3p' | head -12
 echo "--- memory ---"
