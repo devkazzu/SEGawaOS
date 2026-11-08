@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="mio_bg">#FF04030A</color>
+    <color name="mio_bg_soft">#FF0B0716</color>
+    <color name="mio_purple">#FF7C5CFF</color>
+    <color name="mio_purple_deep">#FF4C1D95</color>
+    <color name="mio_glass">#14FFFFFF</color>
+    <color name="mio_text">#FFF5F2FF</color>
+    <color name="transparent">#00000000</color>
+</resources>
