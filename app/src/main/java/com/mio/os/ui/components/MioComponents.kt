@@ -195,7 +195,7 @@ private fun renderWallpaper(
         val halo = Paint()
         halo.shader = RadialGradient(
             w * 0.72f, h * 0.28f, h * 0.45f,
-            intArrayOf(0x667C5CFF, 0x00000000), Shader.TileMode.CLAMP,
+            intArrayOf(0x667C5CFF, 0x00000000), floatArrayOf(0f, 1f), Shader.TileMode.CLAMP,
         )
         canvas.drawRect(0f, 0f, w.toFloat(), h.toFloat(), halo)
     }
@@ -215,6 +215,7 @@ private fun renderWallpaper(
     glow.shader = RadialGradient(
         0f, 0f, maxOf(w, h) * 0.95f,
         intArrayOf((accent and 0x00FFFFFF) or 0x29000000, 0x00000000),
+        floatArrayOf(0f, 1f),
         Shader.TileMode.CLAMP,
     )
     canvas.drawRect(0f, 0f, w.toFloat(), h.toFloat(), glow)
