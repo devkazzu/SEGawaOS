@@ -8,10 +8,12 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.BatteryManager
+import android.os.Build
 import android.text.format.DateFormat
 import android.widget.RemoteViews
 import com.mio.os.MainActivity
 import com.mio.os.R
+import com.mio.os.core.LauncherHelper
 import com.mio.os.core.MioPlayer
 import com.mio.os.service.MusicService
 
@@ -23,7 +25,32 @@ import com.mio.os.service.MusicService
  * and Battery (sticky-broadcast reading + manual refresh). Updates are
  * event-driven; no polling service runs in the background.
  */
+/** The four built-in SEGAWA widgets, in drawer-pin order. */
+enum class WidgetKind { CLOCK, SEARCH, MUSIC, BATTERY }
+
 object SegaWidgets {
+
+    /**
+     * Asks the system launcher to pin a SEGAWA widget (Android 8+). On older
+     * releases — or launchers without pin support — explains the manual path.
+     */
+    fun requestPin(context: Context, kind: WidgetKind) {
+        val provider = ComponentName(
+            context,
+            when (kind) {
+                WidgetKind.CLOCK -> SegaClockWidget::class.java
+                WidgetKind.SEARCH -> SegaSearchWidget::class.java
+                WidgetKind.MUSIC -> SegaMusicWidget::class.java
+                WidgetKind.BATTERY -> SegaBatteryWidget::class.java
+            },
+        )
+        val mgr = context.getSystemService(AppWidgetManager::class.java)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && mgr != null && mgr.isRequestPinAppWidgetSupported) {
+            mgr.requestPinAppWidget(provider, null, null)
+        } else {
+            LauncherHelper.toast(context, "Long-press the home screen to add the SEGAWA widget")
+        }
+    }
 
     fun updateAll(context: Context) {
         updateClock(context)
