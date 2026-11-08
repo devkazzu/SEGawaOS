@@ -49,6 +49,7 @@ data class MioSettings(
     val customIcons: String = "",
     val iconProfile: String = "neon",
     val doubleTapAction: String = "search",
+    val ccTiles: String = "Torch,Airplane,Rotate,DND,Cast,Hotspot,Night,Battery",
     val tileOrder: String = "",
     val tilesHidden: Set<String> = emptySet(),
     val playlists: String = "",
@@ -140,6 +141,7 @@ class MioPrefs(context: Context) {
             customIcons = sp.getString("customIcons", d.customIcons) ?: d.customIcons,
             iconProfile = sp.getString("iconProfile", d.iconProfile) ?: d.iconProfile,
             doubleTapAction = sp.getString("doubleTap", d.doubleTapAction) ?: d.doubleTapAction,
+            ccTiles = sp.getString("ccTiles", d.ccTiles) ?: d.ccTiles,
             tileOrder = sp.getString("tileOrder", d.tileOrder) ?: d.tileOrder,
             tilesHidden = sp.getStringSet("tilesHidden", emptySet())?.toSet() ?: emptySet(),
             playlists = sp.getString("playlists", d.playlists) ?: d.playlists,
@@ -203,6 +205,7 @@ class MioPrefs(context: Context) {
             putString("customIcons", s.customIcons)
             putString("iconProfile", s.iconProfile)
             putString("doubleTap", s.doubleTapAction)
+            putString("ccTiles", s.ccTiles)
             putString("tileOrder", s.tileOrder)
             putStringSet("tilesHidden", s.tilesHidden)
             putString("playlists", s.playlists)

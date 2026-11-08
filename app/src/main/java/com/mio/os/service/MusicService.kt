@@ -12,6 +12,7 @@ import android.os.IBinder
 import com.mio.os.MainActivity
 import com.mio.os.R
 import com.mio.os.core.MioPlayer
+import com.mio.os.widget.SegaWidgets
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -70,6 +71,7 @@ class MusicService : Service() {
     }
 
     private fun refresh() {
+        runCatching { SegaWidgets.updateMusic(this) }
         val nm = getSystemService(NotificationManager::class.java) ?: return
         val notif = build()
         if (MioPlayer.playing.value) {

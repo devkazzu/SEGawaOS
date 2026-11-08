@@ -87,4 +87,37 @@ object DeviceStats {
 
     fun installedAppCount(context: Context): Int =
         context.packageManager.getInstalledApplications(0).size
+
+    /** True when the user granted Usage Access in system settings. */
+    fun hasUsageAccess(context: Context): Boolean = runCatching {
+        val ops = context.getSystemService(android.app.AppOpsManager::class.java) ?: return false
+        val mode = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+            ops.unsafeCheckOpNoThrow(
+                android.app.AppOpsManager.OPSTR_GET_USAGE_STATS,
+                android.os.Process.myUid(), context.packageName
+            )
+        } else {
+            @Suppress("DEPRECATION")
+            ops.checkOpNoThrow(
+                android.app.AppOpsManager.OPSTR_GET_USAGE_STATS,
+                android.os.Process.myUid(), context.packageName
+            )
+        }
+        mode == android.app.AppOpsManager.MODE_ALLOWED
+    }.getOrDefault(false)
+
+    /** Top packages by foreground time in the last 24h (minutes). Empty unless granted. */
+    fun topUsage(context: Context, limit: Int = 5): List<Pair<String, Long>> = runCatching {
+        if (!hasUsageAccess(context)) return emptyList()
+        val usm = context.getSystemService(android.app.usage.UsageStatsManager::class.java)
+            ?: return emptyList()
+        val end = System.currentTimeMillis()
+        val stats = usm.queryUsageStats(
+            android.app.usage.UsageStatsManager.INTERVAL_DAILY, end - 86_400_000L, end
+        ) ?: return emptyList()
+        stats.filter { it.totalTimeInForeground > 0 }
+            .sortedByDescending { it.totalTimeInForeground }
+            .take(limit)
+            .map { it.packageName to it.totalTimeInForeground / 60_000L }
+    }.getOrDefault(emptyList())
 }

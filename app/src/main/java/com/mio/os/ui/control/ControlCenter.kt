@@ -3,6 +3,7 @@ package com.mio.os.ui.control
 import android.text.format.DateFormat
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -73,11 +74,13 @@ import com.mio.os.core.MioScreen
 import com.mio.os.core.SystemControls
 import com.mio.os.core.Weather
 import com.mio.os.core.WeatherRepo
+import com.mio.os.ui.components.AppIconView
 import com.mio.os.ui.components.GlassCard
 import com.mio.os.ui.components.MioLogo
 import com.mio.os.ui.components.MioWallpaper
 import com.mio.os.ui.components.ThinSlider
 import com.mio.os.ui.components.bounceClick
+import com.mio.os.ui.theme.LocalApps
 import com.mio.os.ui.theme.LocalAccent
 import com.mio.os.ui.theme.LocalSettings
 import com.mio.os.ui.theme.MioColors
@@ -107,6 +110,8 @@ fun ControlCenter() {
 
     var weather by remember { mutableStateOf<Weather?>(null) }
     var now by remember { mutableStateOf(System.currentTimeMillis()) }
+    var customizing by remember { mutableStateOf(false) }
+    val apps = LocalApps.current
 
     LaunchedEffect(Unit) {
         weather = WeatherRepo.get(context, settings.city)
@@ -156,6 +161,20 @@ fun ControlCenter() {
                     contentAlignment = Alignment.Center,
                 ) {
                     Icon(Icons.Rounded.Lock, "Lock", tint = Color.White.copy(alpha = 0.85f), modifier = Modifier.size(17.dp))
+                }
+                Spacer(Modifier.width(8.dp))
+                Box(
+                    Modifier.clip(RoundedCornerShape(50)).background(
+                        if (customizing) LocalAccent.current.copy(alpha = 0.35f)
+                        else Color.White.copy(alpha = 0.09f),
+                    ).bounceClick { customizing = !customizing }
+                        .padding(horizontal = 14.dp, vertical = 9.dp),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Text(
+                        if (customizing) "Done" else "Edit",
+                        style = MioType.micro.copy(fontSize = 11.sp, color = Color.White),
+                    )
                 }
             }
 
@@ -218,11 +237,33 @@ fun ControlCenter() {
                     SystemControls.open(context, SystemControls.batterySettings(context))
                 },
             )
+            val enabledTiles = remember(settings.ccTiles) {
+                settings.ccTiles.split(",").map { it.trim() }.filter { it.isNotEmpty() }.toSet()
+            }
+            if (customizing) {
+                Text(
+                    "Tap tiles to show or hide them.",
+                    style = MioType.micro.copy(fontSize = 10.sp, color = Color.White.copy(alpha = 0.6f)),
+                )
+                Spacer(Modifier.height(8.dp))
+            }
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                toggles.chunked(4).forEach { row ->
+                toggles.filter { customizing || it.label in enabledTiles }.chunked(4).forEach { row ->
                     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                         row.forEach { t ->
-                            ToggleCircle(t.icon, t.label, t.active) { t.action() }
+                            ToggleCircle(
+                                t.icon, t.label,
+                                if (customizing) t.label in enabledTiles else t.active,
+                            ) {
+                                if (customizing) {
+                                    val cur = settings.ccTiles.split(",").map { it.trim() }
+                                        .filter { it.isNotEmpty() }.toMutableSet()
+                                    if (t.label in cur) cur.remove(t.label) else cur.add(t.label)
+                                    Mio.prefs.edit { it.copy(ccTiles = cur.joinToString(",")) }
+                                } else {
+                                    t.action()
+                                }
+                            }
                         }
                         repeat(4 - row.size) { Spacer(Modifier.width(1.dp)) }
                     }
@@ -322,6 +363,46 @@ fun ControlCenter() {
                         Icons.Rounded.SkipNext, "Next", tint = Color.White.copy(alpha = 0.8f),
                         modifier = Modifier.size(20.dp).bounceClick { MioPlayer.next(context) },
                     )
+                }
+            }
+
+            Spacer(Modifier.height(12.dp))
+
+            // Recent apps
+            val recents = remember(settings.recentApps) {
+                settings.recentApps.take(10).mapNotNull { pkg -> apps.find { it.packageName == pkg } }
+            }
+            if (recents.isNotEmpty()) {
+                Spacer(Modifier.height(12.dp))
+                GlassCard(Modifier.fillMaxWidth(), corner = 22.dp, alpha = 0.06f) {
+                    Column(Modifier.padding(12.dp)) {
+                        Text(
+                            "Recent",
+                            style = MioType.micro.copy(fontSize = 10.sp, color = Color.White.copy(alpha = 0.6f)),
+                        )
+                        Spacer(Modifier.height(8.dp))
+                        Row(
+                            Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
+                            horizontalArrangement = Arrangement.spacedBy(14.dp),
+                        ) {
+                            recents.forEach { app ->
+                                Column(
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    modifier = Modifier.bounceClick(scaleDown = 0.9f) { Mio.apps.launch(app) },
+                                ) {
+                                    AppIconView(app, 42.dp)
+                                    Spacer(Modifier.height(4.dp))
+                                    Text(
+                                        app.name,
+                                        style = MioType.micro.copy(fontSize = 8.5.sp),
+                                        maxLines = 1, overflow = TextOverflow.Ellipsis,
+                                        modifier = Modifier.width(52.dp),
+                                        textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                                    )
+                                }
+                            }
+                        }
+                    }
                 }
             }
 

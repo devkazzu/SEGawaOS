@@ -19,6 +19,10 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="32" />
 
+    <!-- Read screen-time stats for the Device Intelligence dashboard (opt-in) -->
+    <uses-permission android:name="android.permission.PACKAGE_USAGE_STATS"
+        tools:ignore="ProtectedPermissions" />
+
     <!-- Music playback service -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
@@ -139,6 +143,24 @@
                 android:name="android.service.wallpaper"
                 android:resource="@xml/wallpaper_segawa" />
         </service>
+
+        <!-- Home-screen widgets any launcher can host -->
+        <receiver android:name=".widget.SegaClockWidget" android:exported="true" android:label="SEGAWA Clock">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_clock" />
+        </receiver>
+        <receiver android:name=".widget.SegaSearchWidget" android:exported="true" android:label="SEGAWA Search">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_search" />
+        </receiver>
+        <receiver android:name=".widget.SegaMusicWidget" android:exported="true" android:label="SEGAWA Music">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_music" />
+        </receiver>
+        <receiver android:name=".widget.SegaBatteryWidget" android:exported="true" android:label="SEGAWA Battery">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_battery" />
+        </receiver>
 
         <!-- Wallpaper rotation + automation routines (re-armed after reboot) -->
         <receiver

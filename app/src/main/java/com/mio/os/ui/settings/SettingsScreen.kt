@@ -43,6 +43,7 @@ import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material.icons.rounded.Shield
 import androidx.compose.material.icons.rounded.Storage
+import androidx.compose.material.icons.rounded.TouchApp
 import androidx.compose.material.icons.rounded.Wallpaper
 import androidx.compose.material.icons.rounded.Wifi
 import androidx.compose.material3.Icon
@@ -466,6 +467,32 @@ fun HomeScreenSettings() {
                     subtitle = "Digital clock format",
                     checked = settings.clock24h,
                     onChange = { v -> Mio.prefs.edit { it.copy(clock24h = v) } },
+                )
+            }
+
+            SectionHeader("Gestures")
+            SettingsGroup {
+                GlassRow(
+                    "Double-tap action",
+                    when (settings.doubleTapAction) {
+                        "drawer" -> "Open app drawer"
+                        "control" -> "Open control center"
+                        "ai" -> "Open SEGAWA AI"
+                        "lock" -> "Show lock screen"
+                        else -> "Open search"
+                    },
+                    leading = { SettingsIconBadge(Icons.Rounded.TouchApp, MioColors.Blue) },
+                    onClick = {
+                        val next = when (settings.doubleTapAction) {
+                            "search" -> "drawer"
+                            "drawer" -> "control"
+                            "control" -> "ai"
+                            "ai" -> "lock"
+                            else -> "search"
+                        }
+                        Mio.prefs.edit { it.copy(doubleTapAction = next) }
+                    },
+                    trailing = { Chevron() },
                 )
             }
 

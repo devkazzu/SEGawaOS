@@ -194,7 +194,11 @@ object LocalAssistant {
 /** Tiny JSON-backed notes store (no database needed for a few hundred notes). */
 object NotesRepo {
 
-    data class Note(val id: Long, val text: String, val created: Long, val pinned: Boolean = false)
+    data class Note(
+        val id: Long, val text: String, val created: Long, val pinned: Boolean = false,
+        val title: String = "", val category: String = "", val tags: String = "",
+        val favorite: Boolean = false,
+    )
 
     fun all(): List<Note> {
         val raw = Mio.prefs.current.notes
@@ -208,6 +212,10 @@ object NotesRepo {
                     text = o.optString("text", ""),
                     created = o.optLong("created", 0L),
                     pinned = o.optBoolean("pinned", false),
+                    title = o.optString("title", ""),
+                    category = o.optString("category", ""),
+                    tags = o.optString("tags", ""),
+                    favorite = o.optBoolean("favorite", false),
                 )
             }.filter { it.text.isNotBlank() }.sortedByDescending { it.created }
         }.getOrDefault(emptyList())
@@ -220,6 +228,8 @@ object NotesRepo {
                 JSONObject()
                     .put("id", n.id).put("text", n.text)
                     .put("created", n.created).put("pinned", n.pinned)
+                    .put("title", n.title).put("category", n.category)
+                    .put("tags", n.tags).put("favorite", n.favorite)
             )
         }
         Mio.prefs.edit { it.copy(notes = arr.toString()) }
@@ -232,4 +242,21 @@ object NotesRepo {
     fun delete(id: Long) = persist(all().filterNot { it.id == id })
 
     fun togglePin(id: Long) = persist(all().map { if (it.id == id) it.copy(pinned = !it.pinned) else it })
+
+    fun toggleFavorite(id: Long) =
+        persist(all().map { if (it.id == id) it.copy(favorite = !it.favorite) else it })
+
+    fun upsert(note: Note) {
+        persist(listOf(note) + all().filterNot { it.id == note.id })
+    }
+
+    /** Honest on-device summary: lead sentences plus reading stats. */
+    fun offlineSummary(text: String): String {
+        val clean = text.replace(Regex("\\s+"), " ").trim()
+        if (clean.isEmpty()) return "Empty note."
+        val sentences = clean.split(Regex("(?<=[.!?])\\s+")).filter { it.isNotBlank() }
+        val head = sentences.take(2).joinToString(" ")
+        val words = clean.split(' ').size
+        return head + "\n\n$words words · ~${(words / 200).coerceAtLeast(1)} min read · summarized on-device."
+    }
 }

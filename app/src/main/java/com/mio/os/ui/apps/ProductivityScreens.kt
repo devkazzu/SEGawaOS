@@ -9,6 +9,8 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -86,11 +88,28 @@ import java.util.Locale
 fun NotesScreen() {
     val context = LocalContext.current
     var notes by remember { mutableStateOf(NotesRepo.all()) }
-    var editing by remember { mutableStateOf<String?>(null) }
+    var editing by remember { mutableStateOf<NotesRepo.Note?>(null) }
     var showSheet by remember { mutableStateOf(false) }
+    var query by remember { mutableStateOf("") }
+    var cat by remember { mutableStateOf<String?>(null) }
+    var summaryFor by remember { mutableStateOf<NotesRepo.Note?>(null) }
 
     fun reload() {
         notes = NotesRepo.all()
+    }
+
+    val cats = remember(notes) { notes.mapNotNull { it.category.ifBlank { null } }.distinct().sorted() }
+    val shown = remember(notes, query, cat) {
+        var list = notes
+        if (cat == "★") list = list.filter { it.favorite }
+        else if (cat != null) list = list.filter { it.category == cat }
+        if (query.isNotBlank()) {
+            list = list.filter {
+                it.title.contains(query, true) || it.text.contains(query, true) ||
+                    it.tags.contains(query, true)
+            }
+        }
+        list.sortedWith(compareByDescending<NotesRepo.Note> { it.pinned }.thenByDescending { it.created })
     }
 
     MioScreenScaffold(
@@ -108,38 +127,107 @@ fun NotesScreen() {
             }
         },
     ) { m ->
-        if (notes.isEmpty()) {
-            Column(m) {
-                Spacer(Modifier.height(50.dp))
+        Column(m) {
+            Box(
+                Modifier.fillMaxWidth().clip(RoundedCornerShape(50))
+                    .background(Color.White.copy(alpha = 0.08f))
+                    .border(1.dp, Color.White.copy(alpha = 0.10f), RoundedCornerShape(50))
+                    .padding(horizontal = 16.dp, vertical = 11.dp),
+            ) {
+                if (query.isEmpty()) {
+                    Text(
+                        "Search notes…",
+                        style = MioType.body.copy(fontSize = 13.sp, color = Color.White.copy(alpha = 0.45f)),
+                    )
+                }
+                BasicTextField(
+                    value = query,
+                    onValueChange = { query = it },
+                    singleLine = true,
+                    textStyle = MioType.title.copy(fontSize = 13.sp, color = Color.White),
+                    cursorBrush = SolidColor(LocalAccent.current),
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            }
+            Spacer(Modifier.height(10.dp))
+            Row(
+                Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                NoteChip("All", cat == null) { cat = null }
+                NoteChip("★ Favorites", cat == "★") { cat = "★" }
+                cats.forEach { c -> NoteChip(c, cat == c) { cat = c } }
+            }
+            Spacer(Modifier.height(10.dp))
+            if (shown.isEmpty()) {
                 com.mio.os.ui.components.EmptyState(
                     "Nothing here yet",
                     "Tap + to write your first note. Segawa can also save notes for you from the AI screen.",
                 )
-            }
-        } else {
-            LazyColumn(m, contentPadding = androidx.compose.foundation.layout.PaddingValues(bottom = 24.dp)) {
-                items(notes, key = { it.id }) { note ->
-                    GlassCard(
-                        Modifier.fillMaxWidth().padding(vertical = 5.dp)
-                            .bounceClick(scaleDown = 0.98f) { editing = note.text; showSheet = true },
-                        corner = 18.dp, alpha = 0.07f,
-                    ) {
-                        Row(Modifier.padding(14.dp), verticalAlignment = Alignment.Top) {
-                            Column(Modifier.weight(1f)) {
-                                Text(note.text, style = MioType.title.copy(fontSize = 13.sp, lineHeight = 19.sp))
-                                Spacer(Modifier.height(6.dp))
-                                Text(
-                                    DateFormat.format("d MMM · HH:mm", note.created).toString(),
-                                    style = MioType.micro.copy(fontSize = 9.5.sp),
-                                )
+            } else {
+                LazyColumn(
+                    Modifier.weight(1f),
+                    contentPadding = androidx.compose.foundation.layout.PaddingValues(bottom = 24.dp),
+                ) {
+                    items(shown, key = { it.id }) { note ->
+                        GlassCard(
+                            Modifier.fillMaxWidth().padding(vertical = 5.dp)
+                                .bounceClick(scaleDown = 0.98f) { editing = note; showSheet = true },
+                            corner = 18.dp, alpha = 0.07f,
+                        ) {
+                            Column(Modifier.padding(14.dp)) {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    if (note.pinned) {
+                                        Text("📌 ", style = MioType.micro.copy(fontSize = 10.sp))
+                                    }
+                                    Text(
+                                        note.title.ifBlank { note.text.lineSequence().firstOrNull()?.take(42) ?: "Note" },
+                                        style = MioType.title.copy(fontSize = 13.sp),
+                                        maxLines = 1, overflow = TextOverflow.Ellipsis,
+                                        modifier = Modifier.weight(1f),
+                                    )
+                                    Icon(
+                                        Icons.Rounded.Star,
+                                        "Favorite",
+                                        tint = if (note.favorite) LocalAccent.current else Color.White.copy(alpha = 0.3f),
+                                        modifier = Modifier.size(17.dp).bounceClick {
+                                            NotesRepo.toggleFavorite(note.id); reload()
+                                        },
+                                    )
+                                }
+                                if (note.title.isNotBlank()) {
+                                    Spacer(Modifier.height(4.dp))
+                                    Text(
+                                        note.text,
+                                        style = MioType.body.copy(fontSize = 11.5.sp, lineHeight = 16.sp),
+                                        maxLines = 3, overflow = TextOverflow.Ellipsis,
+                                    )
+                                }
+                                Spacer(Modifier.height(8.dp))
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Text(
+                                        DateFormat.format("d MMM · HH:mm", note.created).toString() +
+                                            (if (note.category.isNotBlank()) " · ${note.category}" else "") +
+                                            (if (note.tags.isNotBlank()) " · ${note.tags}" else ""),
+                                        style = MioType.micro.copy(fontSize = 9.5.sp),
+                                        modifier = Modifier.weight(1f),
+                                        maxLines = 1, overflow = TextOverflow.Ellipsis,
+                                    )
+                                    Text(
+                                        "Summary",
+                                        style = MioType.micro.copy(fontSize = 9.5.sp, color = LocalAccent.current),
+                                        modifier = Modifier.bounceClick { summaryFor = note }
+                                            .padding(horizontal = 6.dp, vertical = 4.dp),
+                                    )
+                                    Icon(
+                                        Icons.Rounded.Delete, "Delete",
+                                        tint = Color.White.copy(alpha = 0.35f),
+                                        modifier = Modifier.size(16.dp).bounceClick {
+                                            NotesRepo.delete(note.id); reload()
+                                        },
+                                    )
+                                }
                             }
-                            Icon(
-                                Icons.Rounded.Delete, "Delete",
-                                tint = Color.White.copy(alpha = 0.35f),
-                                modifier = Modifier.size(16.dp).bounceClick {
-                                    NotesRepo.delete(note.id); reload()
-                                },
-                            )
                         }
                     }
                 }
@@ -148,48 +236,145 @@ fun NotesScreen() {
     }
 
     if (showSheet) {
-        var text by remember(editing) { mutableStateOf(editing ?: "") }
+        NoteEditorSheet(
+            initial = editing,
+            onDismiss = { showSheet = false },
+            onSave = { title, text, category, tags, favorite ->
+                val now = System.currentTimeMillis()
+                NotesRepo.upsert(
+                    NotesRepo.Note(
+                        id = editing?.id ?: now,
+                        text = text.trim(),
+                        created = editing?.created ?: now,
+                        pinned = editing?.pinned ?: false,
+                        title = title.trim(),
+                        category = category.trim().take(24),
+                        tags = tags.trim().take(48),
+                        favorite = favorite,
+                    )
+                )
+                reload()
+                showSheet = false
+            },
+        )
+    }
+
+    summaryFor?.let { note ->
         ModalBottomSheet(
-            onDismissRequest = { showSheet = false },
+            onDismissRequest = { summaryFor = null },
             containerColor = Color(0xFF0D0918),
             dragHandle = { com.mio.os.ui.components.SheetHandle() },
         ) {
             Column(Modifier.padding(horizontal = 20.dp)) {
-                Text(if (editing == null) "New note" else "Edit note", style = MioType.h2)
-                Spacer(Modifier.height(12.dp))
-                Box(
-                    Modifier.fillMaxWidth().height(140.dp).clip(RoundedCornerShape(16.dp))
-                        .background(Color.White.copy(alpha = 0.07f))
-                        .border(1.dp, Color.White.copy(alpha = 0.10f), RoundedCornerShape(16.dp))
-                        .padding(14.dp)
-                ) {
-                    BasicTextField(
-                        value = text,
-                        onValueChange = { text = it },
-                        textStyle = MioType.title.copy(fontSize = 13.sp),
-                        cursorBrush = SolidColor(LocalAccent.current),
-                        modifier = Modifier.fillMaxSize(),
-                    )
-                }
-                Spacer(Modifier.height(14.dp))
-                Row {
-                    SettingsPill("Save", primary = true) {
-                        if (text.isNotBlank()) {
-                            if (editing == null) NotesRepo.add(context, text.trim())
-                            else {
-                                NotesRepo.delete(notes.firstOrNull { it.text == editing }?.id ?: -1)
-                                NotesRepo.add(context, text.trim())
-                            }
-                            reload()
-                        }
-                        showSheet = false
-                    }
-                    Spacer(Modifier.width(8.dp))
-                    SettingsPill("Cancel") { showSheet = false }
-                }
+                Text("Offline summary", style = MioType.h2)
+                Spacer(Modifier.height(10.dp))
+                Text(
+                    NotesRepo.offlineSummary(note.text),
+                    style = MioType.body.copy(fontSize = 12.sp, lineHeight = 18.sp),
+                )
                 Spacer(Modifier.height(28.dp))
             }
         }
+    }
+}
+
+@Composable
+private fun NoteChip(label: String, selected: Boolean, onClick: () -> Unit) {
+    val accent = LocalAccent.current
+    Box(
+        Modifier.clip(RoundedCornerShape(50))
+            .background(if (selected) accent.copy(alpha = 0.30f) else Color.White.copy(alpha = 0.06f))
+            .border(
+                1.dp,
+                if (selected) accent.copy(alpha = 0.7f) else Color.White.copy(alpha = 0.08f),
+                RoundedCornerShape(50),
+            )
+            .bounceClick(scaleDown = 0.95f, onClick = onClick)
+            .padding(horizontal = 12.dp, vertical = 6.dp),
+    ) {
+        Text(
+            label,
+            style = MioType.micro.copy(
+                color = if (selected) Color.White else Color.White.copy(alpha = 0.65f),
+                fontSize = 10.sp,
+            ),
+        )
+    }
+}
+
+@Composable
+private fun NoteEditorSheet(
+    initial: NotesRepo.Note?,
+    onDismiss: () -> Unit,
+    onSave: (title: String, text: String, category: String, tags: String, favorite: Boolean) -> Unit,
+) {
+    var title by remember(initial) { mutableStateOf(initial?.title ?: "") }
+    var text by remember(initial) { mutableStateOf(initial?.text ?: "") }
+    var category by remember(initial) { mutableStateOf(initial?.category ?: "") }
+    var tags by remember(initial) { mutableStateOf(initial?.tags ?: "") }
+    var favorite by remember(initial) { mutableStateOf(initial?.favorite ?: false) }
+    ModalBottomSheet(
+        onDismissRequest = onDismiss,
+        containerColor = Color(0xFF0D0918),
+        dragHandle = { com.mio.os.ui.components.SheetHandle() },
+    ) {
+        Column(Modifier.padding(horizontal = 20.dp)) {
+            Text(if (initial == null) "New note" else "Edit note", style = MioType.h2)
+            Spacer(Modifier.height(12.dp))
+            NoteField(value = title, onValueChange = { title = it }, hint = "Title (optional)", single = true)
+            Spacer(Modifier.height(10.dp))
+            NoteField(value = text, onValueChange = { text = it }, hint = "Write…", single = false, height = 130.dp)
+            Spacer(Modifier.height(10.dp))
+            Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                Box(Modifier.weight(1f)) {
+                    NoteField(value = category, onValueChange = { category = it }, hint = "Category", single = true)
+                }
+                Box(Modifier.weight(1f)) {
+                    NoteField(value = tags, onValueChange = { tags = it }, hint = "tags, comma", single = true)
+                }
+            }
+            Spacer(Modifier.height(14.dp))
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                SettingsPill("Save", primary = true) {
+                    if (text.isNotBlank()) onSave(title, text, category, tags, favorite)
+                }
+                Spacer(Modifier.width(8.dp))
+                SettingsPill(if (favorite) "★ Favorited" else "☆ Favorite") { favorite = !favorite }
+                Spacer(Modifier.weight(1f))
+                SettingsPill("Cancel", onClick = onDismiss)
+            }
+            Spacer(Modifier.height(28.dp))
+        }
+    }
+}
+
+@Composable
+private fun NoteField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    hint: String,
+    single: Boolean,
+    height: androidx.compose.ui.unit.Dp? = null,
+) {
+    Box(
+        Modifier.fillMaxWidth()
+            .then(if (height != null) Modifier.height(height) else Modifier)
+            .clip(RoundedCornerShape(14.dp))
+            .background(Color.White.copy(alpha = 0.07f))
+            .border(1.dp, Color.White.copy(alpha = 0.10f), RoundedCornerShape(14.dp))
+            .padding(12.dp),
+    ) {
+        if (value.isEmpty()) {
+            Text(hint, style = MioType.body.copy(fontSize = 12.sp, color = Color.White.copy(alpha = 0.4f)))
+        }
+        BasicTextField(
+            value = value,
+            onValueChange = onValueChange,
+            singleLine = single,
+            textStyle = MioType.title.copy(fontSize = 13.sp, color = Color.White),
+            cursorBrush = SolidColor(LocalAccent.current),
+            modifier = Modifier.fillMaxWidth(),
+        )
     }
 }
 

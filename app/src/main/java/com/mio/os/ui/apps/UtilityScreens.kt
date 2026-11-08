@@ -546,6 +546,61 @@ fun AboutScreen() {
                 StatBlock("Storage", "${storage.percent}%", Modifier.weight(1f), MioColors.Green)
             }
 
+            Spacer(Modifier.height(16.dp))
+            GlassCard(Modifier.fillMaxWidth(), corner = 20.dp, alpha = 0.06f) {
+                Column(Modifier.padding(16.dp)) {
+                    Text("Screen time · last 24 h", style = MioType.title.copy(fontSize = 13.sp))
+                    Spacer(Modifier.height(6.dp))
+                    if (!DeviceStats.hasUsageAccess(context)) {
+                        Text(
+                            "See which apps you actually use. SEGAWA OS reads this only on-device, " +
+                                "after you grant Usage Access in system settings.",
+                            style = MioType.body.copy(fontSize = 11.sp, lineHeight = 16.sp),
+                        )
+                        Spacer(Modifier.height(10.dp))
+                        Row {
+                            SettingsPill("Grant usage access") {
+                                runCatching {
+                                    context.startActivity(Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS))
+                                }.onFailure {
+                                    com.mio.os.core.LauncherHelper.toast(context, "Could not open usage settings")
+                                }
+                            }
+                        }
+                    } else {
+                        val top = remember { DeviceStats.topUsage(context) }
+                        if (top.isEmpty()) {
+                            Text(
+                                "No screen time recorded yet — check back later.",
+                                style = MioType.body.copy(fontSize = 11.sp),
+                            )
+                        } else {
+                            top.forEach { (pkg, min) ->
+                                Row(
+                                    Modifier.fillMaxWidth().padding(vertical = 5.dp),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                ) {
+                                    Text(
+                                        pkg.substringAfterLast('.').take(26),
+                                        style = MioType.body.copy(fontSize = 11.5.sp),
+                                        modifier = Modifier.weight(1f),
+                                        maxLines = 1,
+                                        overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
+                                    )
+                                    Text(
+                                        if (min < 60) "${min}m" else "${min / 60}h ${min % 60}m",
+                                        style = MioType.title.copy(
+                                            fontSize = 11.5.sp,
+                                            color = Color.White.copy(alpha = 0.9f),
+                                        ),
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
             Spacer(Modifier.height(18.dp))
             GlassCard(Modifier.fillMaxWidth(), corner = 20.dp, alpha = 0.06f) {
                 Column(Modifier.padding(16.dp)) {

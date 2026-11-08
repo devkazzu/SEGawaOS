@@ -3,5 +3,9 @@
     <string name="app_name">SEGAWA OS</string>
     <string name="notification_listener_label">SEGAWA OS Notification Access</string>
     <string name="launcher_role_description">Allow SEGAWA OS to be your home screen</string>
+    <string name="widget_clock_desc">SEGAWA clock with date. Tap to open the Clock app.</string>
+    <string name="widget_search_desc">SEGAWA universal search bar. Tap to search apps, notes and music.</string>
+    <string name="widget_music_desc">SEGAWA music controls with live track info.</string>
+    <string name="widget_battery_desc">SEGAWA battery level with refresh.</string>
     <string name="wallpaper_desc">SEGAWA OS live wallpaper — drifting sakura, neon aurora, or your own video.</string>
 </resources>

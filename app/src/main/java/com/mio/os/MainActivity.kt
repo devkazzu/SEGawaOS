@@ -30,13 +30,14 @@ class MainActivity : ComponentActivity() {
         window.setBackgroundDrawable(ColorDrawable(0xFF04030A.toInt()))
         setContent { MioRoot() }
         applyDebugIntent(intent)
+        applyOpenScreen(intent)
     }
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         setIntent(intent)
         // Pressing Home while SEGAWA OS is already visible must return home.
-        if (!applyDebugIntent(intent)) {
+        if (!applyDebugIntent(intent) && !applyOpenScreen(intent)) {
             MioNav.home()
             MioNav.signalHome()
         }
@@ -102,8 +103,31 @@ class MainActivity : ComponentActivity() {
         return handled
     }
 
+    /**
+     * Release-safe deep link used by the SEGAWA widgets (which must reach
+     * Search/Music/etc. through a PendingIntent). Unlike the debug hook, this
+     * never skips onboarding and only navigates to a fixed allowlist.
+     */
+    private fun applyOpenScreen(intent: Intent?): Boolean {
+        val target = intent?.getStringExtra(EXTRA_OPEN_SCREEN) ?: return false
+        if (!Mio.prefs.current.onboarded) return false
+        MioNav.home()
+        when (target) {
+            "search" -> MioNav.push(MioScreen.SEARCH)
+            "music" -> MioNav.push(MioScreen.MUSIC)
+            "ai" -> MioNav.push(MioScreen.AI)
+            "notes" -> MioNav.push(MioScreen.NOTES)
+            "clock" -> MioNav.push(MioScreen.CLOCK)
+            "about" -> MioNav.push(MioScreen.ABOUT)
+            else -> return false
+        }
+        intent.removeExtra(EXTRA_OPEN_SCREEN)
+        return true
+    }
+
     companion object {
         const val EXTRA_SKIP_SETUP = "mio_skip_setup"
         const val EXTRA_SCREEN = "mio_screen"
+        const val EXTRA_OPEN_SCREEN = "segawa_open"
     }
 }

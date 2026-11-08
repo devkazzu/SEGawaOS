@@ -59,6 +59,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mio.os.core.Mio
+import com.mio.os.widget.SegaWidgets
+import com.mio.os.widget.WidgetKind
 import com.mio.os.core.MioApp
 import com.mio.os.ui.apps.IconStudioRequest
 import com.mio.os.core.MioCategory
@@ -408,18 +410,62 @@ private fun WidgetsTab(modifier: Modifier = Modifier) {
         ) { on -> Mio.prefs.edit { it.copy(showDock = on) } }
 
         Spacer(Modifier.height(14.dp))
+        SectionHeader("Add to home screen")
+        Text(
+            "Pin a live SEGAWA widget to your home screen. Android asks for one confirmation tap.",
+            style = MioType.body.copy(fontSize = 11.5.sp),
+        )
+        Spacer(Modifier.height(10.dp))
+        val widgetContext = androidx.compose.ui.platform.LocalContext.current
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            WidgetPinPill("Clock", Modifier.weight(1f)) {
+                SegaWidgets.requestPin(widgetContext, WidgetKind.CLOCK)
+            }
+            WidgetPinPill("Search", Modifier.weight(1f)) {
+                SegaWidgets.requestPin(widgetContext, WidgetKind.SEARCH)
+            }
+        }
+        Spacer(Modifier.height(8.dp))
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            WidgetPinPill("Music", Modifier.weight(1f)) {
+                SegaWidgets.requestPin(widgetContext, WidgetKind.MUSIC)
+            }
+            WidgetPinPill("Battery", Modifier.weight(1f)) {
+                SegaWidgets.requestPin(widgetContext, WidgetKind.BATTERY)
+            }
+        }
+
+        Spacer(Modifier.height(14.dp))
         GlassCard(Modifier.fillMaxWidth(), corner = 18.dp, alpha = 0.06f) {
             Column(Modifier.padding(16.dp)) {
                 Text("Android widgets", style = MioType.title)
                 Spacer(Modifier.height(6.dp))
                 Text(
-                    "Third-party widgets are owned by their apps and need an AppWidgetProvider host. " +
-                        "SEGAWA OS ships its own SEGAWA Clock widget – long-press your home screen in the " +
-                        "system launcher to add any app's widget alongside it.",
+                    "Third-party widgets are owned by their apps and need a system widget host. " +
+                        "Use the pin buttons above for the four built-in SEGAWA widgets, or long-press " +
+                        "your home screen in the system launcher to add any other app's widget.",
                     style = MioType.body.copy(fontSize = 11.5.sp),
                 )
             }
         }
+    }
+}
+
+@Composable
+private fun WidgetPinPill(
+    text: String,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+) {
+    Box(
+        modifier.clip(RoundedCornerShape(14.dp))
+            .background(LocalAccent.current.copy(alpha = 0.22f))
+            .border(1.dp, LocalAccent.current.copy(alpha = 0.5f), RoundedCornerShape(14.dp))
+            .bounceClick(scaleDown = 0.95f, onClick = onClick)
+            .padding(vertical = 12.dp),
+        contentAlignment = Alignment.Center,
+    ) {
+        Text("+  " + text, style = MioType.title.copy(fontSize = 12.sp))
     }
 }
 
