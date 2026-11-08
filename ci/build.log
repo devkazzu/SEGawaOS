@@ -1,8 +1,8 @@
 Starting a Gradle Daemon (subsequent builds will be faster)
 > Task :wrapper
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run-1794113079871.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run-1794113924925.json
 
-BUILD SUCCESSFUL in 18s
+BUILD SUCCESSFUL in 19s
 1 actionable task: 1 executed
 > Task :app:preBuild UP-TO-DATE
 > Task :app:preDebugBuild UP-TO-DATE
@@ -20,12 +20,12 @@ BUILD SUCCESSFUL in 18s
 > Task :app:parseDebugLocalResources
 > Task :app:processDebugMainManifest
 > Task :app:processDebugManifest
-> Task :app:processDebugManifestForPackage
 > Task :app:javaPreCompileDebug
 > Task :app:mergeDebugShaders
 > Task :app:compileDebugShaders NO-SOURCE
 > Task :app:generateDebugAssets UP-TO-DATE
 > Task :app:mergeDebugAssets
+> Task :app:processDebugManifestForPackage
 > Task :app:compressDebugAssets
 > Task :app:desugarDebugFileDependencies
 > Task :app:processDebugResources
@@ -33,7 +33,6 @@ BUILD SUCCESSFUL in 18s
 > Task :app:mergeDebugJniLibFolders
 > Task :app:mergeLibDexDebug
 > Task :app:mergeDebugNativeLibs
-> Task :app:compileDebugKotlin
 > Task :app:validateSigningDebug
 > Task :app:writeDebugAppMetadata
 > Task :app:writeDebugSigningConfigVersions
@@ -53,21 +52,21 @@ Unable to strip the following libraries, packaging them as they are: libandroidx
 > Task :app:generateReleaseBuildConfig
 > Task :app:extractReleaseNativeSymbolTables
 > Task :app:mergeReleaseNativeDebugMetadata NO-SOURCE
-> Task :app:generateReleaseResValues
 > Task :app:checkReleaseAarMetadata
+> Task :app:generateReleaseResValues
 > Task :app:mapReleaseSourceSetPaths
 > Task :app:generateReleaseResources
-> Task :app:mergeExtDexDebug
+> Task :app:compileDebugKotlin
 > Task :app:packageReleaseResources
 > Task :app:parseReleaseLocalResources
 > Task :app:createReleaseCompatibleScreenManifests
 > Task :app:extractDeepLinksRelease
-> Task :app:mergeReleaseResources
 > Task :app:processReleaseMainManifest
 > Task :app:processReleaseManifest
 > Task :app:processReleaseManifestForPackage
+> Task :app:mergeExtDexDebug
 > Task :app:javaPreCompileRelease
-> Task :app:processReleaseResources
+> Task :app:mergeReleaseResources
 > Task :app:mergeReleaseArtProfile
 > Task :app:extractProguardFiles
 > Task :app:mergeReleaseStartupProfile
@@ -77,8 +76,9 @@ Unable to strip the following libraries, packaging them as they are: libandroidx
 > Task :app:mergeReleaseAssets
 > Task :app:compressReleaseAssets
 > Task :app:extractReleaseVersionControlInfo
-> Task :app:convertLinkedResourcesToProtoRelease
+> Task :app:processReleaseResources
 > Task :app:collectReleaseDependencies
+> Task :app:convertLinkedResourcesToProtoRelease
 > Task :app:sdkReleaseDependencyData
 > Task :app:validateSigningRelease
 > Task :app:writeReleaseAppMetadata
@@ -101,16 +101,16 @@ w: file:///home/runner/work/SEGawaOS/SEGawaOS/app/src/main/java/com/mio/os/ui/se
 > Task :app:dexBuilderDebug
 > Task :app:mergeDebugGlobalSynthetics
 > Task :app:processDebugJavaRes
-> Task :app:compileReleaseJavaWithJavac
 > Task :app:mergeProjectDexDebug
+> Task :app:compileReleaseJavaWithJavac
+> Task :app:mergeDebugJavaResource
 > Task :app:mergeReleaseGeneratedProguardFiles
 > Task :app:processReleaseJavaRes
-> Task :app:mergeDebugJavaResource
-> Task :app:mergeReleaseJavaResource
-> Task :app:expandReleaseArtProfileWildcards
 > Task :app:packageDebug
 > Task :app:createDebugApkListingFileRedirect
 > Task :app:assembleDebug
+> Task :app:mergeReleaseJavaResource
+> Task :app:expandReleaseArtProfileWildcards
 > Task :app:minifyReleaseWithR8
 > Task :app:compileReleaseArtProfile
 > Task :app:shrinkReleaseRes
@@ -119,7 +119,7 @@ w: file:///home/runner/work/SEGawaOS/SEGawaOS/app/src/main/java/com/mio/os/ui/se
 > Task :app:packageRelease
 > Task :app:createReleaseApkListingFileRedirect
 > Task :app:assembleRelease
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/assemble-1794113094419.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/assemble-1794113940445.json
 
 BUILD SUCCESSFUL in 2m 59s
 84 actionable tasks: 84 executed
