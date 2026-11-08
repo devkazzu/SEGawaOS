@@ -105,8 +105,8 @@ class MediaRepository(private val context: Context) {
         get() = Track(
             id = -1,
             title = "Khaayal",
-            artist = "MIO Ambient",
-            album = "MIO OS Sessions",
+            artist = "SEGAWA Ambient",
+            album = "SEGAWA OS Sessions",
             durationMs = 24_000,
             uri = "",
             albumId = -1,

@@ -288,7 +288,7 @@ private fun TopStatusRow(settings: MioSettings, notifications: Int, battery: Int
                 maxLines = 1, overflow = TextOverflow.Ellipsis,
             )
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text("MIO", style = MioType.label.copy(color = LocalAccent.current, letterSpacing = 2.2.sp, fontSize = 10.sp))
+                Text("SEGAWA", style = MioType.label.copy(color = LocalAccent.current, letterSpacing = 2.2.sp, fontSize = 10.sp))
                 Spacer(Modifier.width(4.dp))
                 Text("OS", style = MioType.label.copy(color = Color.White.copy(alpha = 0.75f), letterSpacing = 2.2.sp, fontSize = 10.sp))
             }
@@ -536,7 +536,7 @@ private fun MusicWidget(track: Track?, playing: Boolean) {
             Spacer(Modifier.width(12.dp))
             Column(Modifier.weight(1f)) {
                 Text(
-                    track?.title ?: "MIO Music",
+                    track?.title ?: "SEGAWA Music",
                     style = MioType.title.copy(fontSize = 13.5.sp),
                     maxLines = 1, overflow = TextOverflow.Ellipsis,
                 )
@@ -694,7 +694,7 @@ private fun HomeSheet(onDismiss: () -> Unit) {
         Column(Modifier.padding(horizontal = 18.dp).navigationBarsPadding()) {
             Text("Home screen", style = MioType.h2)
             Spacer(Modifier.height(4.dp))
-            Text("Customize MIO OS", style = MioType.body)
+            Text("Customize SEGAWA OS", style = MioType.body)
             Spacer(Modifier.height(16.dp))
             HomeAction("Wallpaper & themes", "Mountain, anime, aurora, live accents", Icons.Rounded.Settings) {
                 onDismiss(); MioNav.push(MioScreen.THEMES)
@@ -702,10 +702,10 @@ private fun HomeSheet(onDismiss: () -> Unit) {
             HomeAction("Personalization", "Grid, icon size, fonts, accent colour", Icons.Rounded.Settings) {
                 onDismiss(); MioNav.push(MioScreen.APPEARANCE)
             }
-            HomeAction("Set MIO OS as default", "Confirm the home app selection", Icons.Rounded.Settings) {
+            HomeAction("Set SEGAWA OS as default", "Confirm the home app selection", Icons.Rounded.Settings) {
                 onDismiss(); MioNav.push(MioScreen.HOME_SETTINGS)
             }
-            HomeAction("MIO settings", "All settings and permissions", Icons.Rounded.Settings) {
+            HomeAction("SEGAWA settings", "All settings and permissions", Icons.Rounded.Settings) {
                 onDismiss(); MioNav.push(MioScreen.SETTINGS)
             }
             Spacer(Modifier.height(18.dp))

@@ -69,8 +69,8 @@ object LauncherHelper {
 
     /** Home app "Always / Just once" hint copied from the system dialog wording. */
     fun activationHint(): String =
-        "Android will ask you to choose a Home app. Pick MIO OS, then tap “Always” " +
-            "(or open Settings ▸ Default apps ▸ Home app and select MIO OS)."
+        "Android will ask you to choose a Home app. Pick SEGAWA OS, then tap “Always” " +
+            "(or open Settings ▸ Default apps ▸ Home app and select SEGAWA OS)."
 
     fun launch(context: Context, intent: Intent?) {
         if (intent == null) {

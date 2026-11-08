@@ -118,7 +118,7 @@ fun WelcomeScreen() {
                 MioLogo(Modifier.size(30.dp))
                 Spacer(Modifier.width(10.dp))
                 Text(
-                    "MIO OS",
+                    "SEGAWA OS",
                     style = MioType.h2.copy(letterSpacing = 3.sp, fontWeight = FontWeight.Light),
                 )
                 Spacer(Modifier.width(8.dp))
@@ -126,7 +126,7 @@ fun WelcomeScreen() {
                     Modifier.clip(RoundedCornerShape(50)).background(Color.White.copy(alpha = 0.10f))
                         .padding(horizontal = 8.dp, vertical = 3.dp)
                 ) {
-                    Text("v1.0", style = MioType.micro.copy(fontSize = 9.sp))
+                    Text("v1.1", style = MioType.micro.copy(fontSize = 9.sp))
                 }
             }
 
@@ -161,7 +161,7 @@ fun WelcomeScreen() {
                         0 -> "Get started"
                         1 -> if (isDefault) "Continue" else "Set as default"
                         2 -> "Allow"
-                        else -> "Enter MIO OS"
+                        else -> "Enter SEGAWA OS"
                     },
                 ) {
                     when (step) {
@@ -227,7 +227,7 @@ private fun WelcomeStep() {
         )
         Spacer(Modifier.height(20.dp))
         val features = listOf(
-            "AI powered" to "Mio assistant",
+            "AI powered" to "Segawa assistant",
             "Highly customisable" to "Themes & icons",
             "Minimal & fluid" to "60fps motion",
         )
@@ -255,11 +255,11 @@ private fun WelcomeStep() {
 private fun DefaultLauncherStep(isDefault: Boolean, onSetDefault: () -> Unit) {
     val context = LocalContext.current
     Column {
-        Text("Make MIO OS your\nhome screen", style = MioType.h1.copy(fontSize = 28.sp, lineHeight = 34.sp))
+        Text("Make SEGAWA OS your\nhome screen", style = MioType.h1.copy(fontSize = 28.sp, lineHeight = 34.sp))
         Spacer(Modifier.height(10.dp))
         Text(
-            "MIO OS is a real Android launcher. Android asks once which app should " +
-                "open when you press the Home button – choose MIO OS to use it every day.",
+            "SEGAWA OS is a real Android launcher. Android asks once which app should " +
+                "open when you press the Home button – choose SEGAWA OS to use it every day.",
             style = MioType.body.copy(fontSize = 13.sp, lineHeight = 20.sp),
         )
         Spacer(Modifier.height(18.dp))
@@ -283,7 +283,7 @@ private fun DefaultLauncherStep(isDefault: Boolean, onSetDefault: () -> Unit) {
                 Spacer(Modifier.width(12.dp))
                 Column(Modifier.weight(1f)) {
                     Text(
-                        if (isDefault) "MIO OS is your home app" else "MIO OS is not the default home app",
+                        if (isDefault) "SEGAWA OS is your home app" else "SEGAWA OS is not the default home app",
                         style = MioType.title.copy(fontSize = 13.5.sp),
                     )
                     Text(
@@ -299,13 +299,13 @@ private fun DefaultLauncherStep(isDefault: Boolean, onSetDefault: () -> Unit) {
         if (!isDefault) {
             GlassCard(Modifier.fillMaxWidth(), corner = 18.dp, alpha = 0.06f) {
                 Column(Modifier.padding(16.dp)) {
-                    Text("How to select MIO OS", style = MioType.title.copy(fontSize = 13.sp))
+                    Text("How to select SEGAWA OS", style = MioType.title.copy(fontSize = 13.sp))
                     Spacer(Modifier.height(8.dp))
                     listOf(
                         "1. Tap “Set as default” – Android opens its own Home app chooser.",
-                        "2. Pick MIO OS in the list.",
+                        "2. Pick SEGAWA OS in the list.",
                         "3. Choose “Always” (Android 10+) or “Set as default”.",
-                        "4. Press the Home button – MIO OS opens instantly.",
+                        "4. Press the Home button – SEGAWA OS opens instantly.",
                     ).forEach {
                         Text(
                             it,
@@ -333,7 +333,7 @@ private fun PermissionsStep(onGrant: () -> Unit) {
         Text("Grant what you need", style = MioType.h1.copy(fontSize = 28.sp))
         Spacer(Modifier.height(10.dp))
         Text(
-            "MIO OS only asks for access it actually uses. Nothing leaves your device " +
+            "SEGAWA OS only asks for access it actually uses. Nothing leaves your device " +
                 "unless you connect your own AI endpoint.",
             style = MioType.body.copy(fontSize = 13.sp, lineHeight = 20.sp),
         )

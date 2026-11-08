@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
 /**
- * Every user-visible preference of MIO OS. Persisted in one SharedPreferences
+ * Every user-visible preference of SEGAWA OS. Persisted in one SharedPreferences
  * file and exposed as a hot [StateFlow] so Compose recomposes instantly.
  */
 data class MioSettings(
@@ -39,7 +39,7 @@ data class MioSettings(
     val folders: String = "",
     val equalizerOn: Boolean = true,
     val lastSong: String = "",
-    val iconPack: String = "MIO Aurora",
+    val iconPack: String = "SEGAWA Aurora",
     val iconShape: String = "squircle",
     val reduceMotion: Boolean = false,
 ) {

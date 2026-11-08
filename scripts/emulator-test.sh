@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ---------------------------------------------------------------------------
-# MIO OS launcher verification on a real Android emulator.
+# SEGAWA OS launcher verification on a real Android emulator.
 #
 # Target device profile: Samsung Galaxy A03 class
 #   Android 13 (API 33), 720x1600 @ 270dpi (~426dp), 2 GB RAM cap.
@@ -60,12 +60,12 @@ INSTALL=$(adb install -r -g "$APK" 2>&1)
 echo "$INSTALL"
 check_contains "$INSTALL" "Success" "APK installed"
 
-step "2. Is MIO OS registered as an Android HOME app?"
+step "2. Is SEGAWA OS registered as an Android HOME app?"
 HOMES=$(adb shell cmd package query-activities --brief -a android.intent.action.MAIN -c android.intent.category.HOME 2>&1)
 echo "$HOMES"
 check_contains "$HOMES" "com.mio.os.debug/com.mio.os.MainActivity" "HOME intent filter with CATEGORY_HOME is registered"
 
-step "3. Set MIO OS as the default home app (system command)"
+step "3. Set SEGAWA OS as the default home app (system command)"
 adb shell cmd package set-home-activity "$ACT" 2>&1
 DEFAULT=""
 for i in $(seq 1 10); do
@@ -74,9 +74,9 @@ for i in $(seq 1 10); do
   echo "attempt $i: $DEFAULT"
   echo "$DEFAULT" | grep -q "com.mio.os.debug" && break
 done
-check_contains "$DEFAULT" "com.mio.os.debug" "Android resolves MIO OS as the default launcher"
+check_contains "$DEFAULT" "com.mio.os.debug" "Android resolves SEGAWA OS as the default launcher"
 # The activity manager needs a moment before HOME is routed to the new launcher.
-echo "waiting for the HOME key to be routed to MIO OS..."
+echo "waiting for the HOME key to be routed to SEGAWA OS..."
 ROUTED=0
 for i in $(seq 1 10); do
   adb shell input keyevent KEYCODE_HOME
@@ -85,7 +85,7 @@ for i in $(seq 1 10); do
   echo "home attempt $i: $F"
   echo "$F" | grep -q "com.mio.os.debug" && { ROUTED=1; break; }
 done
-if [ "$ROUTED" = "1" ]; then ok "HOME is routed to MIO OS"; else bad "HOME is still routed to another launcher"; fi
+if [ "$ROUTED" = "1" ]; then ok "HOME is routed to SEGAWA OS"; else bad "HOME is still routed to another launcher"; fi
 # the launcher itself must agree with the system
 INAPP=$(adb shell dumpsys package com.mio.os.debug | grep -A2 "android.intent.category.HOME" | head -3)
 echo "$INAPP"
@@ -106,14 +106,14 @@ FOCUS=$(focus)
 echo "$FOCUS"
 check_contains "$FOCUS" "com.mio.os.debug" "Home screen is in the foreground"
 
-step "6. Physical HOME key must return to MIO OS"
+step "6. Physical HOME key must return to SEGAWA OS"
 adb shell am start -a android.settings.SETTINGS >/dev/null 2>&1
 sleep 3
 adb shell input keyevent KEYCODE_HOME
 sleep 3
 FOCUS=$(focus)
 echo "$FOCUS"
-check_contains "$FOCUS" "com.mio.os.debug" "HOME key opens MIO OS instead of another launcher"
+check_contains "$FOCUS" "com.mio.os.debug" "HOME key opens SEGAWA OS instead of another launcher"
 shot 03-home-after-home-key.png
 
 step "7. App drawer (swipe up from the home grid)"
@@ -156,7 +156,7 @@ open_screen appearance 09-appearance.png
 open_screen privacy 10-privacy.png
 open_screen about 11-about.png
 
-step "11. MIO AI assistant"
+step "11. SEGAWA AI assistant"
 open_screen ai 12-ai.png
 step "11b. AI quick action (tap 'Analyze' = battery query)"
 adb shell input tap $((W * 26 / 100)) $((H * 62 / 100))
@@ -193,7 +193,7 @@ adb shell input keyevent KEYCODE_HOME
 sleep 3
 FOCUS=$(focus)
 echo "$FOCUS"
-check_contains "$FOCUS" "com.mio.os.debug" "Returning from an app lands on the MIO OS home screen"
+check_contains "$FOCUS" "com.mio.os.debug" "Returning from an app lands on the SEGAWA OS home screen"
 
 step "15. Performance snapshot (frame stats, memory)"
 echo "NOTE: the emulator renders with swiftshader (no GPU), so absolute frame"
@@ -216,7 +216,7 @@ adb shell dumpsys gfxinfo "$PKG" | grep -E "Total frames|Janky frames|50th perce
 echo ""
 echo "=== 15b. Baseline: the platform Settings app measured identically ==="
 echo "(if a stock AOSP app also renders at ~100 ms/frame here, the emulator's"
-echo " software rasteriser — not MIO OS — is the bottleneck)"
+echo " software rasteriser — not SEGAWA OS — is the bottleneck)"
 adb shell am start -a android.settings.SETTINGS >/dev/null 2>&1
 sleep 4
 adb shell dumpsys gfxinfo com.android.settings reset >/dev/null 2>&1
@@ -231,7 +231,7 @@ adb shell getprop ro.hardware.egl
 adb shell getprop | grep -i "gpu" | head -3
 adb shell input keyevent KEYCODE_HOME
 sleep 4
-# second MIO measurement after the wallpaper baking optimisation
+# second SEGAWA measurement after the wallpaper baking optimisation
 adb shell dumpsys gfxinfo "$PKG" reset >/dev/null 2>&1
 adb shell input swipe $((W * 80 / 100)) $((H * 55 / 100)) $((W * 20 / 100)) $((H * 55 / 100)) 200
 sleep 1
@@ -241,7 +241,7 @@ adb shell input swipe $((W / 2)) $((H * 80 / 100)) $((W / 2)) $((H * 28 / 100)) 
 sleep 3
 adb shell input keyevent KEYCODE_BACK
 sleep 2
-echo "--- MIO after the home-screen interaction pass ---"
+echo "--- SEGAWA after the home-screen interaction pass ---"
 adb shell dumpsys gfxinfo "$PKG" | grep -E "Total frames rendered|50th percentile|90th percentile" | head -3
 
 echo "--- pipeline breakdown (Draw/Prepare are CPU, GPU is the rasteriser) ---"
@@ -279,7 +279,7 @@ adb shell input keyevent KEYCODE_HOME
 sleep 10
 FOCUS=$(focus)
 echo "$FOCUS"
-check_contains "$FOCUS" "com.mio.os.debug" "HOME after reboot opens MIO OS"
+check_contains "$FOCUS" "com.mio.os.debug" "HOME after reboot opens SEGAWA OS"
 shot 28-after-reboot.png
 
 step "18. Release APK smoke test (R8-minified build)"

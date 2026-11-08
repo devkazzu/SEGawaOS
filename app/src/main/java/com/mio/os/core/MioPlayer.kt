@@ -49,7 +49,7 @@ object MioPlayer {
     fun ensureSession(context: Context) {
         if (session != null) return
         session = runCatching {
-            MediaSession(context, "MIO OS").apply {
+            MediaSession(context, "SEGAWA OS").apply {
                 setCallback(object : MediaSession.Callback() {
                     override fun onPlay() = play(context)
                     override fun onPause() = pause()

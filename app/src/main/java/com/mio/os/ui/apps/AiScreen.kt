@@ -132,7 +132,7 @@ fun AiScreen() {
         val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
             putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
             putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault().toLanguageTag())
-            putExtra(RecognizerIntent.EXTRA_PROMPT, "Talk to Mio")
+            putExtra(RecognizerIntent.EXTRA_PROMPT, "Talk to Segawa")
         }
         runCatching { voiceLauncher.launch(intent) }
             .onFailure {
@@ -160,7 +160,7 @@ fun AiScreen() {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     MioLogo(Modifier.size(18.dp))
                     Spacer(Modifier.width(6.dp))
-                    Text("Mio AI", style = MioType.title.copy(fontSize = 14.sp, letterSpacing = 0.6.sp))
+                    Text("SEGAWA AI", style = MioType.title.copy(fontSize = 14.sp, letterSpacing = 0.6.sp))
                 }
                 Spacer(Modifier.weight(1f))
                 Box(
@@ -179,7 +179,7 @@ fun AiScreen() {
             ) {
                 AmbientOrb(Modifier.size(if (messages.isEmpty()) 132.dp else 76.dp))
                 Spacer(Modifier.height(12.dp))
-                Text("Mio AI", style = MioType.h1.copy(fontSize = if (messages.isEmpty()) 24.sp else 18.sp))
+                Text("SEGAWA AI", style = MioType.h1.copy(fontSize = if (messages.isEmpty()) 24.sp else 18.sp))
                 Spacer(Modifier.height(4.dp))
                 Text(
                     if (messages.isEmpty()) "How can I help you today?" else
@@ -235,7 +235,7 @@ fun AiScreen() {
                 Box(Modifier.weight(1f)) {
                     if (input.isEmpty()) {
                         Text(
-                            "Ask Mio anything…",
+                            "Ask Segawa anything…",
                             style = MioType.body.copy(fontSize = 12.5.sp, color = Color.White.copy(alpha = 0.4f)),
                         )
                     }
@@ -293,7 +293,7 @@ private fun loadHistory(): List<AiMessage> {
 @Composable
 private fun QuickActions(onAction: (String) -> Unit) {
     val actions = listOf(
-        Triple("Chat", "Talk to Mio about anything", "Tell me something interesting"),
+        Triple("Chat", "Talk to Segawa about anything", "Tell me something interesting"),
         Triple("Create", "Capture a thought as a note", "note Write my study plan"),
         Triple("Analyze", "Device status at a glance", "battery"),
         Triple("Tools", "Torch, music and quick actions", "torch on"),
@@ -364,7 +364,7 @@ private fun TypingBubble() {
             Modifier.clip(RoundedCornerShape(18.dp)).background(Color.White.copy(alpha = 0.08f))
                 .padding(horizontal = 14.dp, vertical = 10.dp)
         ) {
-            Text("Mio is thinking…", style = MioType.micro.copy(fontSize = 10.5.sp))
+            Text("Segawa is thinking…", style = MioType.micro.copy(fontSize = 10.5.sp))
         }
     }
 }
@@ -390,7 +390,7 @@ private fun AiSetupSheet(
             Text("Connect your AI", style = MioType.h2)
             Spacer(Modifier.height(6.dp))
             Text(
-                "MIO OS ships with an offline assistant that can operate your device. " +
+                "SEGAWA OS ships with an offline assistant that can operate your device. " +
                     "Paste any OpenAI-compatible endpoint to unlock full conversation. " +
                     "The key is stored only on this device.",
                 style = MioType.body.copy(fontSize = 11.5.sp, lineHeight = 17.sp),

@@ -105,7 +105,7 @@ object SystemControls {
         }.getOrDefault(false)
     }
 
-    /** Always works: changes the brightness of MIO OS' own window instantly. */
+    /** Always works: changes the brightness of SEGAWA OS' own window instantly. */
     fun setWindowBrightness(window: Window, value: Int) {
         runCatching {
             val lp = window.attributes

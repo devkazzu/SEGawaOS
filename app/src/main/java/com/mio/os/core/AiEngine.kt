@@ -79,7 +79,7 @@ object AiEngine {
     }
 
     private const val SYSTEM_PROMPT =
-        "You are Mio, the assistant built into MIO OS, an Android home screen. " +
+        "You are Segawa, the assistant built into SEGAWA OS, an Android home screen. " +
             "Be concise, warm and practical. Answer in the user's language."
 }
 
@@ -141,14 +141,14 @@ object LocalAssistant {
         }
         if (p.contains("default launcher") || p.contains("default home")) {
             return if (LauncherHelper.isDefault(context))
-                "MIO OS is your default home app – pressing Home opens it."
-            else "MIO OS is not the default home app yet. Open Settings ▸ Home screen ▸ Set as default."
+                "SEGAWA OS is your default home app – pressing Home opens it."
+            else "SEGAWA OS is not the default home app yet. Open Settings ▸ Home screen ▸ Set as default."
         }
         if (p.startsWith("note ") || p.startsWith("remember ")) {
             val content = prompt.removePrefix("note ").removePrefix("remember ").trim()
             if (content.isNotBlank()) {
                 NotesRepo.add(context, content)
-                return "Saved to MIO Notes: “$content”."
+                return "Saved to SEGAWA Notes: “$content”."
             }
         }
         if (p.contains("play") && (p.contains("music") || p.contains("song"))) {
@@ -178,7 +178,7 @@ object LocalAssistant {
             p.contains("hello") || p.contains("hi ") || p.trim() == "hi" ->
                 "Hey ${Mio.prefs.current.userName}. I can open apps, control the flashlight, read battery, or take notes. What do you need?"
             p.contains("who are you") || p.contains("your name") ->
-                "I am Mio, the assistant inside MIO OS. I run offline on your device by default."
+                "I am Segawa, the assistant inside SEGAWA OS. I run offline on your device by default."
             p.contains("thank") -> "Anytime. Anything else?"
             p.contains("joke") ->
                 "Why did the launcher break up with the widget? It needed more space. Bad pun, better battery."

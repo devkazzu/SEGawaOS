@@ -12,7 +12,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.mio.os.core.LauncherHelper
 
 /**
- * Live "is MIO OS the default home app?" state – refreshed every time the
+ * Live "is SEGAWA OS the default home app?" state – refreshed every time the
  * activity comes back to the foreground, so returning from the Android Home-app
  * chooser updates the UI immediately.
  */

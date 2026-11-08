@@ -72,7 +72,7 @@ jobs:
       - name: Publish report + screenshots to branch
         if: always()
         run: |
-          git config user.name "MIO CI"
+          git config user.name "SEGAWA CI"
           git config user.email "ci@mio.os"
           set -x
           git add -f ci/emulator-report.txt 2>/dev/null || true

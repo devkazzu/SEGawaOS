@@ -64,7 +64,7 @@
 
         <!--
             The genuine HOME activity: MAIN + HOME + DEFAULT lets Android treat
-            MIO OS as a candidate default home app so pressing the system Home
+            SEGAWA OS as a candidate default home app so pressing the system Home
             key/gesture opens this screen.
         -->
         <activity

@@ -113,7 +113,7 @@ fun NotesScreen() {
                 Spacer(Modifier.height(50.dp))
                 com.mio.os.ui.components.EmptyState(
                     "Nothing here yet",
-                    "Tap + to write your first note. Mio can also save notes for you from the AI screen.",
+                    "Tap + to write your first note. Segawa can also save notes for you from the AI screen.",
                 )
             }
         } else {
@@ -342,7 +342,7 @@ fun CalendarScreen() {
                         Text("No events for this day", style = MioType.title.copy(fontSize = 12.5.sp))
                         Spacer(Modifier.height(4.dp))
                         Text(
-                            "MIO reads your real Android calendars once you grant READ_CALENDAR. " +
+                            "SEGAWA reads your real Android calendars once you grant READ_CALENDAR. " +
                                 "Creating events opens the official system calendar editor.",
                             style = MioType.body.copy(fontSize = 10.5.sp, lineHeight = 15.sp),
                         )
@@ -492,7 +492,7 @@ fun ClockScreen() {
                             Text("Set alarms in Android", style = MioType.title.copy(fontSize = 13.sp))
                             Spacer(Modifier.height(6.dp))
                             Text(
-                                "Alarms are owned by the system clock app – MIO hands off so they ring even " +
+                                "Alarms are owned by the system clock app – SEGAWA hands off so they ring even " +
                                     "when the launcher is not running.",
                                 style = MioType.body.copy(fontSize = 11.sp, lineHeight = 16.sp),
                             )

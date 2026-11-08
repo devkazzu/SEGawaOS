@@ -6,7 +6,7 @@ import com.mio.os.core.MioNotifications
 
 /**
  * Real notification indicators: once the user grants notification access
- * (Settings ▸ Notifications ▸ Device & app notifications), MIO OS can show
+ * (Settings ▸ Notifications ▸ Device & app notifications), SEGAWA OS can show
  * accurate unread counts and per-app badges on the home screen.
  */
 class MioNotificationListener : NotificationListenerService() {

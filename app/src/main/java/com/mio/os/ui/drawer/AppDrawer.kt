@@ -238,7 +238,7 @@ fun AppDrawer() {
                 Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 10.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                BottomPill("Mio AI") { MioNav.push(MioScreen.AI) }
+                BottomPill("SEGAWA AI") { MioNav.push(MioScreen.AI) }
                 Spacer(Modifier.width(8.dp))
                 BottomPill("Themes") { MioNav.push(MioScreen.THEMES) }
                 Spacer(Modifier.weight(1f))
@@ -370,7 +370,7 @@ private fun DrawerTile(app: MioApp, badge: Boolean, onClick: () -> Unit, onLongC
 private fun WidgetsTab(modifier: Modifier = Modifier) {
     val settings = LocalSettings.current
     Column(modifier.padding(horizontal = 20.dp)) {
-        SectionHeader("MIO widgets")
+        SectionHeader("SEGAWA widgets")
         WidgetRow(
             title = "Music player",
             subtitle = "Shows on the home screen while you listen",
@@ -399,7 +399,7 @@ private fun WidgetsTab(modifier: Modifier = Modifier) {
                 Spacer(Modifier.height(6.dp))
                 Text(
                     "Third-party widgets are owned by their apps and need an AppWidgetProvider host. " +
-                        "MIO OS ships its own MIO Clock widget – long-press your home screen in the " +
+                        "SEGAWA OS ships its own SEGAWA Clock widget – long-press your home screen in the " +
                         "system launcher to add any app's widget alongside it.",
                     style = MioType.body.copy(fontSize = 11.5.sp),
                 )

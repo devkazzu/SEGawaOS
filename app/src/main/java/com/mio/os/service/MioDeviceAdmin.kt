@@ -12,7 +12,7 @@ import android.widget.Toast
 class MioDeviceAdmin : DeviceAdminReceiver() {
 
     override fun onEnabled(context: Context, intent: Intent) {
-        Toast.makeText(context, "MIO OS can now lock the device", Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, "SEGAWA OS can now lock the device", Toast.LENGTH_SHORT).show()
     }
 
     override fun onDisabled(context: Context, intent: Intent) {

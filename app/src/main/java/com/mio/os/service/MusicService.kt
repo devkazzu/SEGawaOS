@@ -86,7 +86,7 @@ class MusicService : Service() {
         val playing = MioPlayer.playing.value
         val builder = Notification.Builder(this, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_stat_music)
-            .setContentTitle(track?.title ?: "MIO Music")
+            .setContentTitle(track?.title ?: "SEGAWA Music")
             .setContentText(track?.artist ?: "Nothing playing")
             .setContentIntent(contentIntent())
             .setVisibility(Notification.VISIBILITY_PUBLIC)
@@ -136,8 +136,8 @@ class MusicService : Service() {
         val nm = getSystemService(NotificationManager::class.java) ?: return
         if (nm.getNotificationChannel(CHANNEL_ID) == null) {
             nm.createNotificationChannel(
-                NotificationChannel(CHANNEL_ID, "MIO Music playback", NotificationManager.IMPORTANCE_LOW).apply {
-                    description = "Media controls for the MIO OS music player"
+                NotificationChannel(CHANNEL_ID, "SEGAWA Music playback", NotificationManager.IMPORTANCE_LOW).apply {
+                    description = "Media controls for the SEGAWA OS music player"
                     setShowBadge(false)
                     enableVibration(false)
                 }

@@ -14,7 +14,7 @@ import com.mio.os.core.MioScreen
 import com.mio.os.ui.MioRoot
 
 /**
- * The actual HOME activity. When MIO OS is the default home app, Android starts
+ * The actual HOME activity. When SEGAWA OS is the default home app, Android starts
  * this activity (with FLAG_ACTIVITY_NEW_TASK) every time the user presses the
  * Home key/gesture, and [onNewIntent] brings any open overlay back to the home
  * screen – exactly like a stock launcher.
@@ -35,7 +35,7 @@ class MainActivity : ComponentActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         setIntent(intent)
-        // Pressing Home while MIO OS is already visible must return home.
+        // Pressing Home while SEGAWA OS is already visible must return home.
         if (!applyDebugIntent(intent)) {
             MioNav.home()
             MioNav.signalHome()

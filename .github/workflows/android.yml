@@ -49,8 +49,8 @@ jobs:
         if: always()
         run: |
           mkdir -p dist
-          cp app/build/outputs/apk/debug/*.apk dist/MIO-OS-debug.apk 2>/dev/null || true
-          cp app/build/outputs/apk/release/*.apk dist/MIO-OS-release.apk 2>/dev/null || true
+          cp app/build/outputs/apk/debug/*.apk dist/SEGAWA-OS-debug.apk 2>/dev/null || true
+          cp app/build/outputs/apk/release/*.apk dist/SEGAWA-OS-release.apk 2>/dev/null || true
           ls -la dist || true
           echo "### Build result: ${{ steps.assemble.outcome }}" >> $GITHUB_STEP_SUMMARY
           grep -E "^e: |error:" ci/build.log | head -40 >> $GITHUB_STEP_SUMMARY || true
@@ -60,17 +60,17 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release view v1.0.0 >/dev/null 2>&1 || gh release create v1.0.0 \
-            --title "MIO OS v1.0.0 — Android launcher" \
-            --notes "Installable MIO OS build. Debug APK is signed with the debug key and installs on any API 26+ device; release APK is signed with the same key so updates install over each other." \
+          gh release view v1.1.0 >/dev/null 2>&1 || gh release create v1.1.0 \
+            --title "SEGAWA OS v1.1.0 (Hiro) — Android launcher" \
+            --notes "Installable SEGAWA OS build. Debug APK is signed with the debug key and installs on any API 26+ device; release APK is signed with the same key so updates install over each other." \
             --latest
-          gh release upload v1.0.0 dist/MIO-OS-debug.apk dist/MIO-OS-release.apk --clobber
+          gh release upload v1.1.0 dist/SEGAWA-OS-debug.apk dist/SEGAWA-OS-release.apk --clobber
 
       - name: Publish outputs back to branch
         if: always()
         run: |
           set -x
-          git config user.name "MIO CI"
+          git config user.name "SEGAWA CI"
           git config user.email "ci@mio.os"
           git add -f ci/build.log 2>/dev/null || true
           git add -f dist 2>/dev/null || true

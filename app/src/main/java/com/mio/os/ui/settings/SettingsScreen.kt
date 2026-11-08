@@ -165,7 +165,7 @@ fun SettingsScreen() {
     val notifCount by MioNotifications.count.collectAsState()
     val battery by DeviceStats.battery.collectAsState()
 
-    MioScreenScaffold(title = "Settings", subtitle = "MIO OS v1.0 · ${apps.size} apps") { m ->
+    MioScreenScaffold(title = "Settings", subtitle = "SEGAWA OS v1.1 · ${apps.size} apps") { m ->
         Column(m.padding(bottom = 30.dp)) {
 
             // Default-launcher hero card
@@ -180,12 +180,12 @@ fun SettingsScreen() {
                         Spacer(Modifier.width(12.dp))
                         Column(Modifier.weight(1f)) {
                             Text(
-                                if (isDefault) "MIO OS is your home app" else "Set MIO OS as default",
+                                if (isDefault) "SEGAWA OS is your home app" else "Set SEGAWA OS as default",
                                 style = MioType.h2.copy(fontSize = 16.sp),
                             )
                             Text(
-                                if (isDefault) "Home button opens MIO OS"
-                                else "Required to use MIO OS every day",
+                                if (isDefault) "Home button opens SEGAWA OS"
+                                else "Required to use SEGAWA OS every day",
                                 style = MioType.micro.copy(fontSize = 10.5.sp),
                             )
                         }
@@ -255,7 +255,7 @@ fun SettingsScreen() {
                 )
                 SettingsGroupDivider()
                 GlassRow(
-                    "Mio AI assistant",
+                    "SEGAWA AI assistant",
                     if (settings.aiEndpoint.isBlank()) "Local mode · connect an API in the AI app" else "Custom endpoint connected",
                     leading = { SettingsIconBadge(Icons.Rounded.Cloud, MioColors.PurpleSoft) },
                     onClick = { MioNav.push(MioScreen.AI) },
@@ -319,8 +319,8 @@ fun SettingsScreen() {
             SectionHeader("About")
             SettingsGroup {
                 GlassRow(
-                    "About MIO OS",
-                    "v1.0.0 (Rebirth) · Android ${Build.VERSION.RELEASE}",
+                    "About SEGAWA OS",
+                    "v1.1.0 (Hiro) · Android ${Build.VERSION.RELEASE}",
                     leading = { SettingsIconBadge(Icons.Rounded.Info, MioColors.PurpleSoft) },
                     onClick = { MioNav.push(MioScreen.ABOUT) },
                     trailing = { Chevron() },
@@ -338,7 +338,7 @@ fun SettingsScreen() {
             Spacer(Modifier.height(18.dp))
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
                 Text(
-                    "MIO OS  ·  built on Android AOSP  ·  concept by RJNX",
+                    "SEGAWA OS · by Raju Mahato (RJNX) · built on Android AOSP",
                     style = MioType.micro.copy(fontSize = 9.5.sp),
                 )
             }
@@ -400,20 +400,20 @@ fun HomeScreenSettings() {
             GlassCard(Modifier.fillMaxWidth(), corner = 22.dp, alpha = 0.10f) {
                 Column(Modifier.padding(16.dp)) {
                     Text(
-                        if (isDefault) "Default home app: MIO OS" else "Not the default home app",
+                        if (isDefault) "Default home app: SEGAWA OS" else "Not the default home app",
                         style = MioType.h2.copy(fontSize = 15.sp),
                     )
                     Spacer(Modifier.height(6.dp))
                     Text(
                         if (isDefault)
-                            "Pressing Home from any app returns to MIO OS. This survives reboots."
+                            "Pressing Home from any app returns to SEGAWA OS. This survives reboots."
                         else
-                            "Android requires one extra confirmation before MIO OS can replace your current home app.",
+                            "Android requires one extra confirmation before SEGAWA OS can replace your current home app.",
                         style = MioType.body.copy(fontSize = 11.5.sp, lineHeight = 16.sp),
                     )
                     Spacer(Modifier.height(12.dp))
                     Row {
-                        SettingsPill(if (isDefault) "Home app settings" else "Set MIO OS as default", primary = !isDefault) {
+                        SettingsPill(if (isDefault) "Home app settings" else "Set SEGAWA OS as default", primary = !isDefault) {
                             requestDefault(context)
                         }
                         if (!isDefault) {
@@ -584,7 +584,7 @@ fun PrivacyScreen() {
                     Text("Local-first by design", style = MioType.title.copy(fontSize = 13.5.sp))
                     Spacer(Modifier.height(6.dp))
                     Text(
-                        "MIO OS has no analytics, no account and no cloud sync. Preferences, notes and " +
+                        "SEGAWA OS has no analytics, no account and no cloud sync. Preferences, notes and " +
                             "playlists stay in this app's private storage. Only the weather widget and an " +
                             "AI endpoint you configure yourself use the network.",
                         style = MioType.body.copy(fontSize = 11.5.sp, lineHeight = 17.sp),
@@ -657,7 +657,7 @@ fun PrivacyScreen() {
                 SettingsGroupDivider()
                 PermissionItem(
                     title = "Device administrator",
-                    subtitle = if (SystemControls.isDeviceAdmin(context)) "Granted – lock device enabled" else "Optional – lock the phone from MIO OS",
+                    subtitle = if (SystemControls.isDeviceAdmin(context)) "Granted – lock device enabled" else "Optional – lock the phone from SEGAWA OS",
                     granted = SystemControls.isDeviceAdmin(context),
                 ) {
                     if (!SystemControls.isDeviceAdmin(context)) {
@@ -670,7 +670,7 @@ fun PrivacyScreen() {
                                 )
                                 .putExtra(
                                     android.app.admin.DevicePolicyManager.EXTRA_ADD_EXPLANATION,
-                                    "MIO OS uses this only to lock your screen from the control centre."
+                                    "SEGAWA OS uses this only to lock your screen from the control centre."
                                 )
                                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                         )

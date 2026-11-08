@@ -144,7 +144,7 @@ fun AppearanceScreen() {
                     Spacer(Modifier.height(6.dp))
                     Text(
                         "Android has no public icon-pack API: packs like Nova's rely on their own " +
-                            "proprietary format. MIO OS therefore styles every icon itself – shape, " +
+                            "proprietary format. SEGAWA OS therefore styles every icon itself – shape, " +
                             "size and background tint – so all installed apps stay visually consistent.",
                         style = MioType.body.copy(fontSize = 11.sp, lineHeight = 16.sp),
                     )

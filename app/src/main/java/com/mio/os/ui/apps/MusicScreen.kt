@@ -148,7 +148,7 @@ fun MusicScreen() {
                         MioLogo(Modifier.size(64.dp), Color.White.copy(alpha = 0.9f))
                         Spacer(Modifier.height(10.dp))
                         Text(
-                            "MIO OS Sessions",
+                            "SEGAWA OS Sessions",
                             style = MioType.micro.copy(fontSize = 10.sp, color = Color.White.copy(alpha = 0.7f)),
                         )
                     }

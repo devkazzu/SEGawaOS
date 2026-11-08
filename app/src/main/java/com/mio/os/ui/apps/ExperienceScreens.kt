@@ -242,7 +242,7 @@ fun ThemesScreen() {
                             Spacer(Modifier.height(6.dp))
                             Text(
                                 "Icon packs such as Nova's use a closed, app-private format, so a stock " +
-                                    "launcher cannot read them. MIO restyles every installed icon itself " +
+                                    "launcher cannot read them. SEGAWA restyles every installed icon itself " +
                                     "and keeps the real bitmap, so nothing looks out of place.",
                                 style = MioType.body.copy(fontSize = 11.sp, lineHeight = 16.sp),
                             )
@@ -250,7 +250,7 @@ fun ThemesScreen() {
                     }
                 }
                 else -> {
-                    SectionHeader("MIO lock screen")
+                    SectionHeader("SEGAWA lock screen")
                     Box(
                         Modifier.fillMaxWidth().height(360.dp).clip(RoundedCornerShape(26.dp))
                             .border(1.dp, Color.White.copy(alpha = 0.10f), RoundedCornerShape(26.dp))
@@ -284,7 +284,7 @@ fun ThemesScreen() {
                             Spacer(Modifier.height(6.dp))
                             Text(
                                 "Android only lets system apps replace the real lock screen. A third-party " +
-                                    "launcher cannot draw over or replace it, so MIO provides a matching " +
+                                    "launcher cannot draw over or replace it, so SEGAWA provides a matching " +
                                     "in-app lock experience plus music controls on the system lock screen " +
                                     "through the media session.",
                                 style = MioType.body.copy(fontSize = 11.sp, lineHeight = 16.sp),
@@ -554,7 +554,7 @@ fun GamingScreen() {
 }
 
 /* ------------------------------------------------------------------------- */
-/* MIO lock screen (in-app, honest preview)                                   */
+/* SEGAWA lock screen (in-app, honest preview)                                   */
 /* ------------------------------------------------------------------------- */
 
 @Composable

@@ -217,11 +217,11 @@ fun FilesScreen() {
             SectionHeader("Full file access")
             GlassCard(Modifier.fillMaxWidth(), corner = 18.dp, alpha = 0.06f) {
                 Column(Modifier.padding(16.dp)) {
-                    Text("Why MIO Files is a viewer", style = MioType.title.copy(fontSize = 13.sp))
+                    Text("Why SEGAWA Files is a viewer", style = MioType.title.copy(fontSize = 13.sp))
                     Spacer(Modifier.height(6.dp))
                     Text(
                         "Android 11+ blocks raw filesystem browsing unless an app is granted the " +
-                            "restricted “All files access” permission. MIO OS deliberately keeps the " +
+                            "restricted “All files access” permission. SEGAWA OS deliberately keeps the " +
                             "normal MediaStore permissions and hands deep browsing to your system " +
                             "file manager – that keeps the app store-compliant and battery friendly.",
                         style = MioType.body.copy(fontSize = 11.sp, lineHeight = 16.sp),
@@ -500,7 +500,7 @@ fun AboutScreen() {
     val ram = remember { DeviceStats.ram(context) }
     val apps = LocalApps.current
 
-    MioScreenScaffold(title = "About MIO OS", subtitle = "v1.0.0 (Rebirth)") { m ->
+    MioScreenScaffold(title = "About SEGAWA OS", subtitle = "v1.1.0 (Hiro)") { m ->
         Column(m.padding(bottom = 28.dp), horizontalAlignment = Alignment.CenterHorizontally) {
             Spacer(Modifier.height(12.dp))
             Box(
@@ -511,10 +511,10 @@ fun AboutScreen() {
                 MioLogo(Modifier.size(46.dp), Color.White)
             }
             Spacer(Modifier.height(12.dp))
-            Text("MIO OS", style = MioType.h1.copy(fontSize = 24.sp, letterSpacing = 1.sp))
-            Text("v1.0.0 (Rebirth)", style = MioType.micro.copy(fontSize = 10.5.sp))
+            Text("SEGAWA OS", style = MioType.h1.copy(fontSize = 24.sp, letterSpacing = 1.sp))
+            Text("v1.1.0 (Hiro)", style = MioType.micro.copy(fontSize = 10.5.sp))
             Spacer(Modifier.height(4.dp))
-            Text("Concept by RJNX · built on Android AOSP", style = MioType.body.copy(fontSize = 10.5.sp))
+            Text("By Raju Mahato · RJNX / Devkazzu", style = MioType.body.copy(fontSize = 10.5.sp))
 
             Spacer(Modifier.height(20.dp))
             GlassCard(Modifier.fillMaxWidth(), corner = 20.dp, alpha = 0.06f) {
@@ -542,7 +542,7 @@ fun AboutScreen() {
                     Text("Open & transparent", style = MioType.title.copy(fontSize = 13.sp))
                     Spacer(Modifier.height(6.dp))
                     Text(
-                        "MIO OS is a normal, unrooted Android launcher: Kotlin + Jetpack Compose, " +
+                        "SEGAWA OS is a normal, unrooted Android launcher: Kotlin + Jetpack Compose, " +
                             "no analytics, no hidden services. System-level features that require " +
                             "privileged permissions are clearly labelled and hand off to the " +
                             "official Android settings panels.",

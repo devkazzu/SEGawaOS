@@ -199,7 +199,7 @@ fun ControlCenter() {
                 },
                 ToggleSpec("DND", Icons.Rounded.DoNotDisturbOn, dnd) {
                     if (!LauncherHelper.dndAccess(context)) {
-                        LauncherHelper.toast(context, "Grant Do Not Disturb access to MIO OS")
+                        LauncherHelper.toast(context, "Grant Do Not Disturb access to SEGAWA OS")
                         SystemControls.open(context, LauncherHelper.dndAccessIntent(context))
                     } else {
                         SystemControls.toggleDnd(context)
@@ -289,7 +289,7 @@ fun ControlCenter() {
                     Spacer(Modifier.width(11.dp))
                     Column(Modifier.weight(1f)) {
                         Text(
-                            track?.title ?: "MIO Music",
+                            track?.title ?: "SEGAWA Music",
                             style = MioType.title.copy(fontSize = 12.5.sp),
                             maxLines = 1, overflow = TextOverflow.Ellipsis,
                         )
@@ -333,7 +333,7 @@ fun ControlCenter() {
                     Modifier.fillMaxWidth().padding(vertical = 14.dp),
                     horizontalArrangement = Arrangement.SpaceEvenly,
                 ) {
-                    QuickAction(Icons.Rounded.AutoAwesome, "Mio AI") { MioNav.push(MioScreen.AI) }
+                    QuickAction(Icons.Rounded.AutoAwesome, "SEGAWA AI") { MioNav.push(MioScreen.AI) }
                     QuickAction(Icons.Rounded.MusicNote, "Player") { MioNav.push(MioScreen.MUSIC) }
                     QuickAction(Icons.Rounded.Palette, "Themes") { MioNav.push(MioScreen.THEMES) }
                     QuickAction(Icons.Rounded.Photo, "Gallery") { MioNav.push(MioScreen.GALLERY) }
