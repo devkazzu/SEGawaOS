@@ -80,4 +80,7 @@ dependencies {
     implementation("androidx.compose.material:material-icons-extended")
     implementation("io.coil-kt:coil-compose:2.7.0")
     debugImplementation("androidx.compose.ui:ui-tooling")
+    testImplementation("junit:junit:4.13.2")
+    // Real org.json for JVM unit tests (android.jar only ships stubs).
+    testImplementation("org.json:json:20240303")
 }

@@ -3,4 +3,5 @@
     <string name="app_name">SEGAWA OS</string>
     <string name="notification_listener_label">SEGAWA OS Notification Access</string>
     <string name="launcher_role_description">Allow SEGAWA OS to be your home screen</string>
+    <string name="wallpaper_desc">SEGAWA OS live wallpaper — drifting sakura, neon aurora, or your own video.</string>
 </resources>

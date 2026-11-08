@@ -44,6 +44,31 @@ data class MioSettings(
     val reduceMotion: Boolean = false,
     val themeId: String = "hiro",
     val customThemeJson: String = "",
+    val homeOrder: List<String> = emptyList(),
+    val favorites: Set<String> = emptySet(),
+    val customIcons: String = "",
+    val iconProfile: String = "neon",
+    val doubleTapAction: String = "search",
+    val tileOrder: String = "",
+    val tilesHidden: Set<String> = emptySet(),
+    val playlists: String = "",
+    val favTracks: Set<String> = emptySet(),
+    val routines: String = "",
+    val aiActiveThread: String = "",
+    val aiTts: Boolean = false,
+    val aiMemory: String = "",
+    val searchWeb: Boolean = true,
+    val browserHome: String = "https://duckduckgo.com",
+    val browserEngine: String = "DuckDuckGo",
+    val bookmarks: String = "",
+    val browserHistory: String = "",
+    val favWalls: Set<String> = emptySet(),
+    val wallHistory: List<String> = emptyList(),
+    val wallRotationMin: Int = 0,
+    val liveWallMode: String = "off",
+    val liveWallVideo: String = "",
+    val lockClock: String = "neon",
+    val backupInfo: String = "",
 ) {
     val sortModeEnum: SortMode get() = runCatching { SortMode.valueOf(sortMode) }.getOrDefault(SortMode.ALPHABETICAL)
 }
@@ -110,6 +135,31 @@ class MioPrefs(context: Context) {
             reduceMotion = sp.getBoolean("reduceMotion", d.reduceMotion),
             themeId = sp.getString("themeId", d.themeId) ?: d.themeId,
             customThemeJson = sp.getString("customTheme", d.customThemeJson) ?: d.customThemeJson,
+            homeOrder = sp.getString("homeOrder", null)?.split("|")?.filter { it.isNotBlank() } ?: emptyList(),
+            favorites = sp.getStringSet("favorites", emptySet())?.toSet() ?: emptySet(),
+            customIcons = sp.getString("customIcons", d.customIcons) ?: d.customIcons,
+            iconProfile = sp.getString("iconProfile", d.iconProfile) ?: d.iconProfile,
+            doubleTapAction = sp.getString("doubleTap", d.doubleTapAction) ?: d.doubleTapAction,
+            tileOrder = sp.getString("tileOrder", d.tileOrder) ?: d.tileOrder,
+            tilesHidden = sp.getStringSet("tilesHidden", emptySet())?.toSet() ?: emptySet(),
+            playlists = sp.getString("playlists", d.playlists) ?: d.playlists,
+            favTracks = sp.getStringSet("favTracks", emptySet())?.toSet() ?: emptySet(),
+            routines = sp.getString("routines", d.routines) ?: d.routines,
+            aiActiveThread = sp.getString("aiThread", d.aiActiveThread) ?: d.aiActiveThread,
+            aiTts = sp.getBoolean("aiTts", d.aiTts),
+            aiMemory = sp.getString("aiMemory", d.aiMemory) ?: d.aiMemory,
+            searchWeb = sp.getBoolean("searchWeb", d.searchWeb),
+            browserHome = sp.getString("browserHome", d.browserHome) ?: d.browserHome,
+            browserEngine = sp.getString("browserEngine", d.browserEngine) ?: d.browserEngine,
+            bookmarks = sp.getString("bookmarks", d.bookmarks) ?: d.bookmarks,
+            browserHistory = sp.getString("browserHistory", d.browserHistory) ?: d.browserHistory,
+            favWalls = sp.getStringSet("favWalls", emptySet())?.toSet() ?: emptySet(),
+            wallHistory = sp.getString("wallHistory", null)?.split("|")?.filter { it.isNotBlank() } ?: emptyList(),
+            wallRotationMin = sp.getInt("wallRotation", d.wallRotationMin),
+            liveWallMode = sp.getString("liveWall", d.liveWallMode) ?: d.liveWallMode,
+            liveWallVideo = sp.getString("liveWallVideo", d.liveWallVideo) ?: d.liveWallVideo,
+            lockClock = sp.getString("lockClock", d.lockClock) ?: d.lockClock,
+            backupInfo = sp.getString("backupInfo", d.backupInfo) ?: d.backupInfo,
         )
     }
 
@@ -148,6 +198,31 @@ class MioPrefs(context: Context) {
             putBoolean("reduceMotion", s.reduceMotion)
             putString("themeId", s.themeId)
             putString("customTheme", s.customThemeJson)
+            putString("homeOrder", s.homeOrder.joinToString("|"))
+            putStringSet("favorites", s.favorites)
+            putString("customIcons", s.customIcons)
+            putString("iconProfile", s.iconProfile)
+            putString("doubleTap", s.doubleTapAction)
+            putString("tileOrder", s.tileOrder)
+            putStringSet("tilesHidden", s.tilesHidden)
+            putString("playlists", s.playlists)
+            putStringSet("favTracks", s.favTracks)
+            putString("routines", s.routines)
+            putString("aiThread", s.aiActiveThread)
+            putBoolean("aiTts", s.aiTts)
+            putString("aiMemory", s.aiMemory)
+            putBoolean("searchWeb", s.searchWeb)
+            putString("browserHome", s.browserHome)
+            putString("browserEngine", s.browserEngine)
+            putString("bookmarks", s.bookmarks)
+            putString("browserHistory", s.browserHistory)
+            putStringSet("favWalls", s.favWalls)
+            putString("wallHistory", s.wallHistory.joinToString("|"))
+            putInt("wallRotation", s.wallRotationMin)
+            putString("liveWall", s.liveWallMode)
+            putString("liveWallVideo", s.liveWallVideo)
+            putString("lockClock", s.lockClock)
+            putString("backupInfo", s.backupInfo)
         }.apply()
     }
 }

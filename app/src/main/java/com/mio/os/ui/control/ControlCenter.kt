@@ -86,7 +86,7 @@ import kotlinx.coroutines.delay
 import java.util.Date
 
 /**
- * MIO Control Center. Every tile does something real:
+ * SEGAWA Control Center. Every tile does something real:
  * toggles use the actual system APIs a launcher may use, and the ones Android
  * restricts (airplane mode, hotspot, cast, rotation lock) open the matching
  * system panel instead of pretending.

@@ -540,7 +540,7 @@ fun GamingScreen() {
                     Spacer(Modifier.height(6.dp))
                     Text(
                         "Boost mode (CPU/GPU governor changes) requires root or a system signature. " +
-                            "MIO’s gaming mode relies on DND, brightness and a distraction-free launcher instead.",
+                            "SEGAWA’s gaming mode relies on DND, brightness and a distraction-free launcher instead.",
                         style = MioType.micro.copy(fontSize = 9.sp, lineHeight = 13.sp),
                     )
                 }
