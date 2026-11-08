@@ -39,6 +39,7 @@ import com.mio.os.core.Mio
 import com.mio.os.core.MioSettings
 import com.mio.os.core.SegaThemeSpec
 import com.mio.os.core.SegaThemes
+import com.mio.os.core.applyTo
 import com.mio.os.ui.components.GlassCard
 import com.mio.os.ui.components.SectionHeader
 import com.mio.os.ui.components.bounceClick
@@ -337,6 +338,6 @@ private fun importThemeFromClipboard(context: Context) {
     }
     val custom = spec.copy(id = "custom")
     Mio.prefs.edit { it.copy(customThemeJson = custom.toJson()) }
-    custom.apply(Mio.prefs)
+    custom.applyTo(Mio.prefs)
     LauncherHelper.toast(context, "Theme \"" + custom.name + "\" applied")
 }
