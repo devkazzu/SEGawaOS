@@ -67,6 +67,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.platform.LocalContext
 import coil.compose.AsyncImage
 import androidx.compose.foundation.Image
 import androidx.compose.ui.res.painterResource
@@ -93,19 +94,10 @@ fun MioWallpaper(settings: MioSettings, extraDim: Float = 0f, modifier: Modifier
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize(),
             )
-            settings.wallpaperId == "anime" -> Image(
-                painter = painterResource(R.drawable.wall_anime), contentDescription = null,
-                contentScale = ContentScale.Crop, modifier = Modifier.fillMaxSize()
-            )
-            settings.wallpaperId == "aurora" -> Image(
-                painter = painterResource(R.drawable.wall_aurora), contentDescription = null,
-                contentScale = ContentScale.Crop, modifier = Modifier.fillMaxSize()
-            )
+            settings.wallpaperId == "anime" -> WallpaperImage(R.drawable.wall_anime)
+            settings.wallpaperId == "aurora" -> WallpaperImage(R.drawable.wall_aurora)
             settings.wallpaperId == "violet" -> VioletField()
-            else -> Image(
-                painter = painterResource(R.drawable.wall_mountain), contentDescription = null,
-                contentScale = ContentScale.Crop, modifier = Modifier.fillMaxSize()
-            )
+            else -> WallpaperImage(R.drawable.wall_mountain)
         }
         // cinematic vignette so white text always stays legible
         Box(
@@ -131,6 +123,23 @@ fun MioWallpaper(settings: MioSettings, extraDim: Float = 0f, modifier: Modifier
                 .background(Color.Black.copy(alpha = (settings.dim + extraDim).coerceIn(0f, 0.8f)))
         )
     }
+}
+
+/**
+ * Coil decodes and caches the bundled artwork at the exact view size, which
+ * keeps the launcher's memory footprint small on 2 GB devices.
+ */
+@Composable
+private fun WallpaperImage(res: Int) {
+    AsyncImage(
+        model = coil.request.ImageRequest.Builder(LocalContext.current)
+            .data(res)
+            .crossfade(false)
+            .build(),
+        contentDescription = null,
+        contentScale = ContentScale.Crop,
+        modifier = Modifier.fillMaxSize(),
+    )
 }
 
 @Composable
@@ -326,7 +335,8 @@ fun AppIconView(app: MioApp, size: Dp = 52.dp, iconBitmap: ImageBitmap? = app.ic
         if (iconBitmap != null) {
             Image(
                 bitmap = iconBitmap, contentDescription = app.name,
-                contentScale = ContentScale.Fit, modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Fit,
+                modifier = Modifier.fillMaxSize().padding(size * 0.055f),
             )
         } else {
             Text(

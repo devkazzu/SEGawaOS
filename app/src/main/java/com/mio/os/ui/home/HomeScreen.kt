@@ -187,10 +187,8 @@ fun HomeScreen() {
             Spacer(Modifier.height(6.dp))
             ClockBlock(settings = settings, weather = weather, time = now)
             Spacer(Modifier.height(14.dp))
-            if (track != null || playing) {
-                MusicWidget(track = track, playing = playing)
-                Spacer(Modifier.height(12.dp))
-            }
+            MusicWidget(track = track, playing = playing)
+            Spacer(Modifier.height(12.dp))
             if (folders.isNotEmpty()) {
                 Row(
                     Modifier.fillMaxWidth().padding(bottom = 6.dp),
@@ -542,7 +540,7 @@ private fun MusicWidget(track: Track?, playing: Boolean) {
                     maxLines = 1, overflow = TextOverflow.Ellipsis,
                 )
                 Text(
-                    track?.artist ?: "Tap to open the player",
+                    track?.artist ?: "Tap play to start · your local library",
                     style = MioType.micro.copy(fontSize = 10.sp),
                     maxLines = 1, overflow = TextOverflow.Ellipsis,
                 )
@@ -558,8 +556,16 @@ private fun MusicWidget(track: Track?, playing: Boolean) {
                     Modifier.size(34.dp).clip(CircleShape)
                         .background(Color.White.copy(alpha = 0.92f))
                         .bounceClick {
-                            if (track == null) MioNav.push(MioScreen.MUSIC)
-                            else MioPlayer.toggle(context)
+                            if (track == null) {
+                                val library = Mio.media.tracksWithDemo()
+                                if (library.isNotEmpty()) {
+                                    MioPlayer.enqueue(context, library.first(), library)
+                                } else {
+                                    MioNav.push(MioScreen.MUSIC)
+                                }
+                            } else {
+                                MioPlayer.toggle(context)
+                            }
                         },
                     contentAlignment = Alignment.Center,
                 ) {

@@ -55,6 +55,17 @@ jobs:
           echo "### Build result: ${{ steps.assemble.outcome }}" >> $GITHUB_STEP_SUMMARY
           grep -E "^e: |error:" ci/build.log | head -40 >> $GITHUB_STEP_SUMMARY || true
 
+      - name: Publish GitHub release with APKs
+        if: success()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release view v1.0.0 >/dev/null 2>&1 || gh release create v1.0.0 \
+            --title "MIO OS v1.0.0 — Android launcher" \
+            --notes "Installable MIO OS build. Debug APK is signed with the debug key and installs on any API 26+ device; release APK is signed with the same key so updates install over each other." \
+            --latest
+          gh release upload v1.0.0 dist/MIO-OS-debug.apk dist/MIO-OS-release.apk --clobber
+
       - name: Publish outputs back to branch
         if: always()
         run: |

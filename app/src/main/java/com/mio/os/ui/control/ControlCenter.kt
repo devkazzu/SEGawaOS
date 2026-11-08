@@ -22,10 +22,14 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.AirplanemodeActive
+import androidx.compose.material.icons.rounded.AutoAwesome
 import androidx.compose.material.icons.rounded.BatteryChargingFull
 import androidx.compose.material.icons.rounded.Bluetooth
 import androidx.compose.material.icons.rounded.Brightness6
 import androidx.compose.material.icons.rounded.Cast
+import androidx.compose.material.icons.rounded.MusicNote
+import androidx.compose.material.icons.rounded.Palette
+import androidx.compose.material.icons.rounded.Photo
 import androidx.compose.material.icons.rounded.DarkMode
 import androidx.compose.material.icons.rounded.DoNotDisturbOn
 import androidx.compose.material.icons.rounded.FlashlightOn
@@ -36,6 +40,7 @@ import androidx.compose.material.icons.rounded.ScreenRotation
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material.icons.rounded.SkipNext
 import androidx.compose.material.icons.rounded.SkipPrevious
+import androidx.compose.material.icons.rounded.SportsEsports
 import androidx.compose.material.icons.rounded.VolumeUp
 import androidx.compose.material.icons.rounded.Wifi
 import androidx.compose.material.icons.rounded.WifiTethering
@@ -322,6 +327,22 @@ fun ControlCenter() {
 
             Spacer(Modifier.height(12.dp))
 
+            // quick jumps – fills the lower half of the panel like the reference
+            GlassCard(Modifier.fillMaxWidth(), corner = 22.dp, alpha = 0.06f) {
+                Row(
+                    Modifier.fillMaxWidth().padding(vertical = 14.dp),
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                ) {
+                    QuickAction(Icons.Rounded.AutoAwesome, "Mio AI") { MioNav.push(MioScreen.AI) }
+                    QuickAction(Icons.Rounded.MusicNote, "Player") { MioNav.push(MioScreen.MUSIC) }
+                    QuickAction(Icons.Rounded.Palette, "Themes") { MioNav.push(MioScreen.THEMES) }
+                    QuickAction(Icons.Rounded.Photo, "Gallery") { MioNav.push(MioScreen.GALLERY) }
+                    QuickAction(Icons.Rounded.SportsEsports, "Gaming") { MioNav.push(MioScreen.GAMING) }
+                }
+            }
+
+            Spacer(Modifier.height(12.dp))
+
             Row(
                 Modifier.fillMaxWidth().padding(bottom = 22.dp),
                 verticalAlignment = Alignment.CenterVertically,
@@ -341,6 +362,29 @@ fun ControlCenter() {
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun QuickAction(
+    icon: ImageVector,
+    label: String,
+    onClick: () -> Unit,
+) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Box(
+            Modifier.size(46.dp).clip(CircleShape)
+                .background(Color.White.copy(alpha = 0.08f))
+                .bounceClick(scaleDown = 0.9f, onClick = onClick),
+            contentAlignment = Alignment.Center,
+        ) {
+            Icon(icon, label, tint = LocalAccent.current, modifier = Modifier.size(20.dp))
+        }
+        Spacer(Modifier.height(6.dp))
+        Text(
+            label,
+            style = MioType.micro.copy(fontSize = 9.sp, color = Color.White.copy(alpha = 0.62f)),
+        )
     }
 }
 
