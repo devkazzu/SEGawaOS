@@ -2,7 +2,7 @@
 <resources>
 
     <style name="Theme.Mio.Launcher" parent="@android:style/Theme.Material.NoActionBar">
-        <item name="android:windowBackground">@color/mio_bg</item>
+        <item name="android:windowBackground">@drawable/splash_segawa</item>
         <item name="android:colorBackground">@color/mio_bg</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
