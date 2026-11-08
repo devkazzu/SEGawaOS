@@ -12,8 +12,8 @@ Physical density: 160
 Override density: 270
 RAM cap (emulator -memory 2048):
 MemTotal:        2013352 kB
-MemFree:          142952 kB
-MemAvailable:     767428 kB
+MemFree:          145996 kB
+MemAvailable:     877744 kB
 
 === 1. Install the debug APK ===
 APK: app/build/outputs/apk/debug/app-debug.apk
@@ -38,15 +38,17 @@ PASS: HOME intent filter with CATEGORY_HOME is registered
 Success
 attempt 1: Launcher: ComponentInfo{com.google.android.apps.nexuslauncher/com.google.android.apps.nexuslauncher.NexusLauncherActivity}
 Success
-attempt 2: Launcher: ComponentInfo{com.mio.os.debug/com.mio.os.MainActivity}
+attempt 2: Launcher: ComponentInfo{com.google.android.apps.nexuslauncher/com.google.android.apps.nexuslauncher.NexusLauncherActivity}
+Success
+attempt 3: Launcher: ComponentInfo{com.mio.os.debug/com.mio.os.MainActivity}
 Success
 PASS: Android resolves MIO OS as the default launcher
 waiting for the HOME key to be routed to MIO OS...
-home attempt 1:   mCurrentFocus=Window{c9e285f u0 com.mio.os.debug/com.mio.os.MainActivity}
+home attempt 1:   mCurrentFocus=Window{cd08aa8 u0 com.mio.os.debug/com.mio.os.MainActivity}
 PASS: HOME is routed to MIO OS
           Category: "android.intent.category.HOME"
           Category: "android.intent.category.DEFAULT"
-        4381073 com.mio.os.debug/com.mio.os.MainActivity filter 78603a9
+        dd39ef3 com.mio.os.debug/com.mio.os.MainActivity filter 90c7629
 
 === 4. Cold start (setup flow) + screenshot ===
 Starting: Intent { cmp=com.mio.os.debug/com.mio.os.MainActivity }
@@ -57,14 +59,14 @@ Starting: Intent { flg=0x10000000 cmp=com.mio.os.debug/com.mio.os.MainActivity (
 Status: ok
 LaunchState: COLD
 Activity: com.mio.os.debug/com.mio.os.MainActivity
-TotalTime: 5973
-WaitTime: 6116
+TotalTime: 4145
+WaitTime: 4178
 Complete
-  mCurrentFocus=Window{ea6cc47 u0 com.mio.os.debug/com.mio.os.MainActivity}
+  mCurrentFocus=Window{81c8ade u0 com.mio.os.debug/com.mio.os.MainActivity}
 PASS: Home screen is in the foreground
 
 === 6. Physical HOME key must return to MIO OS ===
-  mCurrentFocus=Window{9f0d607 u0 com.mio.os.debug/com.mio.os.MainActivity}
+  mCurrentFocus=Window{a3b089f u0 com.mio.os.debug/com.mio.os.MainActivity}
 PASS: HOME key opens MIO OS instead of another launcher
 
 === 7. App drawer (swipe up from the home grid) ===
@@ -85,15 +87,15 @@ screen 720x1600
 === 12. Music player ===
 
 === 12b. Start playback (tap the play button) ===
-      state=PlaybackState {state=7, position=0, buffered position=0, speed=0.0, updated=46588, actions=0, custom actions=[], active item id=-1, error=Bluetooth audio disconnected}
-      state=PlaybackState {state=7, position=0, buffered position=0, speed=0.0, updated=46641, actions=0, custom actions=[], active item id=-1, error=Bluetooth audio disconnected}
-      state=PlaybackState {state=7, position=0, buffered position=0, speed=0.0, updated=53189, actions=0, custom actions=[], active item id=-1, error=Bluetooth audio disconnected}
+      state=PlaybackState {state=7, position=0, buffered position=0, speed=0.0, updated=33199, actions=0, custom actions=[], active item id=-1, error=Bluetooth audio disconnected}
+      state=PlaybackState {state=7, position=0, buffered position=0, speed=0.0, updated=33221, actions=0, custom actions=[], active item id=-1, error=Bluetooth audio disconnected}
+      state=PlaybackState {state=7, position=0, buffered position=0, speed=0.0, updated=38488, actions=0, custom actions=[], active item id=-1, error=Bluetooth audio disconnected}
 PASS: Media session active (lock-screen controls available)
 
 === 13. Themed apps: themes, files, gallery, notes, calendar, clock, calculator, weather, gaming ===
 
 === 14. Launch a real third-party app from the drawer, then press Home ===
-  mCurrentFocus=Window{91caffc u0 com.mio.os.debug/com.mio.os.MainActivity}
+  mCurrentFocus=Window{9487842 u0 com.mio.os.debug/com.mio.os.MainActivity}
 PASS: Returning from an app lands on the MIO OS home screen
 
 === 15. Performance snapshot (frame stats, memory) ===
@@ -101,50 +103,50 @@ NOTE: the emulator renders with swiftshader (no GPU), so absolute frame
 times are CPU-rasterisation bound and much worse than on real hardware.
 Total frames rendered: 0
 --- home-screen interaction frames only (gfxinfo reset before the swipes) ---
-Total frames rendered: 59
-Janky frames: 43 (72.88%)
-Janky frames (legacy): 59 (100.00%)
-50th percentile: 61ms
-90th percentile: 93ms
-95th percentile: 150ms
-99th percentile: 350ms
+Total frames rendered: 68
+Janky frames: 43 (63.24%)
+Janky frames (legacy): 68 (100.00%)
+50th percentile: 48ms
+90th percentile: 85ms
+95th percentile: 101ms
+99th percentile: 150ms
 
 === 15b. Baseline: the platform Settings app measured identically ===
 (if a stock AOSP app also renders at ~100 ms/frame here, the emulator's
  software rasteriser — not MIO OS — is the bottleneck)
-Total frames rendered: 133
-Janky frames: 33 (24.81%)
-Janky frames (legacy): 117 (87.97%)
-50th percentile: 26ms
-90th percentile: 65ms
+Total frames rendered: 148
+Janky frames: 27 (18.24%)
+Janky frames (legacy): 59 (39.86%)
+50th percentile: 16ms
+90th percentile: 57ms
 --- CPU rasterisation proof ---
 emulation
 [graphics.gpu.profiler.support]: [true]
 [init.svc.gpu]: [running]
 --- MIO after the home-screen interaction pass ---
-Total frames rendered: 64
-50th percentile: 57ms
-90th percentile: 81ms
+Total frames rendered: 73
+50th percentile: 46ms
+90th percentile: 65ms
 --- pipeline breakdown (Draw/Prepare are CPU, GPU is the rasteriser) ---
 --- memory ---
-  Native Heap    39029    38968       40       22    40112    49936    41293     3627
-           Java Heap:    15364                          26336
-         Native Heap:    38968                          40112
-           TOTAL PSS:   142619            TOTAL RSS:   211912       TOTAL SWAP PSS:      172
+  Native Heap    38945    38892       28       22    40048    49680    41094     3936
+           Java Heap:    14920                          25828
+         Native Heap:    38892                          40048
+           TOTAL PSS:   143512            TOTAL RSS:   211520       TOTAL SWAP PSS:      168
 --- app startup ---
-TotalTime: 2714
-WaitTime: 2718
-wall clock start: 2788 ms
+TotalTime: 2111
+WaitTime: 2112
+wall clock start: 2179 ms
 
 === 16. Stability: 500 random UI events ===
-pid: 8808
+pid: 8488
 PASS: Launcher still alive after 500 random events
 
 === 17. Reboot – the default home app must survive ===
 Launcher: ComponentInfo{com.mio.os.debug/com.mio.os.MainActivity}
 Success
 PASS: Default launcher survives a reboot
-  mCurrentFocus=Window{6dc99b2 u0 com.mio.os.debug/com.mio.os.MainActivity}
+  mCurrentFocus=Window{b5b328a u0 com.mio.os.debug/com.mio.os.MainActivity}
 PASS: HOME after reboot opens MIO OS
 
 === 18. Release APK smoke test (R8-minified build) ===
@@ -154,7 +156,7 @@ Success
 PASS: R8-minified release APK installs
 Success
 Starting: Intent { cmp=com.mio.os/.MainActivity (has extras) }
-  mCurrentFocus=Window{eda46c1 u0 com.mio.os/com.mio.os.MainActivity}
+  mCurrentFocus=Window{3ffe81b u0 com.mio.os/com.mio.os.MainActivity}
 PASS: Release build launches as the home screen
 Launcher: ComponentInfo{com.mio.os/com.mio.os.MainActivity}
 Success
@@ -174,49 +176,49 @@ RESULT: 16 passed, 0 failed
 === workflow outcome ===
 emulator step: success
 screenshots:
-total 51684
-drwxr-xr-x 2 runner runner    4096 Nov  8 04:44 .
-drwxr-xr-x 3 runner runner    4096 Nov  8 04:44 ..
--rw-r--r-- 1 runner runner       0 Nov  8 04:44 .keep
--rw-r--r-- 1 runner runner 1473771 Nov  8 04:50 01-onboarding-welcome.png
--rw-r--r-- 1 runner runner   55750 Nov  8 04:44 01-welcome.png
--rw-r--r-- 1 runner runner 1493823 Nov  8 04:50 02-home.png
--rw-r--r-- 1 runner runner 2897277 Nov  8 04:44 03-after-home-key.png
--rw-r--r-- 1 runner runner 1493823 Nov  8 04:51 03-home-after-home-key.png
--rw-r--r-- 1 runner runner  897314 Nov  8 04:51 04-app-drawer.png
--rw-r--r-- 1 runner runner 1725305 Nov  8 04:44 04-drawer.png
--rw-r--r-- 1 runner runner 1816577 Nov  8 04:44 05-control-center.png
--rw-r--r-- 1 runner runner  769179 Nov  8 04:51 05-drawer-search.png
--rw-r--r-- 1 runner runner 1815603 Nov  8 04:44 06-control-center-torch.png
--rw-r--r-- 1 runner runner  942522 Nov  8 04:51 06-control-center.png
--rw-r--r-- 1 runner runner   23124 Nov  8 04:51 07-control-center-torch.png
--rw-r--r-- 1 runner runner   88393 Nov  8 04:44 07-drawer-launch.png
--rw-r--r-- 1 runner runner 2896129 Nov  8 04:44 08-home-return.png
--rw-r--r-- 1 runner runner 1066906 Nov  8 04:51 08-settings.png
--rw-r--r-- 1 runner runner 1002815 Nov  8 04:51 09-appearance.png
--rw-r--r-- 1 runner runner 2896355 Nov  8 04:44 09-settings.png
--rw-r--r-- 1 runner runner 1778567 Nov  8 04:44 10-ai.png
--rw-r--r-- 1 runner runner 1019168 Nov  8 04:52 10-privacy.png
--rw-r--r-- 1 runner runner  974865 Nov  8 04:52 11-about.png
--rw-r--r-- 1 runner runner 2893419 Nov  8 04:44 11-after-monkey.png
--rw-r--r-- 1 runner runner 2896054 Nov  8 04:44 12-after-reboot.png
--rw-r--r-- 1 runner runner  900042 Nov  8 04:52 12-ai.png
--rw-r--r-- 1 runner runner  906552 Nov  8 04:52 13-ai-reply.png
--rw-r--r-- 1 runner runner  683036 Nov  8 04:52 14-music.png
--rw-r--r-- 1 runner runner  683036 Nov  8 04:52 15-music-playing.png
--rw-r--r-- 1 runner runner 1105624 Nov  8 04:52 16-themes.png
--rw-r--r-- 1 runner runner  969314 Nov  8 04:53 17-files.png
--rw-r--r-- 1 runner runner  849725 Nov  8 04:53 18-gallery.png
--rw-r--r-- 1 runner runner  850186 Nov  8 04:53 19-notes.png
--rw-r--r-- 1 runner runner  886750 Nov  8 04:53 20-calendar.png
--rw-r--r-- 1 runner runner  871319 Nov  8 04:53 21-clock.png
--rw-r--r-- 1 runner runner  885990 Nov  8 04:53 22-calculator.png
--rw-r--r-- 1 runner runner  951875 Nov  8 04:53 23-weather.png
--rw-r--r-- 1 runner runner  786793 Nov  8 04:54 24-gaming.png
--rw-r--r-- 1 runner runner 1440677 Nov  8 04:54 25-lock-screen.png
--rw-r--r-- 1 runner runner 1493238 Nov  8 04:54 26-home-final.png
--rw-r--r-- 1 runner runner 1493540 Nov  8 04:55 27-after-monkey.png
--rw-r--r-- 1 runner runner 1493299 Nov  8 04:57 28-after-reboot.png
--rw-r--r-- 1 runner runner 1330985 Nov  8 04:57 29-release-home.png
--rw-r--r-- 1 runner runner 1331574 Nov  8 04:57 30-release-drawer.png
-report bytes: 9527
+total 51088
+drwxr-xr-x 2 runner runner    4096 Nov  8 04:58 .
+drwxr-xr-x 3 runner runner    4096 Nov  8 04:58 ..
+-rw-r--r-- 1 runner runner       0 Nov  8 04:58 .keep
+-rw-r--r-- 1 runner runner 1494552 Nov  8 05:03 01-onboarding-welcome.png
+-rw-r--r-- 1 runner runner   55750 Nov  8 04:58 01-welcome.png
+-rw-r--r-- 1 runner runner 1494552 Nov  8 05:03 02-home.png
+-rw-r--r-- 1 runner runner 2897277 Nov  8 04:58 03-after-home-key.png
+-rw-r--r-- 1 runner runner 1494552 Nov  8 05:03 03-home-after-home-key.png
+-rw-r--r-- 1 runner runner  897738 Nov  8 05:03 04-app-drawer.png
+-rw-r--r-- 1 runner runner 1725305 Nov  8 04:58 04-drawer.png
+-rw-r--r-- 1 runner runner 1816577 Nov  8 04:58 05-control-center.png
+-rw-r--r-- 1 runner runner  676530 Nov  8 05:04 05-drawer-search.png
+-rw-r--r-- 1 runner runner 1815603 Nov  8 04:58 06-control-center-torch.png
+-rw-r--r-- 1 runner runner  943526 Nov  8 05:04 06-control-center.png
+-rw-r--r-- 1 runner runner   23589 Nov  8 05:04 07-control-center-torch.png
+-rw-r--r-- 1 runner runner   88393 Nov  8 04:58 07-drawer-launch.png
+-rw-r--r-- 1 runner runner 2896129 Nov  8 04:58 08-home-return.png
+-rw-r--r-- 1 runner runner 1067263 Nov  8 05:04 08-settings.png
+-rw-r--r-- 1 runner runner 1003095 Nov  8 05:04 09-appearance.png
+-rw-r--r-- 1 runner runner 2896355 Nov  8 04:58 09-settings.png
+-rw-r--r-- 1 runner runner 1778567 Nov  8 04:58 10-ai.png
+-rw-r--r-- 1 runner runner 1019545 Nov  8 05:04 10-privacy.png
+-rw-r--r-- 1 runner runner  974224 Nov  8 05:04 11-about.png
+-rw-r--r-- 1 runner runner 2893419 Nov  8 04:58 11-after-monkey.png
+-rw-r--r-- 1 runner runner 2896054 Nov  8 04:58 12-after-reboot.png
+-rw-r--r-- 1 runner runner  903153 Nov  8 05:05 12-ai.png
+-rw-r--r-- 1 runner runner  898656 Nov  8 05:05 13-ai-reply.png
+-rw-r--r-- 1 runner runner  683052 Nov  8 05:05 14-music.png
+-rw-r--r-- 1 runner runner  683052 Nov  8 05:05 15-music-playing.png
+-rw-r--r-- 1 runner runner 1105498 Nov  8 05:05 16-themes.png
+-rw-r--r-- 1 runner runner  969282 Nov  8 05:05 17-files.png
+-rw-r--r-- 1 runner runner  849421 Nov  8 05:05 18-gallery.png
+-rw-r--r-- 1 runner runner  850009 Nov  8 05:05 19-notes.png
+-rw-r--r-- 1 runner runner  886585 Nov  8 05:06 20-calendar.png
+-rw-r--r-- 1 runner runner  870735 Nov  8 05:06 21-clock.png
+-rw-r--r-- 1 runner runner  886159 Nov  8 05:06 22-calculator.png
+-rw-r--r-- 1 runner runner  952125 Nov  8 05:06 23-weather.png
+-rw-r--r-- 1 runner runner  787070 Nov  8 05:06 24-gaming.png
+-rw-r--r-- 1 runner runner 1441633 Nov  8 05:06 25-lock-screen.png
+-rw-r--r-- 1 runner runner 1494750 Nov  8 05:06 26-home-final.png
+-rw-r--r-- 1 runner runner  954755 Nov  8 05:07 27-after-monkey.png
+-rw-r--r-- 1 runner runner 1495332 Nov  8 05:09 28-after-reboot.png
+-rw-r--r-- 1 runner runner 1330741 Nov  8 05:09 29-release-home.png
+-rw-r--r-- 1 runner runner 1331627 Nov  8 05:09 30-release-drawer.png
+report bytes: 9668
