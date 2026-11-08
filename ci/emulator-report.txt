@@ -268,3 +268,53 @@ drwxr-xr-x 3 runner runner    4096 Nov  8 06:26 ..
 -rw-r--r-- 1 runner runner 1257632 Nov  8 06:26 29-release-home.png
 -rw-r--r-- 1 runner runner 1257585 Nov  8 06:26 30-release-drawer.png
 report bytes: 12367
+
+=== workflow outcome ===
+emulator step: skipped
+screenshots:
+total 49348
+drwxr-xr-x 2 runner runner    4096 Nov  8 06:32 .
+drwxr-xr-x 3 runner runner    4096 Nov  8 06:32 ..
+-rw-r--r-- 1 runner runner       0 Nov  8 06:32 .keep
+-rw-r--r-- 1 runner runner 1404061 Nov  8 06:32 01-onboarding-welcome.png
+-rw-r--r-- 1 runner runner   55750 Nov  8 06:32 01-welcome.png
+-rw-r--r-- 1 runner runner 1404048 Nov  8 06:32 02-home.png
+-rw-r--r-- 1 runner runner 2897277 Nov  8 06:32 03-after-home-key.png
+-rw-r--r-- 1 runner runner 1403624 Nov  8 06:32 03-home-after-home-key.png
+-rw-r--r-- 1 runner runner  806531 Nov  8 06:32 04-app-drawer.png
+-rw-r--r-- 1 runner runner 1725305 Nov  8 06:32 04-drawer.png
+-rw-r--r-- 1 runner runner 1816577 Nov  8 06:32 05-control-center.png
+-rw-r--r-- 1 runner runner  539356 Nov  8 06:32 05-drawer-search.png
+-rw-r--r-- 1 runner runner 1815603 Nov  8 06:32 06-control-center-torch.png
+-rw-r--r-- 1 runner runner  863903 Nov  8 06:32 06-control-center.png
+-rw-r--r-- 1 runner runner   23949 Nov  8 06:32 07-control-center-torch.png
+-rw-r--r-- 1 runner runner   88393 Nov  8 06:32 07-drawer-launch.png
+-rw-r--r-- 1 runner runner 2896129 Nov  8 06:32 08-home-return.png
+-rw-r--r-- 1 runner runner  982868 Nov  8 06:32 08-settings.png
+-rw-r--r-- 1 runner runner  934976 Nov  8 06:32 09-appearance.png
+-rw-r--r-- 1 runner runner 2896355 Nov  8 06:32 09-settings.png
+-rw-r--r-- 1 runner runner 1778567 Nov  8 06:32 10-ai.png
+-rw-r--r-- 1 runner runner  945859 Nov  8 06:32 10-privacy.png
+-rw-r--r-- 1 runner runner  926362 Nov  8 06:32 11-about.png
+-rw-r--r-- 1 runner runner 2893419 Nov  8 06:32 11-after-monkey.png
+-rw-r--r-- 1 runner runner 2896054 Nov  8 06:32 12-after-reboot.png
+-rw-r--r-- 1 runner runner  816114 Nov  8 06:32 12-ai.png
+-rw-r--r-- 1 runner runner  815230 Nov  8 06:32 13-ai-reply.png
+-rw-r--r-- 1 runner runner  653234 Nov  8 06:32 14-music.png
+-rw-r--r-- 1 runner runner  653234 Nov  8 06:32 15-music-playing.png
+-rw-r--r-- 1 runner runner 1386431 Nov  8 06:32 16-themes.png
+-rw-r--r-- 1 runner runner  885379 Nov  8 06:32 17-files.png
+-rw-r--r-- 1 runner runner  734410 Nov  8 06:32 18-gallery.png
+-rw-r--r-- 1 runner runner  735621 Nov  8 06:32 19-notes.png
+-rw-r--r-- 1 runner runner  784574 Nov  8 06:32 20-calendar.png
+-rw-r--r-- 1 runner runner  756797 Nov  8 06:32 21-clock.png
+-rw-r--r-- 1 runner runner  785060 Nov  8 06:32 22-calculator.png
+-rw-r--r-- 1 runner runner  866590 Nov  8 06:32 23-weather.png
+-rw-r--r-- 1 runner runner  742515 Nov  8 06:32 24-gaming.png
+-rw-r--r-- 1 runner runner 1335155 Nov  8 06:32 25-lock-screen.png
+-rw-r--r-- 1 runner runner 1401636 Nov  8 06:32 26-home-final.png
+-rw-r--r-- 1 runner runner  833720 Nov  8 06:32 27-after-monkey.png
+-rw-r--r-- 1 runner runner 1739164 Nov  8 06:32 28-after-reboot.png
+-rw-r--r-- 1 runner runner 1257632 Nov  8 06:32 29-release-home.png
+-rw-r--r-- 1 runner runner 1257585 Nov  8 06:32 30-release-drawer.png
+report bytes: 15317
