@@ -115,14 +115,6 @@ fun HomeScreen() {
     val track by MioPlayer.current.collectAsState()
     val playing by MioPlayer.playing.collectAsState()
 
-    var now by remember { mutableStateOf(System.currentTimeMillis()) }
-    LaunchedEffect(Unit) {
-        while (true) {
-            now = System.currentTimeMillis()
-            delay(1000)
-        }
-    }
-
     var weather by remember { mutableStateOf<Weather?>(null) }
     LaunchedEffect(settings.city) { weather = WeatherRepo.get(context, settings.city) }
 
@@ -185,7 +177,7 @@ fun HomeScreen() {
                 charging = battery.charging,
             )
             Spacer(Modifier.height(6.dp))
-            ClockBlock(settings = settings, weather = weather, time = now)
+            ClockBlock(settings = settings, weather = weather)
             Spacer(Modifier.height(14.dp))
             MusicWidget(track = track, playing = playing)
             Spacer(Modifier.height(12.dp))
@@ -348,8 +340,17 @@ private fun IconCircleMini(
 }
 
 @Composable
-private fun ClockBlock(settings: MioSettings, weather: Weather?, time: Long) {
+private fun ClockBlock(settings: MioSettings, weather: Weather?) {
     val accent = LocalAccent.current
+    // The ticker lives here: only the clock recomposes every second, not the
+    // whole home screen (important on 2 GB devices).
+    var time by remember { mutableStateOf(System.currentTimeMillis()) }
+    LaunchedEffect(Unit) {
+        while (true) {
+            time = System.currentTimeMillis()
+            delay(1000)
+        }
+    }
     val date = Date(time)
     val timeText = remember(time, settings.clock24h) {
         DateFormat.format(if (settings.clock24h) "HH:mm" else "h:mm", date).toString()

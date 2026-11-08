@@ -34,7 +34,7 @@ jobs:
       - name: Build debug APK
         run: |
           set -o pipefail
-          gradle assembleDebug --stacktrace 2>&1 | tail -30
+          gradle assembleDebug assembleRelease --stacktrace 2>&1 | tail -30
 
       - name: Enable KVM
         run: |

@@ -99,9 +99,12 @@ fun MioWallpaper(settings: MioSettings, extraDim: Float = 0f, modifier: Modifier
             settings.wallpaperId == "violet" -> VioletField()
             else -> WallpaperImage(R.drawable.wall_mountain)
         }
-        // cinematic vignette so white text always stays legible
-        Box(
-            Modifier.fillMaxSize().background(
+        // One canvas paints the vignette, the accent glow and the dim level so the
+        // launcher never stacks four full-screen layers on top of each other.
+        val accent = LocalAccent.current
+        val dim = (settings.dim + extraDim).coerceIn(0f, 0.8f)
+        Canvas(Modifier.fillMaxSize()) {
+            drawRect(
                 Brush.verticalGradient(
                     0f to Color.Black.copy(alpha = 0.55f),
                     0.22f to Color.Black.copy(alpha = 0.12f),
@@ -109,19 +112,14 @@ fun MioWallpaper(settings: MioSettings, extraDim: Float = 0f, modifier: Modifier
                     1f to Color.Black.copy(alpha = 0.86f),
                 )
             )
-        )
-        Box(
-            Modifier.fillMaxSize().background(
+            drawRect(
                 Brush.radialGradient(
-                    colors = listOf(LocalAccent.current.copy(alpha = 0.18f), Color.Transparent),
-                    center = Offset(0f, 0f), radius = 1400f,
+                    colors = listOf(accent.copy(alpha = 0.16f), Color.Transparent),
+                    center = Offset(0f, 0f), radius = size.maxDimension * 0.95f,
                 )
             )
-        )
-        Box(
-            Modifier.fillMaxSize()
-                .background(Color.Black.copy(alpha = (settings.dim + extraDim).coerceIn(0f, 0.8f)))
-        )
+            if (dim > 0.01f) drawRect(Color.Black.copy(alpha = dim))
+        }
     }
 }
 

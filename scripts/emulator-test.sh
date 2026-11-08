@@ -63,10 +63,17 @@ check_contains "$HOMES" "com.mio.os.debug/com.mio.os.MainActivity" "HOME intent 
 
 step "3. Set MIO OS as the default home app (system command)"
 adb shell cmd package set-home-activity "$ACT" 2>&1
-sleep 3
-DEFAULT=$(adb shell cmd shortcut get-default-launcher 2>&1)
-echo "$DEFAULT"
+DEFAULT=""
+for i in $(seq 1 10); do
+  sleep 2
+  DEFAULT=$(adb shell cmd shortcut get-default-launcher 2>&1)
+  echo "attempt $i: $DEFAULT"
+  echo "$DEFAULT" | grep -q "com.mio.os.debug" && break
+done
 check_contains "$DEFAULT" "com.mio.os.debug" "Android resolves MIO OS as the default launcher"
+# the launcher itself must agree with the system
+INAPP=$(adb shell dumpsys package com.mio.os.debug | grep -A2 "android.intent.category.HOME" | head -3)
+echo "$INAPP"
 
 step "4. Cold start (setup flow) + screenshot"
 adb shell am force-stop "$PKG"
@@ -209,7 +216,39 @@ echo "$FOCUS"
 check_contains "$FOCUS" "com.mio.os.debug" "HOME after reboot opens MIO OS"
 shot 28-after-reboot.png
 
-step "18. Crash log"
+step "18. Release APK smoke test (R8-minified build)"
+RELAPK=$(ls app/build/outputs/apk/release/*.apk 2>/dev/null | head -1)
+if [ -n "$RELAPK" ]; then
+  echo "Release APK: $RELAPK"
+  RELINSTALL=$(adb install -r -g "$RELAPK" 2>&1)
+  echo "$RELINSTALL"
+  check_contains "$RELINSTALL" "Success" "R8-minified release APK installs"
+  adb shell cmd package set-home-activity com.mio.os/com.mio.os.MainActivity 2>&1
+  sleep 4
+  adb shell am force-stop com.mio.os
+  adb shell am start -n com.mio.os/com.mio.os.MainActivity --ez mio_skip_setup true 2>&1
+  sleep 8
+  shot 29-release-home.png
+  RFOCUS=$(adb shell dumpsys window | grep -E "mCurrentFocus" | head -1)
+  echo "$RFOCUS"
+  check_contains "$RFOCUS" "com.mio.os/" "Release build launches as the home screen"
+  RELDEFAULT=$(adb shell cmd shortcut get-default-launcher 2>&1)
+  echo "$RELDEFAULT"
+  check_contains "$RELDEFAULT" "com.mio.os/" "Release build is the default home app"
+  adb shell input keyevent KEYCODE_HOME
+  sleep 4
+  RFOCUS=$(adb shell dumpsys window | grep -E "mCurrentFocus" | head -1)
+  check_contains "$RFOCUS" "com.mio.os/" "Release build answers the HOME key"
+  adb shell input swipe $((W / 2)) $((H * 80 / 100)) $((W / 2)) $((H * 28 / 100)) 320
+  sleep 3
+  shot 30-release-drawer.png
+  adb shell input keyevent KEYCODE_BACK
+  sleep 2
+else
+  bad "Release APK not found"
+fi
+
+step "19. Crash log"
 CRASH=$(adb logcat -d -b crash 2>&1 | tail -60)
 echo "$CRASH"
 FATAL=$(adb logcat -d 2>&1 | grep -iE "FATAL EXCEPTION|E AndroidRuntime" | tail -30)

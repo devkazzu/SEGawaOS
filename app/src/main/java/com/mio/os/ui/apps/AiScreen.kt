@@ -191,12 +191,14 @@ fun AiScreen() {
             Spacer(Modifier.height(14.dp))
 
             if (messages.isEmpty()) {
-                QuickActions(
-                    onAction = { prompt ->
-                        input = prompt
-                        send()
-                    },
-                )
+                Box(Modifier.weight(1f).fillMaxWidth()) {
+                    QuickActions(
+                        onAction = { prompt ->
+                            input = prompt
+                            send()
+                        },
+                    )
+                }
             } else {
                 LazyColumn(
                     state = listState,
@@ -291,15 +293,15 @@ private fun loadHistory(): List<AiMessage> {
 @Composable
 private fun QuickActions(onAction: (String) -> Unit) {
     val actions = listOf(
-        "Chat" to "Tell me something interesting",
-        "Create" to "note Write my study plan",
-        "Analyze" to "battery",
-        "Tools" to "torch on",
+        Triple("Chat", "Talk to Mio about anything", "Tell me something interesting"),
+        Triple("Create", "Capture a thought as a note", "note Write my study plan"),
+        Triple("Analyze", "Device status at a glance", "battery"),
+        Triple("Tools", "Torch, music and quick actions", "torch on"),
     )
     Column(Modifier.padding(horizontal = 24.dp)) {
         actions.chunked(2).forEach { row ->
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                row.forEach { (label, prompt) ->
+                row.forEach { (label, hint, prompt) ->
                     GlassCard(
                         Modifier.weight(1f).bounceClick(scaleDown = 0.96f) { onAction(prompt) },
                         corner = 18.dp, alpha = 0.07f,
@@ -311,7 +313,7 @@ private fun QuickActions(onAction: (String) -> Unit) {
                                 Text(label, style = MioType.title.copy(fontSize = 12.5.sp, fontWeight = FontWeight.SemiBold))
                             }
                             Spacer(Modifier.height(4.dp))
-                            Text(prompt, style = MioType.micro.copy(fontSize = 9.5.sp), maxLines = 2)
+                            Text(hint, style = MioType.micro.copy(fontSize = 9.5.sp), maxLines = 2)
                         }
                     }
                 }
