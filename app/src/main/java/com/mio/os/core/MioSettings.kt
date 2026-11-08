@@ -11,12 +11,12 @@ import kotlinx.coroutines.flow.StateFlow
  * file and exposed as a hot [StateFlow] so Compose recomposes instantly.
  */
 data class MioSettings(
-    val accent: Int = 0xFF7C5CFF.toInt(),
+    val accent: Int = 0xFFFF4FA3.toInt(),
     val gridColumns: Int = 4,
     val iconScale: Float = 1f,
     val hiddenApps: Set<String> = emptySet(),
     val dockApps: List<String> = emptyList(),
-    val wallpaperId: String = "mountain",
+    val wallpaperId: String = "hiro_sakura",
     val wallpaperUri: String? = null,
     val dim: Float = 0.25f,
     val userName: String = "Creator",
@@ -42,6 +42,8 @@ data class MioSettings(
     val iconPack: String = "SEGAWA Aurora",
     val iconShape: String = "squircle",
     val reduceMotion: Boolean = false,
+    val themeId: String = "hiro",
+    val customThemeJson: String = "",
 ) {
     val sortModeEnum: SortMode get() = runCatching { SortMode.valueOf(sortMode) }.getOrDefault(SortMode.ALPHABETICAL)
 }
@@ -106,6 +108,8 @@ class MioPrefs(context: Context) {
             iconPack = sp.getString("iconPack", d.iconPack) ?: d.iconPack,
             iconShape = sp.getString("iconShape", d.iconShape) ?: d.iconShape,
             reduceMotion = sp.getBoolean("reduceMotion", d.reduceMotion),
+            themeId = sp.getString("themeId", d.themeId) ?: d.themeId,
+            customThemeJson = sp.getString("customTheme", d.customThemeJson) ?: d.customThemeJson,
         )
     }
 
@@ -142,6 +146,8 @@ class MioPrefs(context: Context) {
             putString("iconPack", s.iconPack)
             putString("iconShape", s.iconShape)
             putBoolean("reduceMotion", s.reduceMotion)
+            putString("themeId", s.themeId)
+            putString("customTheme", s.customThemeJson)
         }.apply()
     }
 }

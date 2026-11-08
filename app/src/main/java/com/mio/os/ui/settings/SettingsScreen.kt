@@ -221,7 +221,7 @@ fun SettingsScreen() {
             SettingsGroup {
                 GlassRow(
                     "Wallpaper & themes",
-                    "Mountain, anime, aurora · ${settings.wallpaperId}",
+                    "7 wallpapers · 8 themes · ${settings.wallpaperId}",
                     leading = { SettingsIconBadge(Icons.Rounded.Wallpaper, MioColors.PurpleSoft) },
                     onClick = { MioNav.push(MioScreen.THEMES) },
                     trailing = { Chevron() },

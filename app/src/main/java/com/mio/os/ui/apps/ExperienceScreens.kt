@@ -177,6 +177,34 @@ fun ThemesScreen() {
                             Mio.prefs.edit { it.copy(wallpaperId = "violet", wallpaperUri = null) }
                         }
                     }
+                    Spacer(Modifier.height(10.dp))
+                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                        WallpaperPreview(
+                            MioWallpapers[4],
+                            settings.wallpaperId == "hiro_sakura" && settings.wallpaperUri == null,
+                            Modifier.weight(1f), 190.dp,
+                        ) {
+                            Mio.prefs.edit { it.copy(wallpaperId = "hiro_sakura", wallpaperUri = null) }
+                        }
+                        WallpaperPreview(
+                            MioWallpapers[5],
+                            settings.wallpaperId == "neon_tokyo" && settings.wallpaperUri == null,
+                            Modifier.weight(1f), 190.dp,
+                        ) {
+                            Mio.prefs.edit { it.copy(wallpaperId = "neon_tokyo", wallpaperUri = null) }
+                        }
+                    }
+                    Spacer(Modifier.height(10.dp))
+                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                        WallpaperPreview(
+                            MioWallpapers[6],
+                            settings.wallpaperId == "sakura_void" && settings.wallpaperUri == null,
+                            Modifier.weight(1f), 190.dp,
+                        ) {
+                            Mio.prefs.edit { it.copy(wallpaperId = "sakura_void", wallpaperUri = null) }
+                        }
+                        Spacer(Modifier.weight(1f))
+                    }
                     Spacer(Modifier.height(14.dp))
                     Row {
                         SettingsPill("Apply to Android wallpaper", primary = true) {

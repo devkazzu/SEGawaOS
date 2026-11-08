@@ -176,6 +176,9 @@ private fun renderWallpaper(
             when (id) {
                 "anime" -> R.drawable.wall_anime
                 "aurora" -> R.drawable.wall_aurora
+                "hiro_sakura" -> R.drawable.wall_hiro_sakura
+                "neon_tokyo" -> R.drawable.wall_neon_tokyo
+                "sakura_void" -> R.drawable.wall_sakura_void
                 else -> R.drawable.wall_mountain
             },
         )
@@ -280,23 +283,33 @@ fun GlassCard(
 }
 
 @Composable
-fun MioLogo(modifier: Modifier = Modifier, color: Color = LocalAccent.current) {
+fun SegaLogo(modifier: Modifier = Modifier, color: Color = LocalAccent.current) {
     Canvas(modifier) {
         val w = size.width
         val h = size.height
         val path = Path().apply {
-            moveTo(w * 0.20f, h * 0.78f)
-            lineTo(w * 0.20f, h * 0.24f)
-            lineTo(w * 0.50f, h * 0.62f)
-            lineTo(w * 0.80f, h * 0.24f)
-            lineTo(w * 0.80f, h * 0.78f)
+            moveTo(w * 0.70f, h * 0.28f)
+            cubicTo(w * 0.58f, h * 0.16f, w * 0.34f, h * 0.18f, w * 0.32f, h * 0.34f)
+            cubicTo(w * 0.30f, h * 0.48f, w * 0.70f, h * 0.46f, w * 0.68f, h * 0.62f)
+            cubicTo(w * 0.66f, h * 0.78f, w * 0.40f, h * 0.80f, w * 0.28f, h * 0.70f)
         }
         drawPath(
             path,
-            brush = Brush.verticalGradient(listOf(Color.White, MioColors.PurpleSoft, color)),
+            brush = Brush.verticalGradient(listOf(Color.White, MioColors.Pink, color)),
             style = Stroke(width = w * 0.13f, cap = StrokeCap.Round, join = StrokeJoin.Round),
         )
+        drawCircle(
+            color = MioColors.Pink,
+            radius = w * 0.07f,
+            center = Offset(w * 0.80f, h * 0.20f),
+        )
     }
+}
+
+/** Legacy name kept so existing call sites keep working; draws the S mark. */
+@Composable
+fun MioLogo(modifier: Modifier = Modifier, color: Color = LocalAccent.current) {
+    SegaLogo(modifier, color)
 }
 
 @OptIn(ExperimentalFoundationApi::class)

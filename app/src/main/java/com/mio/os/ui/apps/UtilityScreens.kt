@@ -7,6 +7,7 @@ import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
 import android.provider.Settings
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -52,22 +53,22 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.graphics.drawable.toBitmap
 import coil.compose.AsyncImage
+import com.mio.os.R
 import com.mio.os.core.DeviceStats
 import com.mio.os.core.Mio
 import com.mio.os.core.MioApp
 import com.mio.os.core.MioNav
 import com.mio.os.ui.components.AppIconView
 import com.mio.os.ui.components.GlassCard
-import com.mio.os.ui.components.MioLogo
 import com.mio.os.ui.components.ProgressRing
 import com.mio.os.ui.components.SectionHeader
 import com.mio.os.ui.components.bounceClick
@@ -504,15 +505,24 @@ fun AboutScreen() {
         Column(m.padding(bottom = 28.dp), horizontalAlignment = Alignment.CenterHorizontally) {
             Spacer(Modifier.height(12.dp))
             Box(
-                Modifier.size(88.dp).clip(RoundedCornerShape(26.dp))
-                    .background(Brush.linearGradient(listOf(LocalAccent.current, MioColors.PurpleDeep))),
-                contentAlignment = Alignment.Center,
+                Modifier.size(96.dp).clip(RoundedCornerShape(28.dp))
+                    .border(1.dp, Color.White.copy(alpha = 0.14f), RoundedCornerShape(28.dp)),
             ) {
-                MioLogo(Modifier.size(46.dp), Color.White)
+                Image(
+                    painter = painterResource(R.drawable.segawa_mark),
+                    contentDescription = "SEGAWA OS brand mark",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize(),
+                )
             }
             Spacer(Modifier.height(12.dp))
             Text("SEGAWA OS", style = MioType.h1.copy(fontSize = 24.sp, letterSpacing = 1.sp))
             Text("v1.1.0 (Hiro)", style = MioType.micro.copy(fontSize = 10.5.sp))
+            Spacer(Modifier.height(2.dp))
+            Text(
+                "Your Anime. Your World. Your OS.",
+                style = MioType.body.copy(fontSize = 11.sp, color = MioColors.Pink),
+            )
             Spacer(Modifier.height(4.dp))
             Text("By Raju Mahato · RJNX / Devkazzu", style = MioType.body.copy(fontSize = 10.5.sp))
 

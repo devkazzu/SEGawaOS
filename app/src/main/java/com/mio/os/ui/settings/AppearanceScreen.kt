@@ -27,11 +27,18 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import android.content.Context
 import com.mio.os.R
+import com.mio.os.core.LauncherHelper
 import com.mio.os.core.Mio
+import com.mio.os.core.MioSettings
+import com.mio.os.core.SegaThemeSpec
+import com.mio.os.core.SegaThemes
 import com.mio.os.ui.components.GlassCard
 import com.mio.os.ui.components.SectionHeader
 import com.mio.os.ui.components.bounceClick
@@ -60,14 +67,38 @@ val MioWallpapers = listOf(
     WallpaperOption("anime", "Anime dusk", R.drawable.wall_anime),
     WallpaperOption("aurora", "Aurora", R.drawable.wall_aurora),
     WallpaperOption("violet", "Violet field", null),
+    WallpaperOption("hiro_sakura", "Hiro Sakura", R.drawable.wall_hiro_sakura),
+    WallpaperOption("neon_tokyo", "Neon Tokyo", R.drawable.wall_neon_tokyo),
+    WallpaperOption("sakura_void", "Sakura Void", R.drawable.wall_sakura_void),
 )
 
 @Composable
 fun AppearanceScreen() {
     val settings = LocalSettings.current
+    val context = LocalContext.current
 
     MioScreenScaffold(title = "Appearance", subtitle = "Grid, icons, type & motion") { m ->
         Column(m.padding(bottom = 30.dp)) {
+            SectionHeader("SEGAWA themes")
+            GlassCard(Modifier.fillMaxWidth(), corner = 20.dp, alpha = 0.06f) {
+                Column(Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                    SegaThemes.chunked(4).forEach { row ->
+                        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                            row.forEach { spec -> ThemeCard(spec, settings.themeId == spec.id) }
+                        }
+                    }
+                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        SettingsPill("Export theme") { exportCurrentTheme(context, settings) }
+                        SettingsPill("Import theme") { importThemeFromClipboard(context) }
+                    }
+                    Text(
+                        "A theme applies accent, wallpaper, dim and glass together. " +
+                            "Export copies the current look as JSON; import reads it back.",
+                        style = MioType.body.copy(fontSize = 10.5.sp, lineHeight = 15.sp),
+                    )
+                }
+            }
+
             SectionHeader("Accent colour")
             GlassCard(Modifier.fillMaxWidth(), corner = 20.dp, alpha = 0.06f) {
                 Column(Modifier.padding(14.dp)) {
@@ -257,4 +288,55 @@ fun WallpaperPreview(
             }
         }
     }
+}
+
+@Composable
+private fun ThemeCard(spec: SegaThemeSpec, selected: Boolean) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.width(64.dp)) {
+        Box(
+            Modifier.size(44.dp).clip(CircleShape)
+                .background(Brush.linearGradient(listOf(Color(spec.accent), Color(spec.accent2))))
+                .then(if (selected) Modifier.border(2.dp, Color.White, CircleShape) else Modifier)
+                .bounceClick(scaleDown = 0.9f) {
+                    if (spec.id == "custom") {
+                        val stored = SegaThemeSpec.fromJson(Mio.prefs.current.customThemeJson)
+                        (stored?.copy(id = "custom") ?: spec).applyTo(Mio.prefs)
+                    } else {
+                        spec.applyTo(Mio.prefs)
+                    }
+                },
+            contentAlignment = Alignment.Center,
+        ) {
+            if (selected) Icon(Icons.Rounded.Check, null, tint = Color.White, modifier = Modifier.size(18.dp))
+        }
+        Spacer(Modifier.height(5.dp))
+        Text(spec.name, style = MioType.micro.copy(fontSize = 8.sp), maxLines = 1, overflow = TextOverflow.Ellipsis)
+    }
+}
+
+private fun exportCurrentTheme(context: Context, settings: MioSettings) {
+    val base = SegaThemes.firstOrNull { it.id == settings.themeId } ?: SegaThemes.first()
+    val spec = base.copy(
+        accent = settings.accent,
+        wallpaper = settings.wallpaperId,
+        dim = settings.dim,
+        glass = settings.glass,
+    )
+    val cm = context.getSystemService(Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
+    cm.setPrimaryClip(android.content.ClipData.newPlainText("segawa-theme", spec.toJson()))
+    LauncherHelper.toast(context, "Theme \"" + spec.name + "\" copied as JSON")
+}
+
+private fun importThemeFromClipboard(context: Context) {
+    val cm = context.getSystemService(Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
+    val text = runCatching { cm.primaryClip?.getItemAt(0)?.coerceToText(context)?.toString() }.getOrNull()
+    val spec = text?.let { SegaThemeSpec.fromJson(it) }
+    if (spec == null) {
+        LauncherHelper.toast(context, "Clipboard has no SEGAWA theme JSON")
+        return
+    }
+    val custom = spec.copy(id = "custom")
+    Mio.prefs.edit { it.copy(customThemeJson = custom.toJson()) }
+    custom.apply(Mio.prefs)
+    LauncherHelper.toast(context, "Theme \"" + custom.name + "\" applied")
 }

@@ -56,7 +56,7 @@ import com.mio.os.ui.components.AmbientOrb
 import com.mio.os.ui.components.bounceClick
 import com.mio.os.ui.components.GlassCard
 import com.mio.os.ui.components.GradientPillButton
-import com.mio.os.ui.components.MioLogo
+import com.mio.os.ui.components.SegaLogo
 import com.mio.os.ui.components.MioWallpaper
 import com.mio.os.ui.components.rememberIsDefaultLauncher
 import com.mio.os.ui.theme.LocalAccent
@@ -115,7 +115,7 @@ fun WelcomeScreen() {
         ) {
             Spacer(Modifier.height(28.dp))
             Row(verticalAlignment = Alignment.CenterVertically) {
-                MioLogo(Modifier.size(30.dp))
+                SegaLogo(Modifier.size(30.dp))
                 Spacer(Modifier.width(10.dp))
                 Text(
                     "SEGAWA OS",
@@ -129,6 +129,11 @@ fun WelcomeScreen() {
                     Text("v1.1", style = MioType.micro.copy(fontSize = 9.sp))
                 }
             }
+            Spacer(Modifier.height(6.dp))
+            Text(
+                "Your Anime. Your World. Your OS.",
+                style = MioType.micro.copy(fontSize = 10.sp, letterSpacing = 1.sp),
+            )
 
             Spacer(Modifier.height(26.dp))
 
