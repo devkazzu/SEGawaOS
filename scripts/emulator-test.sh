@@ -29,10 +29,14 @@ check_contains() { # $1 haystack, $2 needle, $3 label
 shot() { adb exec-out screencap -p > "$SHOTS/$1"; }
 
 open_screen() { # $1 = mio_screen value, $2 = screenshot name
-  adb shell am start -n "$ACT" --ez mio_skip_setup true --es mio_screen "$1" >/dev/null 2>&1
-  sleep 2
+  adb shell am force-stop "$PKG" >/dev/null 2>&1
+  sleep 1
+  adb shell am start -W -n "$ACT" -f 0x10000000 --ez mio_skip_setup true --es mio_screen "$1" >/dev/null 2>&1
+  sleep 4
   shot "$2"
 }
+
+focus() { adb shell dumpsys window | grep -E "mCurrentFocus" | head -1; }
 
 step "0. Device profile"
 adb devices
@@ -71,6 +75,17 @@ for i in $(seq 1 10); do
   echo "$DEFAULT" | grep -q "com.mio.os.debug" && break
 done
 check_contains "$DEFAULT" "com.mio.os.debug" "Android resolves MIO OS as the default launcher"
+# The activity manager needs a moment before HOME is routed to the new launcher.
+echo "waiting for the HOME key to be routed to MIO OS..."
+ROUTED=0
+for i in $(seq 1 10); do
+  adb shell input keyevent KEYCODE_HOME
+  sleep 3
+  F=$(focus)
+  echo "home attempt $i: $F"
+  echo "$F" | grep -q "com.mio.os.debug" && { ROUTED=1; break; }
+done
+if [ "$ROUTED" = "1" ]; then ok "HOME is routed to MIO OS"; else bad "HOME is still routed to another launcher"; fi
 # the launcher itself must agree with the system
 INAPP=$(adb shell dumpsys package com.mio.os.debug | grep -A2 "android.intent.category.HOME" | head -3)
 echo "$INAPP"
@@ -82,10 +97,12 @@ sleep 6
 shot 01-onboarding-welcome.png
 
 step "5. Skip setup via the debug-only QA hook and open the home screen"
-adb shell am start -n "$ACT" --ez mio_skip_setup true 2>&1
-sleep 4
+adb shell am force-stop "$PKG"
+sleep 1
+adb shell am start -W -n "$ACT" -f 0x10000000 --ez mio_skip_setup true 2>&1
+sleep 5
 shot 02-home.png
-FOCUS=$(adb shell dumpsys window | grep -E "mCurrentFocus" | head -1)
+FOCUS=$(focus)
 echo "$FOCUS"
 check_contains "$FOCUS" "com.mio.os.debug" "Home screen is in the foreground"
 
@@ -94,7 +111,7 @@ adb shell am start -a android.settings.SETTINGS >/dev/null 2>&1
 sleep 3
 adb shell input keyevent KEYCODE_HOME
 sleep 3
-FOCUS=$(adb shell dumpsys window | grep -E "mCurrentFocus" | head -1)
+FOCUS=$(focus)
 echo "$FOCUS"
 check_contains "$FOCUS" "com.mio.os.debug" "HOME key opens MIO OS instead of another launcher"
 shot 03-home-after-home-key.png
@@ -174,7 +191,7 @@ adb shell am start -a android.settings.SETTINGS >/dev/null 2>&1
 sleep 3
 adb shell input keyevent KEYCODE_HOME
 sleep 3
-FOCUS=$(adb shell dumpsys window | grep -E "mCurrentFocus" | head -1)
+FOCUS=$(focus)
 echo "$FOCUS"
 check_contains "$FOCUS" "com.mio.os.debug" "Returning from an app lands on the MIO OS home screen"
 
@@ -260,7 +277,7 @@ echo "$DEFAULT"
 check_contains "$DEFAULT" "com.mio.os.debug" "Default launcher survives a reboot"
 adb shell input keyevent KEYCODE_HOME
 sleep 10
-FOCUS=$(adb shell dumpsys window | grep -E "mCurrentFocus" | head -1)
+FOCUS=$(focus)
 echo "$FOCUS"
 check_contains "$FOCUS" "com.mio.os.debug" "HOME after reboot opens MIO OS"
 shot 28-after-reboot.png
@@ -278,7 +295,7 @@ if [ -n "$RELAPK" ]; then
   adb shell am start -n com.mio.os/com.mio.os.MainActivity --ez mio_skip_setup true 2>&1
   sleep 8
   shot 29-release-home.png
-  RFOCUS=$(adb shell dumpsys window | grep -E "mCurrentFocus" | head -1)
+  RFOCUS=$(focus)
   echo "$RFOCUS"
   check_contains "$RFOCUS" "com.mio.os/" "Release build launches as the home screen"
   RELDEFAULT=$(adb shell cmd shortcut get-default-launcher 2>&1)
@@ -286,7 +303,7 @@ if [ -n "$RELAPK" ]; then
   check_contains "$RELDEFAULT" "com.mio.os/" "Release build is the default home app"
   adb shell input keyevent KEYCODE_HOME
   sleep 4
-  RFOCUS=$(adb shell dumpsys window | grep -E "mCurrentFocus" | head -1)
+  RFOCUS=$(focus)
   check_contains "$RFOCUS" "com.mio.os/" "Release build answers the HOME key"
   adb shell input swipe $((W / 2)) $((H * 80 / 100)) $((W / 2)) $((H * 28 / 100)) 320
   sleep 3
