@@ -55,7 +55,7 @@ class SegaAlarmReceiver : BroadcastReceiver() {
         }
     }
 
-    private fun runRoutine(context: Context, kind: String, payload: String, name: String) {
+    internal fun runRoutine(context: Context, kind: String, payload: String, name: String) {
         when (kind) {
             "music" -> {
                 val tracks = Mio.media.tracksWithDemo()
@@ -150,6 +150,11 @@ class SegaAlarmReceiver : BroadcastReceiver() {
         fun cancelRoutine(context: Context, id: String) {
             val am = context.getSystemService(AlarmManager::class.java) ?: return
             am.cancel(routineIntent(context, id))
+        }
+
+        /** Fires a routine immediately (the "Run now" button uses the alarm path). */
+        fun test(context: Context, kind: String, payload: String, name: String) {
+            SegaAlarmReceiver().runRoutine(context.applicationContext, kind, payload, name.ifBlank { "Routine" })
         }
 
         private fun rotateIntent(context: Context): PendingIntent {

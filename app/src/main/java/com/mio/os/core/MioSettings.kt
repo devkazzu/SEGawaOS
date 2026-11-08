@@ -3,6 +3,8 @@ package com.mio.os.core
 import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
+import org.json.JSONArray
+import org.json.JSONObject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -99,6 +101,53 @@ class MioPrefs(context: Context) {
     fun pushRecent(pkg: String) = edit {
         it.copy(recentApps = (listOf(pkg) + it.recentApps.filter { p -> p != pkg }).take(16))
     }
+
+    /** Serializes every entry of mio_prefs_v1 into a self-describing JSON document. */
+    fun exportJson(): String {
+        val o = JSONObject()
+        sp.all.forEach { (k, v) ->
+            when (v) {
+                is String -> o.put(k, JSONObject().put("t", "s").put("v", v))
+                is Int -> o.put(k, JSONObject().put("t", "i").put("v", v))
+                is Long -> o.put(k, JSONObject().put("t", "l").put("v", v))
+                is Float -> o.put(k, JSONObject().put("t", "f").put("v", v.toDouble()))
+                is Boolean -> o.put(k, JSONObject().put("t", "b").put("v", v))
+                is Set<*> -> {
+                    val arr = JSONArray()
+                    v.forEach { arr.put(it.toString()) }
+                    o.put(k, JSONObject().put("t", "ss").put("v", arr))
+                }
+            }
+        }
+        return JSONObject().put("mioPrefs", 1).put("entries", o).toString()
+    }
+
+    /** Restores a document produced by [exportJson]; reloads live state on success. */
+    fun importJson(raw: String): Boolean = runCatching {
+        val doc = JSONObject(raw)
+        if (doc.optInt("mioPrefs", 0) != 1) return false
+        val entries = doc.getJSONObject("entries")
+        val ed = sp.edit().clear()
+        entries.keys().forEach { k ->
+            val e = entries.getJSONObject(k)
+            when (e.optString("t")) {
+                "s" -> ed.putString(k, e.optString("v", ""))
+                "i" -> ed.putInt(k, e.optInt("v", 0))
+                "l" -> ed.putLong(k, e.optLong("v", 0L))
+                "f" -> ed.putFloat(k, e.optDouble("v", 0.0).toFloat())
+                "b" -> ed.putBoolean(k, e.optBoolean("v", false))
+                "ss" -> {
+                    val arr = e.optJSONArray("v")
+                    val set = HashSet<String>()
+                    if (arr != null) for (i in 0 until arr.length()) set += arr.optString(i)
+                    ed.putStringSet(k, set)
+                }
+            }
+        }
+        if (!ed.commit()) return false
+        _state.value = load()
+        true
+    }.getOrDefault(false)
 
     private fun load(): MioSettings {
         val d = MioSettings()

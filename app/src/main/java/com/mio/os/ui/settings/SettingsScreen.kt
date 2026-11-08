@@ -30,19 +30,23 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowBack
+import androidx.compose.material.icons.rounded.Backup
 import androidx.compose.material.icons.rounded.BatteryChargingFull
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.Cloud
 import androidx.compose.material.icons.rounded.Folder
 import androidx.compose.material.icons.rounded.Info
+import androidx.compose.material.icons.rounded.Language
 import androidx.compose.material.icons.rounded.MusicNote
 import androidx.compose.material.icons.rounded.Notifications
 import androidx.compose.material.icons.rounded.Palette
 import androidx.compose.material.icons.rounded.Photo
+import androidx.compose.material.icons.rounded.Schedule
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material.icons.rounded.Shield
 import androidx.compose.material.icons.rounded.Storage
+import androidx.compose.material.icons.rounded.Storefront
 import androidx.compose.material.icons.rounded.TouchApp
 import androidx.compose.material.icons.rounded.Wallpaper
 import androidx.compose.material.icons.rounded.Wifi
@@ -243,6 +247,14 @@ fun SettingsScreen() {
                     onClick = { MioNav.push(MioScreen.HOME_SETTINGS) },
                     trailing = { Chevron() },
                 )
+                SettingsGroupDivider()
+                GlassRow(
+                    "Theme store",
+                    "8 built-in themes, offline",
+                    leading = { SettingsIconBadge(Icons.Rounded.Storefront, MioColors.Amber) },
+                    onClick = { MioNav.push(MioScreen.STORE) },
+                    trailing = { Chevron() },
+                )
             }
 
             SectionHeader("Apps & tools")
@@ -276,6 +288,33 @@ fun SettingsScreen() {
                     "Photos, videos, downloads and storage",
                     leading = { SettingsIconBadge(Icons.Rounded.Photo, MioColors.Green) },
                     onClick = { MioNav.push(MioScreen.FILES) },
+                    trailing = { Chevron() },
+                )
+                SettingsGroupDivider()
+                GlassRow(
+                    "Browser",
+                    "Fast, private, on-device history",
+                    leading = { SettingsIconBadge(Icons.Rounded.Language, MioColors.Blue) },
+                    onClick = { MioNav.push(MioScreen.BROWSER) },
+                    trailing = { Chevron() },
+                )
+            }
+
+            SectionHeader("Automation & data")
+            SettingsGroup {
+                GlassRow(
+                    "Automation",
+                    "Routines, reminders, focus mode",
+                    leading = { SettingsIconBadge(Icons.Rounded.Schedule, MioColors.PurpleSoft) },
+                    onClick = { MioNav.push(MioScreen.AUTOMATION) },
+                    trailing = { Chevron() },
+                )
+                SettingsGroupDivider()
+                GlassRow(
+                    "Backup & restore",
+                    if (settings.backupInfo.isBlank()) "Export everything to one file" else settings.backupInfo,
+                    leading = { SettingsIconBadge(Icons.Rounded.Backup, MioColors.Green) },
+                    onClick = { MioNav.push(MioScreen.BACKUP) },
                     trailing = { Chevron() },
                 )
             }

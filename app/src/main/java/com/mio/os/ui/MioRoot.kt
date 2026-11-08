@@ -109,6 +109,10 @@ fun MioRoot() {
                             MioScreen.SEARCH -> SearchScreen()
                             MioScreen.ARRANGE -> ArrangeScreen()
                             MioScreen.ICONS -> IconStudioScreen()
+                            MioScreen.BROWSER -> BrowserScreen()
+                            MioScreen.AUTOMATION -> AutomationScreen()
+                            MioScreen.BACKUP -> BackupScreen()
+                            MioScreen.STORE -> StoreScreen()
                             else -> HomeScreen()
                         }
                     }
