@@ -84,6 +84,9 @@ class MainActivity : ComponentActivity() {
             "gaming" -> MioScreen.GAMING
             "hidden" -> MioScreen.HIDDEN
             "lock" -> MioScreen.LOCK
+            "search" -> MioScreen.SEARCH
+            "arrange" -> MioScreen.ARRANGE
+            "icons" -> MioScreen.ICONS
             "setup" -> MioScreen.WELCOME
             else -> null
         }

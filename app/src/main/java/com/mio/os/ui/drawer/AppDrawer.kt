@@ -32,6 +32,7 @@ import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material.icons.rounded.Settings
+import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
@@ -59,6 +60,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mio.os.core.Mio
 import com.mio.os.core.MioApp
+import com.mio.os.ui.apps.IconStudioRequest
 import com.mio.os.core.MioCategory
 import com.mio.os.core.MioNav
 import com.mio.os.core.MioNotifications
@@ -90,12 +92,14 @@ fun AppDrawer() {
     var query by remember { mutableStateOf("") }
     var tab by remember { mutableStateOf(0) }
     var category by remember { mutableStateOf<MioCategory?>(null) }
+    var favOnly by remember { mutableStateOf(false) }
     var sheetApp by remember { mutableStateOf<MioApp?>(null) }
     var folderApp by remember { mutableStateOf<MioApp?>(null) }
 
-    val filtered = remember(apps, query, category, settings.sortMode, settings.hiddenApps) {
+    val filtered = remember(apps, query, category, favOnly, settings.sortMode, settings.hiddenApps, settings.favorites) {
         var list = apps.filter { it.packageName !in settings.hiddenApps }
         if (category != null) list = list.filter { it.category == category }
+        if (favOnly) list = list.filter { it.packageName in settings.favorites }
         if (query.isNotBlank()) {
             list = list.filter {
                 it.name.contains(query, true) || it.packageName.contains(query, true)
@@ -203,7 +207,12 @@ fun AppDrawer() {
             }
 
             if (tab == 0) {
-                CategoryChips(selected = category, onSelect = { category = it })
+                CategoryChips(
+                    selected = category,
+                    favOnly = favOnly,
+                    onSelect = { category = it },
+                    onFavToggle = { favOnly = !favOnly },
+                )
                 if (apps.isEmpty()) {
                     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -303,7 +312,12 @@ private fun BottomPill(text: String, onClick: () -> Unit) {
 }
 
 @Composable
-private fun CategoryChips(selected: MioCategory?, onSelect: (MioCategory?) -> Unit) {
+private fun CategoryChips(
+    selected: MioCategory?,
+    favOnly: Boolean,
+    onSelect: (MioCategory?) -> Unit,
+    onFavToggle: () -> Unit,
+) {
     val cats = remember { MioCategory.entries.toList() }
     Row(
         Modifier.fillMaxWidth().horizontalScroll(rememberScrollState())
@@ -311,7 +325,8 @@ private fun CategoryChips(selected: MioCategory?, onSelect: (MioCategory?) -> Un
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Chip("All", selected == null) { onSelect(null) }
+        Chip("★ Favorites", favOnly) { onFavToggle() }
+        Chip("All", selected == null && !favOnly) { onSelect(null) }
         cats.forEach { c ->
             Chip(c.label, selected == c) { onSelect(if (selected == c) null else c) }
         }
@@ -457,6 +472,24 @@ private fun DrawerAppSheet(app: MioApp, onDismiss: () -> Unit, onMoveToFolder: (
                 }
             }
             Spacer(Modifier.height(16.dp))
+            val settings = LocalSettings.current
+            val isFav = app.packageName in settings.favorites
+            SheetItem(if (isFav) "★ Favorited" else "☆ Favorite") {
+                Mio.prefs.edit {
+                    it.copy(favorites = if (isFav) it.favorites - app.packageName else it.favorites + app.packageName)
+                }
+            }
+            val inDock = app.packageName in settings.dockApps
+            SheetItem(if (inDock) "Remove from dock" else "Pin to dock") {
+                Mio.prefs.edit {
+                    val d = if (inDock) it.dockApps - app.packageName
+                    else (it.dockApps + app.packageName).take(5)
+                    it.copy(dockApps = d)
+                }
+            }
+            SheetItem("Custom icon") {
+                onDismiss(); IconStudioRequest.pkg = app.packageName; MioNav.push(MioScreen.ICONS)
+            }
             SheetItem("Open app") { onDismiss(); Mio.apps.launch(app) }
             SheetItem("App info") { onDismiss(); Mio.apps.openAppInfo(app.packageName) }
             SheetItem("Move to folder") { onMoveToFolder() }

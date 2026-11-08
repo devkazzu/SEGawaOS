@@ -80,6 +80,7 @@ fun SegaThemeSpec.applyTo(prefs: MioPrefs) {
             wallpaperUri = null,
             dim = dim,
             glass = glass,
+            wallHistory = WallpaperRepo.pushHistory(it.wallHistory, wallpaper),
         )
     }
 }

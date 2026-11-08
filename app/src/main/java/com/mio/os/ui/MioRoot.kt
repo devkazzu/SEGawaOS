@@ -36,11 +36,14 @@ import com.mio.os.ui.apps.GamingScreen
 import com.mio.os.ui.apps.HiddenAppsScreen
 import com.mio.os.ui.apps.LockScreen
 import com.mio.os.ui.apps.MusicScreen
+import com.mio.os.ui.apps.IconStudioScreen
 import com.mio.os.ui.apps.NotesScreen
+import com.mio.os.ui.apps.SearchScreen
 import com.mio.os.ui.apps.ThemesScreen
 import com.mio.os.ui.apps.WeatherScreen
 import com.mio.os.ui.control.ControlCenter
 import com.mio.os.ui.drawer.AppDrawer
+import com.mio.os.ui.home.ArrangeScreen
 import com.mio.os.ui.home.HomeScreen
 import com.mio.os.ui.settings.AppearanceScreen
 import com.mio.os.ui.settings.HomeScreenSettings
@@ -103,6 +106,9 @@ fun MioRoot() {
                             MioScreen.GAMING -> GamingScreen()
                             MioScreen.HIDDEN -> HiddenAppsScreen()
                             MioScreen.LOCK -> LockScreen()
+                            MioScreen.SEARCH -> SearchScreen()
+                            MioScreen.ARRANGE -> ArrangeScreen()
+                            MioScreen.ICONS -> IconStudioScreen()
                             else -> HomeScreen()
                         }
                     }

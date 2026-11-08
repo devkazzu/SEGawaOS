@@ -85,7 +85,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.foundation.Image
+import coil.compose.AsyncImage
 import com.mio.os.R
+import com.mio.os.core.IconStudio
 import com.mio.os.core.MioApp
 import com.mio.os.core.MioSettings
 import com.mio.os.ui.theme.LocalAccent
@@ -408,18 +410,29 @@ fun RowScope.RowSpacer() = Spacer(Modifier.weight(1f))
 
 @Composable
 fun AppIconView(app: MioApp, size: Dp = 52.dp, iconBitmap: ImageBitmap? = app.icon) {
+    val settings = LocalSettings.current
+    val profile = remember(settings.iconProfile) { IconStudio.profile(settings.iconProfile) }
+    val customUri = remember(app.packageName, settings.customIcons) {
+        IconStudio.decode(settings.customIcons)[app.packageName]
+    }
     val tint = hueTint(app.packageName)
-    val shape = when (com.mio.os.ui.theme.LocalSettings.current.iconShape) {
+    val shape = when (settings.iconShape) {
         "circle" -> CircleShape
         "rounded" -> RoundedCornerShape(size * 0.22f)
         else -> RoundedCornerShape(size * 0.30f)
     }
     Box(
         Modifier.size(size).clip(shape)
-            .background(Brush.linearGradient(listOf(tint.copy(alpha = 0.55f), tint.copy(alpha = 0.18f)))),
+            .background(Brush.linearGradient(listOf(tint.copy(alpha = profile.bgAlpha), tint.copy(alpha = profile.bgAlpha * 0.35f)))),
         contentAlignment = Alignment.Center,
     ) {
-        if (iconBitmap != null) {
+        if (customUri != null) {
+            AsyncImage(
+                model = customUri, contentDescription = app.name,
+                contentScale = ContentScale.FillBounds,
+                modifier = Modifier.fillMaxSize(),
+            )
+        } else if (iconBitmap != null) {
             Image(
                 bitmap = iconBitmap, contentDescription = app.name,
                 contentScale = ContentScale.Fit,

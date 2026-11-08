@@ -1,5 +1,7 @@
 package com.mio.os.ui.apps
 
+import android.app.WallpaperManager
+import android.content.ComponentName
 import android.content.Intent
 import android.text.format.DateFormat
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -10,6 +12,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -68,6 +71,9 @@ import com.mio.os.core.MioCategory
 import com.mio.os.core.MioNav
 import com.mio.os.core.MioPlayer
 import com.mio.os.core.SystemControls
+import com.mio.os.core.WallpaperRepo
+import com.mio.os.service.SegaAlarmReceiver
+import com.mio.os.service.SegaWallpaperService
 import com.mio.os.core.Weather
 import com.mio.os.core.WeatherRepo
 import com.mio.os.ui.components.AppIconView
@@ -119,6 +125,30 @@ fun ThemesScreen() {
         }
     }
 
+    val videoLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.OpenDocument()
+    ) { uri ->
+        if (uri != null) {
+            runCatching {
+                context.contentResolver.takePersistableUriPermission(
+                    uri, Intent.FLAG_GRANT_READ_URI_PERMISSION
+                )
+            }
+            Mio.prefs.edit { it.copy(liveWallVideo = uri.toString(), liveWallMode = "video") }
+            LauncherHelper.toast(context, "Video selected – tap Preview & set")
+        }
+    }
+
+    fun applyWall(id: String) {
+        Mio.prefs.edit {
+            it.copy(
+                wallpaperId = id,
+                wallpaperUri = null,
+                wallHistory = WallpaperRepo.pushHistory(it.wallHistory, id),
+            )
+        }
+    }
+
     MioScreenScaffold(title = "Themes", subtitle = "Wallpapers · icons · accents") { m ->
         Column(m.padding(bottom = 28.dp)) {
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
@@ -150,14 +180,14 @@ fun ThemesScreen() {
                             settings.wallpaperId == "mountain" && settings.wallpaperUri == null,
                             Modifier.weight(1f), 190.dp,
                         ) {
-                            Mio.prefs.edit { it.copy(wallpaperId = "mountain", wallpaperUri = null) }
+                            applyWall("mountain")
                         }
                         WallpaperPreview(
                             MioWallpapers[1],
                             settings.wallpaperId == "anime" && settings.wallpaperUri == null,
                             Modifier.weight(1f), 190.dp,
                         ) {
-                            Mio.prefs.edit { it.copy(wallpaperId = "anime", wallpaperUri = null) }
+                            applyWall("anime")
                         }
                     }
                     Spacer(Modifier.height(10.dp))
@@ -167,14 +197,14 @@ fun ThemesScreen() {
                             settings.wallpaperId == "aurora" && settings.wallpaperUri == null,
                             Modifier.weight(1f), 190.dp,
                         ) {
-                            Mio.prefs.edit { it.copy(wallpaperId = "aurora", wallpaperUri = null) }
+                            applyWall("aurora")
                         }
                         WallpaperPreview(
                             MioWallpapers[3],
                             settings.wallpaperId == "violet" && settings.wallpaperUri == null,
                             Modifier.weight(1f), 190.dp,
                         ) {
-                            Mio.prefs.edit { it.copy(wallpaperId = "violet", wallpaperUri = null) }
+                            applyWall("violet")
                         }
                     }
                     Spacer(Modifier.height(10.dp))
@@ -184,14 +214,14 @@ fun ThemesScreen() {
                             settings.wallpaperId == "hiro_sakura" && settings.wallpaperUri == null,
                             Modifier.weight(1f), 190.dp,
                         ) {
-                            Mio.prefs.edit { it.copy(wallpaperId = "hiro_sakura", wallpaperUri = null) }
+                            applyWall("hiro_sakura")
                         }
                         WallpaperPreview(
                             MioWallpapers[5],
                             settings.wallpaperId == "neon_tokyo" && settings.wallpaperUri == null,
                             Modifier.weight(1f), 190.dp,
                         ) {
-                            Mio.prefs.edit { it.copy(wallpaperId = "neon_tokyo", wallpaperUri = null) }
+                            applyWall("neon_tokyo")
                         }
                     }
                     Spacer(Modifier.height(10.dp))
@@ -201,7 +231,7 @@ fun ThemesScreen() {
                             settings.wallpaperId == "sakura_void" && settings.wallpaperUri == null,
                             Modifier.weight(1f), 190.dp,
                         ) {
-                            Mio.prefs.edit { it.copy(wallpaperId = "sakura_void", wallpaperUri = null) }
+                            applyWall("sakura_void")
                         }
                         Spacer(Modifier.weight(1f))
                     }
@@ -231,6 +261,96 @@ fun ThemesScreen() {
                                 }
                             }
                         }
+                    }
+                    Spacer(Modifier.height(16.dp))
+                    SectionHeader("Favorites & history")
+                    MioWallpapers.forEach { opt ->
+                        WallFavRow(
+                            label = opt.label,
+                            active = settings.wallpaperId == opt.id && settings.wallpaperUri == null,
+                            fav = opt.id in settings.favWalls,
+                            onApply = { applyWall(opt.id) },
+                            onFav = {
+                                Mio.prefs.edit {
+                                    it.copy(
+                                        favWalls = if (opt.id in it.favWalls) it.favWalls - opt.id
+                                        else it.favWalls + opt.id
+                                    )
+                                }
+                            },
+                        )
+                    }
+                    if (settings.wallHistory.isNotEmpty()) {
+                        Spacer(Modifier.height(6.dp))
+                        Text("Recent", style = MioType.micro.copy(fontSize = 10.sp))
+                        Spacer(Modifier.height(6.dp))
+                        FlowRow(
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp),
+                        ) {
+                            settings.wallHistory.take(6).forEach { id ->
+                                SettingsPill(id) { applyWall(id) }
+                            }
+                        }
+                        Spacer(Modifier.height(8.dp))
+                    }
+                    Spacer(Modifier.height(8.dp))
+                    SectionHeader("Auto-rotate wallpaper")
+                    FlowRow(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
+                        listOf(0 to "Off", 15 to "15 min", 30 to "30 min", 60 to "1 h", 180 to "3 h").forEach { (mins, label) ->
+                            SettingsPill(
+                                (if (settings.wallRotationMin == mins) "✓ " else "") + label,
+                                primary = settings.wallRotationMin == mins,
+                            ) {
+                                Mio.prefs.edit { it.copy(wallRotationMin = mins) }
+                                if (mins == 0) SegaAlarmReceiver.cancelRotation(context)
+                                else SegaAlarmReceiver.scheduleRotation(context, mins)
+                            }
+                        }
+                    }
+                    Spacer(Modifier.height(6.dp))
+                    Text(
+                        "Rotates your favourites when you have any, otherwise all wallpapers.",
+                        style = MioType.body.copy(fontSize = 10.5.sp),
+                    )
+                    Spacer(Modifier.height(8.dp))
+                    SectionHeader("Live wallpaper (system)")
+                    FlowRow(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
+                        listOf("off" to "Off", "petals" to "Petals", "neon" to "Neon", "video" to "Video").forEach { (id, label) ->
+                            SettingsPill(label, primary = settings.liveWallMode == id) {
+                                Mio.prefs.edit { it.copy(liveWallMode = id) }
+                                LauncherHelper.toast(
+                                    context,
+                                    if (id == "off") "Live wallpaper off"
+                                    else "Pick SEGAWA in the system picker to activate",
+                                )
+                            }
+                        }
+                    }
+                    Spacer(Modifier.height(8.dp))
+                    Row {
+                        SettingsPill("Choose video") { videoLauncher.launch(arrayOf("video/*")) }
+                        Spacer(Modifier.width(8.dp))
+                        SettingsPill("Preview & set", primary = true) {
+                            val comp = ComponentName(context, SegaWallpaperService::class.java)
+                            val ok = runCatching {
+                                context.startActivity(
+                                    Intent(WallpaperManager.ACTION_CHANGE_LIVE_WALLPAPER)
+                                        .putExtra(WallpaperManager.EXTRA_LIVE_WALLPAPER_COMPONENT, comp)
+                                )
+                            }.isSuccess
+                            if (!ok) LauncherHelper.toast(context, "Open Android Settings ▸ Wallpaper ▸ Live wallpapers")
+                        }
+                    }
+                    if (settings.liveWallVideo.isNotBlank()) {
+                        Spacer(Modifier.height(6.dp))
+                        Text("Video selected ✓", style = MioType.micro.copy(fontSize = 10.sp))
                     }
                     Spacer(Modifier.height(16.dp))
                     SectionHeader("Accent colours")
@@ -322,6 +442,43 @@ fun ThemesScreen() {
                 }
             }
             Spacer(Modifier.height(20.dp))
+        }
+    }
+}
+
+@Composable
+private fun WallFavRow(
+    label: String,
+    active: Boolean,
+    fav: Boolean,
+    onApply: () -> Unit,
+    onFav: () -> Unit,
+) {
+    Row(
+        Modifier.fillMaxWidth().clip(RoundedCornerShape(14.dp))
+            .bounceClick(scaleDown = 0.98f, onClick = onApply)
+            .padding(vertical = 10.dp, horizontal = 4.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            (if (active) "✓ " else "") + label,
+            style = MioType.title.copy(fontSize = 12.5.sp),
+            modifier = Modifier.weight(1f),
+        )
+        Box(
+            Modifier.size(34.dp).clip(CircleShape)
+                .background(
+                    if (fav) LocalAccent.current.copy(alpha = 0.3f)
+                    else Color.White.copy(alpha = 0.07f)
+                )
+                .bounceClick(scaleDown = 0.9f, onClick = onFav),
+            contentAlignment = Alignment.Center,
+        ) {
+            Icon(
+                Icons.Rounded.Star, null,
+                tint = if (fav) Color.White else Color.White.copy(alpha = 0.45f),
+                modifier = Modifier.size(16.dp),
+            )
         }
     }
 }

@@ -35,6 +35,7 @@ import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material.icons.rounded.SkipNext
 import androidx.compose.material.icons.rounded.SkipPrevious
+import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
@@ -67,9 +68,11 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.mio.os.ui.apps.IconStudioRequest
 import com.mio.os.ui.components.AppShortcut
 import com.mio.os.core.DeviceStats
 import com.mio.os.core.FoldersRepo
+import com.mio.os.core.HomeLayout
 import com.mio.os.core.MioFolder
 import com.mio.os.core.Mio
 import com.mio.os.core.MioApp
@@ -128,8 +131,13 @@ fun HomeScreen() {
     val columns = settings.gridColumns
     val rows = 4
     val perPage = (columns * rows).coerceAtLeast(4)
-    val pages = remember(visible, perPage) {
-        visible.chunked(perPage).ifEmpty { listOf(emptyList()) }
+    val ordered = remember(visible, settings.homeOrder) {
+        val byPkg = visible.associateBy { it.packageName }
+        HomeLayout.orderKeys(visible.map { it.packageName }, settings.homeOrder)
+            .mapNotNull { byPkg[it] }
+    }
+    val pages = remember(ordered, perPage) {
+        ordered.chunked(perPage).ifEmpty { listOf(emptyList()) }
     }
     val pagerState = rememberPagerState(pageCount = { pages.size.coerceAtLeast(1) })
 
@@ -158,7 +166,10 @@ fun HomeScreen() {
                 )
             }
             .pointerInput(Unit) {
-                detectTapGestures(onLongPress = { showSheet = true })
+                detectTapGestures(
+                    onLongPress = { showSheet = true },
+                    onDoubleTap = { doubleTapAction(settings.doubleTapAction) },
+                )
             }
     ) {
         MioWallpaper(settings)
@@ -588,6 +599,16 @@ private fun MusicWidget(track: Track?, playing: Boolean) {
 }
 
 @Composable
+private fun doubleTapAction(action: String) {
+    when (action) {
+        "drawer" -> MioNav.push(MioScreen.DRAWER)
+        "control" -> MioNav.push(MioScreen.CONTROL)
+        "ai" -> MioNav.push(MioScreen.AI)
+        "lock" -> MioNav.push(MioScreen.LOCK)
+        else -> MioNav.push(MioScreen.SEARCH)
+    }
+}
+
 private fun AppGrid(
     apps: List<MioApp>,
     columns: Int,
@@ -627,7 +648,7 @@ private fun AppGrid(
 private fun SearchPill() {
     GlassCard(Modifier.fillMaxWidth(), corner = 50.dp, alpha = 0.10f) {
         Row(
-            Modifier.fillMaxWidth().bounceClick { MioNav.push(MioScreen.DRAWER) }
+            Modifier.fillMaxWidth().bounceClick { MioNav.push(MioScreen.SEARCH) }
                 .padding(horizontal = 18.dp, vertical = 12.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -696,7 +717,13 @@ private fun HomeSheet(onDismiss: () -> Unit) {
             Spacer(Modifier.height(4.dp))
             Text("Customize SEGAWA OS", style = MioType.body)
             Spacer(Modifier.height(16.dp))
-            HomeAction("Wallpaper & themes", "Mountain, anime, aurora, live accents", Icons.Rounded.Settings) {
+            HomeAction("Arrange icons", "Drag-and-drop your home grid", Icons.Rounded.Star) {
+                onDismiss(); MioNav.push(MioScreen.ARRANGE)
+            }
+            HomeAction("Icon studio", "Profiles and per-app icons", Icons.Rounded.Settings) {
+                onDismiss(); MioNav.push(MioScreen.ICONS)
+            }
+            HomeAction("Wallpaper & themes", "Wallpapers, live, video & rotation", Icons.Rounded.Settings) {
                 onDismiss(); MioNav.push(MioScreen.THEMES)
             }
             HomeAction("Personalization", "Grid, icon size, fonts, accent colour", Icons.Rounded.Settings) {
@@ -765,6 +792,31 @@ private fun AppQuickSheet(
             }
             HomeAction("App info", "Permissions, storage, notifications", Icons.Rounded.Settings) {
                 onDismiss(); Mio.apps.openAppInfo(app.packageName)
+            }
+            val isFav = app.packageName in LocalSettings.current.favorites
+            HomeAction(
+                if (isFav) "★ Favorited" else "☆ Favorite",
+                "Pin to the drawer favorites",
+                Icons.Rounded.Star,
+            ) {
+                Mio.prefs.edit {
+                    it.copy(favorites = if (isFav) it.favorites - app.packageName else it.favorites + app.packageName)
+                }
+            }
+            val inDock = app.packageName in LocalSettings.current.dockApps
+            HomeAction(
+                if (inDock) "Remove from dock" else "Pin to dock",
+                "Bottom shortcut bar",
+                Icons.Rounded.MoreVert,
+            ) {
+                Mio.prefs.edit {
+                    val d = if (inDock) it.dockApps - app.packageName
+                    else (it.dockApps + app.packageName).take(5)
+                    it.copy(dockApps = d)
+                }
+            }
+            HomeAction("Custom icon", "Pick your own image for this app", Icons.Rounded.Settings) {
+                onDismiss(); IconStudioRequest.pkg = app.packageName; MioNav.push(MioScreen.ICONS)
             }
             HomeAction("Hide from home", "Still available in hidden apps", Icons.Rounded.MoreVert) {
                 onHide()
