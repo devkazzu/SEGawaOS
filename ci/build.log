@@ -1,8 +1,8 @@
 Starting a Gradle Daemon (subsequent builds will be faster)
 > Task :wrapper
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run-1794105539024.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run-1794106284941.json
 
-BUILD SUCCESSFUL in 15s
+BUILD SUCCESSFUL in 19s
 1 actionable task: 1 executed
 > Task :app:preBuild UP-TO-DATE
 > Task :app:preDebugBuild UP-TO-DATE
@@ -20,7 +20,6 @@ BUILD SUCCESSFUL in 15s
 > Task :app:parseDebugLocalResources
 > Task :app:processDebugMainManifest
 > Task :app:processDebugManifest
-> Task :app:processDebugManifestForPackage
 > Task :app:javaPreCompileDebug
 > Task :app:mergeDebugShaders
 > Task :app:compileDebugShaders NO-SOURCE
@@ -28,19 +27,20 @@ BUILD SUCCESSFUL in 15s
 > Task :app:mergeDebugAssets
 > Task :app:compressDebugAssets
 > Task :app:desugarDebugFileDependencies
-> Task :app:processDebugResources
-> Task :app:checkDebugDuplicateClasses
 > Task :app:mergeDebugJniLibFolders
-> Task :app:mergeLibDexDebug
+> Task :app:checkDebugDuplicateClasses
 > Task :app:mergeDebugNativeLibs
-> Task :app:validateSigningDebug
-> Task :app:writeDebugAppMetadata
-> Task :app:writeDebugSigningConfigVersions
-> Task :app:preReleaseBuild UP-TO-DATE
+> Task :app:processDebugManifestForPackage
+> Task :app:mergeLibDexDebug
 
 > Task :app:stripDebugDebugSymbols
 Unable to strip the following libraries, packaging them as they are: libandroidx.graphics.path.so.
 
+> Task :app:processDebugResources
+> Task :app:validateSigningDebug
+> Task :app:writeDebugAppMetadata
+> Task :app:writeDebugSigningConfigVersions
+> Task :app:preReleaseBuild UP-TO-DATE
 > Task :app:mergeReleaseJniLibFolders
 > Task :app:mergeReleaseNativeLibs
 > Task :app:buildKotlinToolingMetadata
@@ -49,8 +49,8 @@ Unable to strip the following libraries, packaging them as they are: libandroidx
 Unable to strip the following libraries, packaging them as they are: libandroidx.graphics.path.so.
 
 > Task :app:checkReleaseDuplicateClasses
-> Task :app:generateReleaseBuildConfig
 > Task :app:extractReleaseNativeSymbolTables
+> Task :app:generateReleaseBuildConfig
 > Task :app:mergeReleaseNativeDebugMetadata NO-SOURCE
 > Task :app:generateReleaseResValues
 > Task :app:checkReleaseAarMetadata
@@ -60,12 +60,13 @@ Unable to strip the following libraries, packaging them as they are: libandroidx
 > Task :app:parseReleaseLocalResources
 > Task :app:createReleaseCompatibleScreenManifests
 > Task :app:extractDeepLinksRelease
+> Task :app:mergeReleaseResources
 > Task :app:processReleaseMainManifest
 > Task :app:processReleaseManifest
-> Task :app:processReleaseManifestForPackage
 > Task :app:javaPreCompileRelease
-> Task :app:mergeReleaseResources
+> Task :app:processReleaseManifestForPackage
 > Task :app:mergeReleaseArtProfile
+> Task :app:processReleaseResources
 > Task :app:extractProguardFiles
 > Task :app:mergeReleaseStartupProfile
 > Task :app:mergeReleaseShaders
@@ -74,16 +75,14 @@ Unable to strip the following libraries, packaging them as they are: libandroidx
 > Task :app:mergeReleaseAssets
 > Task :app:compressReleaseAssets
 > Task :app:extractReleaseVersionControlInfo
-> Task :app:processReleaseResources
-> Task :app:collectReleaseDependencies
-> Task :app:compileDebugKotlin
-> Task :app:mergeExtDexDebug
 > Task :app:convertLinkedResourcesToProtoRelease
+> Task :app:mergeExtDexDebug
+> Task :app:collectReleaseDependencies
 > Task :app:sdkReleaseDependencyData
 > Task :app:validateSigningRelease
 > Task :app:writeReleaseAppMetadata
 > Task :app:writeReleaseSigningConfigVersions
-
+> Task :app:compileDebugKotlin
 > Task :app:compileReleaseKotlin
 w: file:///home/runner/work/SEGawaOS/SEGawaOS/app/src/main/java/com/mio/os/ui/apps/AiScreen.kt:157:40 'val Icons.Rounded.ArrowBack: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Rounded.ArrowBack.
 w: file:///home/runner/work/SEGawaOS/SEGawaOS/app/src/main/java/com/mio/os/ui/apps/AiScreen.kt:261:40 'val Icons.Rounded.Send: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Rounded.Send.
@@ -120,7 +119,7 @@ w: file:///home/runner/work/SEGawaOS/SEGawaOS/app/src/main/java/com/mio/os/ui/se
 > Task :app:packageRelease
 > Task :app:createReleaseApkListingFileRedirect
 > Task :app:assembleRelease
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/assemble-1794105551198.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/assemble-1794106300193.json
 
-BUILD SUCCESSFUL in 2m 7s
+BUILD SUCCESSFUL in 2m 55s
 84 actionable tasks: 84 executed
