@@ -598,7 +598,6 @@ private fun MusicWidget(track: Track?, playing: Boolean) {
     }
 }
 
-@Composable
 private fun doubleTapAction(action: String) {
     when (action) {
         "drawer" -> MioNav.push(MioScreen.DRAWER)
@@ -609,6 +608,7 @@ private fun doubleTapAction(action: String) {
     }
 }
 
+@Composable
 private fun AppGrid(
     apps: List<MioApp>,
     columns: Int,
