@@ -58,6 +58,7 @@ data class MioSettings(
     val favTracks: Set<String> = emptySet(),
     val routines: String = "",
     val aiActiveThread: String = "",
+    val aiThreads: String = "",
     val aiTts: Boolean = false,
     val aiMemory: String = "",
     val searchWeb: Boolean = true,
@@ -197,6 +198,7 @@ class MioPrefs(context: Context) {
             favTracks = sp.getStringSet("favTracks", emptySet())?.toSet() ?: emptySet(),
             routines = sp.getString("routines", d.routines) ?: d.routines,
             aiActiveThread = sp.getString("aiThread", d.aiActiveThread) ?: d.aiActiveThread,
+            aiThreads = sp.getString("aiThreads", d.aiThreads) ?: d.aiThreads,
             aiTts = sp.getBoolean("aiTts", d.aiTts),
             aiMemory = sp.getString("aiMemory", d.aiMemory) ?: d.aiMemory,
             searchWeb = sp.getBoolean("searchWeb", d.searchWeb),
@@ -261,6 +263,7 @@ class MioPrefs(context: Context) {
             putStringSet("favTracks", s.favTracks)
             putString("routines", s.routines)
             putString("aiThread", s.aiActiveThread)
+            putString("aiThreads", s.aiThreads)
             putBoolean("aiTts", s.aiTts)
             putString("aiMemory", s.aiMemory)
             putBoolean("searchWeb", s.searchWeb)

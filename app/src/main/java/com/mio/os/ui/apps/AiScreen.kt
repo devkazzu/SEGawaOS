@@ -2,6 +2,7 @@ package com.mio.os.ui.apps
 
 import android.content.Intent
 import android.speech.RecognizerIntent
+import android.speech.tts.TextToSpeech
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -28,6 +29,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.History
 import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.Mic
 import androidx.compose.material.icons.rounded.Send
@@ -35,6 +37,7 @@ import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -53,6 +56,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mio.os.core.AiEngine
 import com.mio.os.core.AiMessage
+import com.mio.os.core.AiThread
+import com.mio.os.core.AiThreads
 import com.mio.os.core.Mio
 import com.mio.os.core.MioNav
 import com.mio.os.core.MioScreen
@@ -78,10 +83,55 @@ fun AiScreen() {
     val accent = LocalAccent.current
     val listState = rememberLazyListState()
 
-    var messages by remember { mutableStateOf(loadHistory()) }
+    var threads by remember {
+        val existing = AiThreads.all(Mio.prefs.current.aiThreads)
+        if (existing.isNotEmpty()) {
+            mutableStateOf(existing)
+        } else {
+            // One-time migration from the single v1 history.
+            val legacy = loadHistory().takeLast(80)
+            val seeded = if (legacy.isEmpty()) {
+                AiThreads.fresh()
+            } else {
+                AiThread(
+                    "legacy",
+                    AiThreads.titleFor(legacy.firstOrNull { it.role == "user" }?.text ?: "Chat"),
+                    legacy, System.currentTimeMillis(),
+                )
+            }
+            Mio.prefs.edit { it.copy(aiThreads = AiThreads.persist(listOf(seeded)), aiActiveThread = seeded.id) }
+            mutableStateOf(listOf(seeded))
+        }
+    }
+    var activeId by remember {
+        mutableStateOf(
+            Mio.prefs.current.aiActiveThread.ifBlank { threads.firstOrNull()?.id ?: "" },
+        )
+    }
+    val active = threads.find { it.id == activeId } ?: threads.firstOrNull() ?: AiThreads.fresh()
+    val messages = active.messages
     var input by remember { mutableStateOf("") }
     var busy by remember { mutableStateOf(false) }
     var showSetup by remember { mutableStateOf(false) }
+    var showThreads by remember { mutableStateOf(false) }
+
+    var ttsReady by remember { mutableStateOf(false) }
+    val tts = remember {
+        TextToSpeech(context.applicationContext) { status ->
+            ttsReady = status == TextToSpeech.SUCCESS
+        }
+    }
+    DisposableEffect(Unit) {
+        onDispose { runCatching { tts.stop(); tts.shutdown() } }
+    }
+
+    fun speak(text: String) {
+        if (!ttsReady) {
+            com.mio.os.core.LauncherHelper.toast(context, "Voice engine not ready yet")
+            return
+        }
+        runCatching { tts.speak(text.take(1200), TextToSpeech.QUEUE_FLUSH, null, "segawa-ai") }
+    }
 
     var pendingVoice by remember { mutableStateOf(false) }
     val voiceLauncher = rememberLauncherForActivityResult(
@@ -94,30 +144,32 @@ fun AiScreen() {
         }
     }
 
-    fun persist(list: List<AiMessage>) {
-        val arr = JSONArray()
-        list.takeLast(80).forEach { m ->
-            arr.put(JSONObject().put("role", m.role).put("text", m.text).put("time", m.time))
-        }
-        Mio.prefs.edit { it.copy(aiHistory = arr.toString()) }
+    fun persistTo(id: String, list: List<AiMessage>) {
+        val target = threads.find { it.id == id } ?: return
+        val title = list.firstOrNull { it.role == "user" }?.text?.let { AiThreads.titleFor(it) }
+            ?: target.title
+        val updated = target.copy(title = title, messages = list.takeLast(80), updated = System.currentTimeMillis())
+        val next = (listOf(updated) + threads.filterNot { it.id == id }).sortedByDescending { it.updated }
+        threads = next
+        Mio.prefs.edit { it.copy(aiThreads = AiThreads.persist(next), aiActiveThread = id) }
     }
 
     fun send() {
         val text = input.trim()
         if (text.isEmpty() || busy) return
+        val id = active.id
         val userMsg = AiMessage("user", text)
         val next = messages + userMsg
-        messages = next
-        persist(next)
+        persistTo(id, next)
         input = ""
         busy = true
         scope.launch {
             val reply = AiEngine.send(context, next.dropLast(1), text)
-            val updated = messages + reply
-            messages = updated
-            persist(updated)
+            val base = threads.find { it.id == id }?.messages ?: next
+            persistTo(id, base + reply)
             busy = false
-            listState.animateScrollToItem((updated.size - 1).coerceAtLeast(0))
+            if (Mio.prefs.current.aiTts) speak(reply.text)
+            listState.animateScrollToItem(base.size.coerceAtLeast(0))
         }
     }
 
@@ -165,6 +217,14 @@ fun AiScreen() {
                 Spacer(Modifier.weight(1f))
                 Box(
                     Modifier.size(38.dp).clip(CircleShape).background(Color.White.copy(alpha = 0.09f))
+                        .bounceClick { showThreads = true },
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Icon(Icons.Rounded.History, "Chats", tint = Color.White, modifier = Modifier.size(18.dp))
+                }
+                Spacer(Modifier.width(8.dp))
+                Box(
+                    Modifier.size(38.dp).clip(CircleShape).background(Color.White.copy(alpha = 0.09f))
                         .bounceClick { showSetup = !showSetup },
                     contentAlignment = Alignment.Center,
                 ) {
@@ -208,7 +268,9 @@ fun AiScreen() {
                     ),
                     verticalArrangement = Arrangement.spacedBy(10.dp),
                 ) {
-                    items(messages) { m -> ChatBubble(m) }
+                    items(messages) { m ->
+                        ChatBubble(m, onSpeak = if (m.role == "assistant") ({ speak(m.text) }) else null)
+                    }
                     if (busy) {
                         item { TypingBubble() }
                     }
@@ -268,11 +330,47 @@ fun AiScreen() {
                 endpoint = settings.aiEndpoint,
                 apiKey = settings.aiKey,
                 model = settings.aiModel,
+                tts = settings.aiTts,
                 onDismiss = { showSetup = false },
                 onSave = { e, k, m ->
                     Mio.prefs.edit { it.copy(aiEndpoint = e, aiKey = k, aiModel = m) }
                     showSetup = false
                 },
+            )
+        }
+
+        if (showThreads) {
+            ThreadsSheet(
+                threads = threads,
+                activeId = activeId,
+                onSelect = { id ->
+                    activeId = id
+                    Mio.prefs.edit { it.copy(aiActiveThread = id) }
+                    showThreads = false
+                },
+                onNew = {
+                    val t = AiThreads.fresh()
+                    val next = (listOf(t) + threads).sortedByDescending { it.updated }
+                    threads = next
+                    activeId = t.id
+                    Mio.prefs.edit { it.copy(aiThreads = AiThreads.persist(next), aiActiveThread = t.id) }
+                    showThreads = false
+                },
+                onDelete = { id ->
+                    var next = threads.filterNot { it.id == id }
+                    if (next.isEmpty()) next = listOf(AiThreads.fresh())
+                    if (activeId == id) activeId = next.first().id
+                    threads = next
+                    Mio.prefs.edit { it.copy(aiThreads = AiThreads.persist(next), aiActiveThread = activeId) }
+                },
+                onClear = {
+                    val t = AiThreads.fresh()
+                    threads = listOf(t)
+                    activeId = t.id
+                    Mio.prefs.edit { it.copy(aiThreads = AiThreads.persist(listOf(t)), aiActiveThread = t.id) }
+                    showThreads = false
+                },
+                onDismiss = { showThreads = false },
             )
         }
     }
@@ -324,11 +422,11 @@ private fun QuickActions(onAction: (String) -> Unit) {
 }
 
 @Composable
-private fun ChatBubble(m: AiMessage) {
+private fun ChatBubble(m: AiMessage, onSpeak: (() -> Unit)?) {
     val isUser = m.role == "user"
-    Row(
+    Column(
         Modifier.fillMaxWidth(),
-        horizontalArrangement = if (isUser) Arrangement.End else Arrangement.Start,
+        horizontalAlignment = if (isUser) Alignment.End else Alignment.Start,
     ) {
         Box(
             Modifier
@@ -354,6 +452,25 @@ private fun ChatBubble(m: AiMessage) {
                 ),
             )
         }
+        if (!isUser) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(top = 4.dp, start = 6.dp),
+            ) {
+                Text(
+                    if (m.local) "on-device" else "cloud",
+                    style = MioType.micro.copy(fontSize = 8.5.sp, color = Color.White.copy(alpha = 0.45f)),
+                )
+                if (onSpeak != null) {
+                    Spacer(Modifier.width(10.dp))
+                    Text(
+                        "Read aloud",
+                        style = MioType.micro.copy(fontSize = 8.5.sp, color = LocalAccent.current),
+                        modifier = Modifier.bounceClick(onClick = onSpeak).padding(vertical = 2.dp),
+                    )
+                }
+            }
+        }
     }
 }
 
@@ -374,6 +491,7 @@ private fun AiSetupSheet(
     endpoint: String,
     apiKey: String,
     model: String,
+    tts: Boolean,
     onDismiss: () -> Unit,
     onSave: (String, String, String) -> Unit,
 ) {
@@ -407,7 +525,101 @@ private fun AiSetupSheet(
                 Spacer(Modifier.width(8.dp))
                 com.mio.os.ui.settings.SettingsPill("Use offline mode") { onSave("", "", "") }
             }
+            Spacer(Modifier.height(10.dp))
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                com.mio.os.ui.settings.SettingsPill(if (tts) "Voice replies: on" else "Voice replies: off") {
+                    Mio.prefs.edit { it.copy(aiTts = !it.aiTts) }
+                }
+            }
+            Spacer(Modifier.height(4.dp))
+            Text(
+                "Voice replies read every answer aloud with the system text-to-speech engine.",
+                style = MioType.micro.copy(fontSize = 9.5.sp),
+            )
             Spacer(Modifier.height(24.dp))
+        }
+    }
+}
+
+@Composable
+private fun ThreadsSheet(
+    threads: List<AiThread>,
+    activeId: String,
+    onSelect: (String) -> Unit,
+    onNew: () -> Unit,
+    onDelete: (String) -> Unit,
+    onClear: () -> Unit,
+    onDismiss: () -> Unit,
+) {
+    androidx.compose.material3.ModalBottomSheet(
+        onDismissRequest = onDismiss,
+        containerColor = Color(0xFF0D0918),
+        dragHandle = { com.mio.os.ui.components.SheetHandle() },
+    ) {
+        Column(Modifier.padding(horizontal = 20.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text("Chats", style = MioType.h2, modifier = Modifier.weight(1f))
+                com.mio.os.ui.settings.SettingsPill("New chat", primary = true, onClick = onNew)
+            }
+            Spacer(Modifier.height(4.dp))
+            Text(
+                "${threads.size} conversation" + if (threads.size == 1) "" else "s" + " · stored on this device",
+                style = MioType.micro.copy(fontSize = 10.sp),
+            )
+            Spacer(Modifier.height(10.dp))
+            LazyColumn(Modifier.height(320.dp)) {
+                items(threads, key = { it.id }) { t ->
+                    val selected = t.id == activeId
+                    GlassCard(
+                        Modifier.fillMaxWidth().padding(vertical = 4.dp)
+                            .bounceClick(scaleDown = 0.98f) { onSelect(t.id) },
+                        corner = 16.dp, alpha = if (selected) 0.14f else 0.06f,
+                    ) {
+                        Row(
+                            Modifier.padding(13.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Column(Modifier.weight(1f)) {
+                                Text(
+                                    t.title,
+                                    style = MioType.title.copy(
+                                        fontSize = 12.5.sp,
+                                        color = if (selected) LocalAccent.current else Color.White,
+                                    ),
+                                    maxLines = 1,
+                                )
+                                Text(
+                                    (if (t.messages.isEmpty()) "Empty" else "${t.messages.size} messages") +
+                                        " · " + android.text.format.DateFormat.format("d MMM · HH:mm", t.updated),
+                                    style = MioType.micro.copy(fontSize = 9.5.sp),
+                                )
+                            }
+                            if (threads.size > 1 || t.messages.isNotEmpty()) {
+                                Text(
+                                    "Delete",
+                                    style = MioType.micro.copy(
+                                        fontSize = 9.5.sp,
+                                        color = Color.White.copy(alpha = 0.55f),
+                                    ),
+                                    modifier = Modifier.bounceClick { onDelete(t.id) }
+                                        .padding(start = 8.dp, top = 6.dp, bottom = 6.dp),
+                                )
+                            }
+                        }
+                    }
+                }
+                item {
+                    Spacer(Modifier.height(10.dp))
+                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+                        Text(
+                            "Clear all chats",
+                            style = MioType.micro.copy(fontSize = 10.5.sp, color = MioColors.Pink),
+                            modifier = Modifier.bounceClick(onClick = onClear).padding(8.dp),
+                        )
+                    }
+                    Spacer(Modifier.height(24.dp))
+                }
+            }
         }
     }
 }

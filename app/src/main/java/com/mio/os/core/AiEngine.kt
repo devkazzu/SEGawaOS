@@ -10,7 +10,13 @@ import java.net.HttpURLConnection
 import java.net.URL
 import java.util.Locale
 
-data class AiMessage(val role: String, val text: String, val time: Long = System.currentTimeMillis())
+data class AiMessage(
+    val role: String,
+    val text: String,
+    val time: Long = System.currentTimeMillis(),
+    /** True when answered on-device (local command, local model or fallback). */
+    val local: Boolean = true,
+)
 
 /**
  * Modular AI layer.
@@ -24,14 +30,14 @@ object AiEngine {
 
     suspend fun send(context: Context, history: List<AiMessage>, prompt: String): AiMessage {
         LocalAssistant.execute(context, prompt)?.let { action ->
-            return AiMessage("assistant", action)
+            return AiMessage("assistant", action, local = true)
         }
         val settings = Mio.prefs.current
         if (settings.aiEndpoint.isNotBlank()) {
             val remote = runCatching { remote(context, settings, history, prompt) }.getOrNull()
-            if (!remote.isNullOrBlank()) return AiMessage("assistant", remote)
+            if (!remote.isNullOrBlank()) return AiMessage("assistant", remote, local = false)
         }
-        return AiMessage("assistant", LocalAssistant.reply(context, prompt))
+        return AiMessage("assistant", LocalAssistant.reply(context, prompt), local = true)
     }
 
     private fun remote(
@@ -89,6 +95,13 @@ object LocalAssistant {
     fun execute(context: Context, prompt: String): String? {
         val p = prompt.lowercase(Locale.getDefault()).trim()
 
+        SEGAWA_SCREENS.forEach { (keys, screen, label) ->
+            if (keys.any { k -> p == "open $k" || p == "launch $k" || p == "go to $k" || p == "show $k" }) {
+                MioNav.push(screen)
+                return "Opening $label."
+            }
+        }
+
         if (p.startsWith("open ") || p.startsWith("launch ")) {
             val target = p.removePrefix("open ").removePrefix("launch ").trim()
             val app = Mio.apps.apps.value.firstOrNull {
@@ -113,6 +126,12 @@ object LocalAssistant {
             return "This device has no camera flash."
         }
 
+        Regex("brightness (\\d{1,3})").find(p)?.let {
+            val v = it.groupValues[1].toIntOrNull()?.coerceIn(0, 100) ?: return@let
+            val ok = SystemControls.setSystemBrightness(context, (v * 255 / 100).coerceIn(1, 255))
+            return if (ok) "Brightness $v%."
+            else "Grant “Modify system settings” in Settings ▸ Privacy to change brightness."
+        }
         if (p.contains("brightness")) {
             if (p.contains("max") || p.contains("full") || p.contains("100")) {
                 val ok = SystemControls.setSystemBrightness(context, 250)
@@ -144,7 +163,35 @@ object LocalAssistant {
                 "SEGAWA OS is your default home app – pressing Home opens it."
             else "SEGAWA OS is not the default home app yet. Open Settings ▸ Home screen ▸ Set as default."
         }
-        if (p.startsWith("note ") || p.startsWith("remember ")) {
+        if (p.startsWith("remember that ")) {
+            val fact = prompt.trim().removePrefix("remember that ").removePrefix("Remember that ").trim()
+            if (fact.length >= 4) {
+                AiMemory.rememberFact(fact)
+                return "Got it — I will remember that."
+            }
+        }
+        Regex("^my (.+?) is (.+)$").find(p)?.let {
+            val key = it.groupValues[1].trim()
+            val value = it.groupValues[2].trim().removeSuffix(".")
+            if (key.length >= 2 && value.length >= 1) {
+                AiMemory.rememberPair(key, prompt.substringAfter(" is ").trim())
+                return "Noted — your $key is saved on this device."
+            }
+        }
+        Regex("what(?:'s| is) my (.+)").find(p)?.let {
+            val key = it.groupValues[1].trim().removeSuffix("?").trim()
+            val hit = AiMemory.recall(key)
+            return hit ?: "I don't have anything saved about your $key yet. Tell me with “my $key is …”."
+        }
+        if (p == "what do you remember" || p == "what do you remember about me") {
+            return AiMemory.describe()
+        }
+        if (p.startsWith("forget my ")) {
+            val key = p.removePrefix("forget my ").trim()
+            return if (AiMemory.forget(key)) "Forgot everything about your $key."
+            else "I had nothing saved about your $key."
+        }
+        if (p.startsWith("note ") || (p.startsWith("remember ") && !p.startsWith("remember that "))) {
             val content = prompt.removePrefix("note ").removePrefix("remember ").trim()
             if (content.isNotBlank()) {
                 NotesRepo.add(context, content)
@@ -160,6 +207,58 @@ object LocalAssistant {
         if (p.contains("pause")) {
             MioPlayer.pause()
             return "Paused."
+        }
+        if ((p.contains("next") || p.contains("skip")) && (p.contains("song") || p.contains("track") || p.contains("music"))) {
+            MioPlayer.next(context)
+            return "Skipped to the next track."
+        }
+        if (p.contains("previous") || (p.contains("last") && p.contains("song")) || p.contains("go back") && p.contains("song")) {
+            MioPlayer.previous(context)
+            return "Back to the previous track."
+        }
+        if (p.contains("volume")) {
+            val max = SystemControls.mediaVolumeMax(context).coerceAtLeast(1)
+            val cur = SystemControls.mediaVolume(context)
+            val next = when {
+                p.contains("mute") || p.contains("silent") || p.contains(" 0") -> 0
+                p.contains("max") || p.contains("full") || p.contains("100") -> max
+                p.contains("up") || p.contains("louder") || p.contains("+") -> (cur + max / 5).coerceAtMost(max)
+                p.contains("down") || p.contains("quieter") || p.contains("lower") -> (cur - max / 5).coerceAtLeast(0)
+                else -> null
+            }
+            if (next != null) {
+                SystemControls.setMediaVolume(context, next)
+                return "Volume ${(next * 100 / max)}%."
+            }
+            return "Volume is at ${(cur * 100 / max)}%. Say “volume up” or “volume 50”."
+        }
+        Regex("volume (\\d{1,3})").find(p)?.let {
+            val v = it.groupValues[1].toIntOrNull()?.coerceIn(0, 100) ?: return@let
+            SystemControls.setMediaVolume(context, v * SystemControls.mediaVolumeMax(context) / 100)
+            return "Volume $v%."
+        }
+        if ((p.contains("dnd") || p.contains("do not disturb")) && (p.contains("on") || p.contains("off") || p.contains("enable") || p.contains("disable"))) {
+            if (!LauncherHelper.dndAccess(context)) {
+                SystemControls.open(context, LauncherHelper.dndAccessIntent(context))
+                return "Grant Do Not Disturb access first — I opened the system screen."
+            }
+            val wantOn = p.contains("on") || p.contains("enable")
+            if (SystemControls.dnd.value != wantOn) SystemControls.toggleDnd(context)
+            return if (wantOn) "Do Not Disturb on." else "Do Not Disturb off."
+        }
+        if (p.contains("wallpaper") && (p.contains("next") || p.contains("rotate") || p.contains("change") || p.contains("shuffle"))) {
+            val id = WallpaperRepo.nextRotation(Mio.prefs.current.wallpaperId, Mio.prefs.current.favWalls)
+            Mio.prefs.edit { it.copy(wallpaperId = id, wallpaperUri = null) }
+            return "Wallpaper rotated."
+        }
+        if ((p.startsWith("use ") || p.startsWith("switch to ") || p.startsWith("theme ")) && p.contains("theme") || p.startsWith("apply theme ")) {
+            val want = p.removePrefix("use ").removePrefix("switch to ").removePrefix("theme ").removePrefix("apply theme ").removeSuffix(" theme").trim()
+            val spec = SegaThemes.firstOrNull { it.name.lowercase(Locale.getDefault()).contains(want) || it.id == want }
+            if (spec != null) {
+                spec.applyTo(Mio.prefs)
+                return "Applied the ${spec.name} theme."
+            }
+            return "I know these themes: " + SegaThemes.joinToString(", ") { it.name } + "."
         }
         if (p.contains("wifi") || p.contains("wi-fi")) {
             SystemControls.open(context, SystemControls.wifiPanel(context))
@@ -183,7 +282,8 @@ object LocalAssistant {
             p.contains("joke") ->
                 "Why did the launcher break up with the widget? It needed more space. Bad pun, better battery."
             p.contains("help") || p.contains("what can you do") ->
-                "Try: “open camera”, “torch on”, “battery”, “note buy milk”, “play music”, “am I the default launcher?”"
+                "Try: “open camera”, “open themes”, “torch on”, “volume 40”, “next song”, “note buy milk”, " +
+                    "“my bike is red”, “what is my bike?”, “use cyberpunk theme”, “next wallpaper”, “dnd on”."
             else ->
                 "I am running in local mode, so I can act on your device rather than write long answers. " +
                     "Add your own OpenAI-compatible endpoint under AI ▸ Settings to unlock full conversation."
@@ -259,4 +359,183 @@ object NotesRepo {
         val words = clean.split(' ').size
         return head + "\n\n$words words · ~${(words / 200).coerceAtLeast(1)} min read · summarized on-device."
     }
+}
+
+/** SEGAWA screens addressable by voice or text ("open themes", "go to notes"). */
+private val SEGAWA_SCREENS: List<Triple<List<String>, MioScreen, String>> = listOf(
+    Triple(listOf("themes", "theme", "personalization"), MioScreen.THEMES, "Themes"),
+    Triple(listOf("notes", "note"), MioScreen.NOTES, "Notes"),
+    Triple(listOf("music", "player", "songs"), MioScreen.MUSIC, "Music"),
+    Triple(listOf("browser", "web", "internet"), MioScreen.BROWSER, "Browser"),
+    Triple(listOf("settings"), MioScreen.SETTINGS, "Settings"),
+    Triple(listOf("gallery", "photos"), MioScreen.GALLERY, "Gallery"),
+    Triple(listOf("files", "file manager"), MioScreen.FILES, "Files"),
+    Triple(listOf("clock", "alarm", "timer"), MioScreen.CLOCK, "Clock"),
+    Triple(listOf("calendar"), MioScreen.CALENDAR, "Calendar"),
+    Triple(listOf("weather"), MioScreen.WEATHER, "Weather"),
+    Triple(listOf("search"), MioScreen.SEARCH, "Search"),
+    Triple(listOf("automation", "routines"), MioScreen.AUTOMATION, "Automation"),
+    Triple(listOf("backup"), MioScreen.BACKUP, "Backup"),
+    Triple(listOf("store", "theme store"), MioScreen.STORE, "the Theme store"),
+    Triple(listOf("control center", "controls"), MioScreen.CONTROL, "Control Center"),
+    Triple(listOf("drawer", "apps", "app drawer"), MioScreen.DRAWER, "the app drawer"),
+    Triple(listOf("home", "home screen"), MioScreen.HOME, "home"),
+    Triple(listOf("calculator"), MioScreen.CALCULATOR, "Calculator"),
+    Triple(listOf("gaming", "games"), MioScreen.GAMING, "Gaming"),
+    Triple(listOf("about"), MioScreen.ABOUT, "About"),
+)
+
+/**
+ * Tiny on-device memory: free-form facts ("remember that …") plus key/value
+ * pairs ("my bike is red"). Stored as JSON in [MioSettings.aiMemory]; nothing
+ * ever leaves the device.
+ */
+object AiMemory {
+
+    private fun doc(): JSONObject {
+        val raw = Mio.prefs.current.aiMemory
+        return runCatching { JSONObject(raw) }.getOrDefault(JSONObject())
+    }
+
+    private fun save(doc: JSONObject) {
+        Mio.prefs.edit { it.copy(aiMemory = doc.toString()) }
+    }
+
+    fun rememberFact(fact: String) {
+        val doc = doc()
+        val arr = doc.optJSONArray("facts") ?: JSONArray()
+        val next = JSONArray()
+        next.put(fact.take(200))
+        for (i in 0 until arr.length().coerceAtMost(49)) next.put(arr.optString(i))
+        doc.put("facts", next)
+        save(doc)
+    }
+
+    fun rememberPair(key: String, value: String) {
+        val doc = doc()
+        val pairs = doc.optJSONObject("pairs") ?: JSONObject()
+        pairs.put(key.lowercase(Locale.getDefault()).take(40), value.take(200))
+        doc.put("pairs", pairs)
+        save(doc)
+    }
+
+    fun recall(key: String): String? {
+        val k = key.lowercase(Locale.getDefault())
+        val pairs = doc().optJSONObject("pairs")
+        if (pairs != null) {
+            pairs.keys().forEach { name ->
+                if (k.contains(name) || name.contains(k)) {
+                    return "Your $name is ${pairs.optString(name)}."
+                }
+            }
+        }
+        val arr = doc().optJSONArray("facts")
+        if (arr != null) {
+            for (i in 0 until arr.length()) {
+                val f = arr.optString(i)
+                if (f.lowercase(Locale.getDefault()).contains(k)) return "You told me: “$f”."
+            }
+        }
+        return null
+    }
+
+    fun forget(key: String): Boolean {
+        val k = key.lowercase(Locale.getDefault())
+        val doc = doc()
+        var changed = false
+        val pairs = doc.optJSONObject("pairs")
+        if (pairs != null) {
+            val drop = ArrayList<String>()
+            pairs.keys().forEach { name -> if (k.contains(name) || name.contains(k)) drop += name }
+            drop.forEach { pairs.remove(it); changed = true }
+            doc.put("pairs", pairs)
+        }
+        val arr = doc.optJSONArray("facts")
+        if (arr != null) {
+            val next = JSONArray()
+            for (i in 0 until arr.length()) {
+                val f = arr.optString(i)
+                if (f.lowercase(Locale.getDefault()).contains(k)) changed = true else next.put(f)
+            }
+            doc.put("facts", next)
+        }
+        if (changed) save(doc)
+        return changed
+    }
+
+    fun describe(): String {
+        val doc = doc()
+        val pairs = doc.optJSONObject("pairs")
+        val bits = ArrayList<String>()
+        if (pairs != null) {
+            pairs.keys().forEach { name -> bits += "your $name is ${pairs.optString(name)}" }
+        }
+        val arr = doc.optJSONArray("facts")
+        if (arr != null) for (i in 0 until arr.length()) bits += "“${arr.optString(i)}”"
+        return if (bits.isEmpty()) {
+            "Nothing yet. Tell me things like “my bike is red” or “remember that I water plants on Sundays”."
+        } else {
+            "Here's what I remember:\n• " + bits.take(10).joinToString("\n• ")
+        }
+    }
+}
+
+/** Chat threads: capped JSON in [MioSettings.aiThreads], newest first. */
+data class AiThread(val id: String, val title: String, val messages: List<AiMessage>, val updated: Long)
+
+object AiThreads {
+
+    fun all(raw: String): List<AiThread> {
+        if (raw.isBlank()) return emptyList()
+        return runCatching {
+            val arr = JSONArray(raw)
+            (0 until arr.length()).mapNotNull { i ->
+                val o = arr.optJSONObject(i) ?: return@mapNotNull null
+                val msgs = ArrayList<AiMessage>()
+                val marr = o.optJSONArray("messages")
+                if (marr != null) {
+                    for (k in 0 until marr.length()) {
+                        val m = marr.optJSONObject(k) ?: continue
+                        val text = m.optString("text", "")
+                        if (text.isBlank()) continue
+                        msgs += AiMessage(
+                            m.optString("role", "assistant"), text,
+                            m.optLong("time", 0L), m.optBoolean("local", true),
+                        )
+                    }
+                }
+                AiThread(
+                    o.optString("id", "$i"), o.optString("title", "Chat").ifBlank { "Chat" },
+                    msgs, o.optLong("updated", 0L),
+                )
+            }.sortedByDescending { it.updated }
+        }.getOrDefault(emptyList())
+    }
+
+    fun persist(list: List<AiThread>): String {
+        val arr = JSONArray()
+        list.sortedByDescending { it.updated }.take(20).forEach { t ->
+            val marr = JSONArray()
+            t.messages.takeLast(80).forEach { m ->
+                marr.put(
+                    JSONObject().put("role", m.role).put("text", m.text)
+                        .put("time", m.time).put("local", m.local),
+                )
+            }
+            arr.put(
+                JSONObject().put("id", t.id).put("title", t.title.take(48))
+                    .put("messages", marr).put("updated", t.updated),
+            )
+        }
+        return arr.toString()
+    }
+
+    fun titleFor(firstText: String): String {
+        val words = firstText.trim().split(Regex("\\s+")).take(6).joinToString(" ")
+        return words.take(40).ifBlank { "Chat" }
+    }
+
+    fun fresh(): AiThread = AiThread(
+        System.currentTimeMillis().toString(), "New chat", emptyList(), System.currentTimeMillis(),
+    )
 }
