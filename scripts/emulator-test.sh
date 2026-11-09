@@ -184,6 +184,15 @@ open_screen calculator 22-calculator.png
 open_screen weather 23-weather.png
 open_screen gaming 24-gaming.png
 open_screen lock 25-lock-screen.png
+
+step "13b. v2.0 screens: search, browser, arrange, icons, automation, backup, store"
+open_screen search 31-search.png
+open_screen browser 32-browser.png
+open_screen arrange 33-arrange.png
+open_screen icons 34-icon-studio.png
+open_screen automation 35-automation.png
+open_screen backup 36-backup.png
+open_screen store 37-store.png
 open_screen home 26-home-final.png
 
 step "14. Launch a real third-party app from the drawer, then press Home"

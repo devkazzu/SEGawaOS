@@ -88,6 +88,10 @@ class MainActivity : ComponentActivity() {
             "search" -> MioScreen.SEARCH
             "arrange" -> MioScreen.ARRANGE
             "icons" -> MioScreen.ICONS
+            "browser" -> MioScreen.BROWSER
+            "automation" -> MioScreen.AUTOMATION
+            "backup" -> MioScreen.BACKUP
+            "store" -> MioScreen.STORE
             "setup" -> MioScreen.WELCOME
             else -> null
         }
