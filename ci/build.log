@@ -1,27 +1,29 @@
 Starting a Gradle Daemon (subsequent builds will be faster)
 > Task :wrapper
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run-1794188268427.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run-1794188398369.json
 
-BUILD SUCCESSFUL in 9s
+BUILD SUCCESSFUL in 18s
 1 actionable task: 1 executed
+> Task :app:checkKotlinGradlePluginConfigurationErrors SKIPPED
 > Task :app:preBuild UP-TO-DATE
 > Task :app:preDebugBuild UP-TO-DATE
-> Task :app:mergeDebugNativeDebugMetadata NO-SOURCE
-> Task :app:checkKotlinGradlePluginConfigurationErrors SKIPPED
 > Task :app:generateDebugBuildConfig
 > Task :app:generateDebugResValues
 > Task :app:checkDebugAarMetadata
 > Task :app:mapDebugSourceSetPaths
 > Task :app:generateDebugResources
 > Task :app:packageDebugResources
+> Task :app:mergeDebugResources
 > Task :app:createDebugCompatibleScreenManifests
 > Task :app:extractDeepLinksDebug
-> Task :app:mergeDebugResources
 > Task :app:parseDebugLocalResources
 > Task :app:processDebugMainManifest
 > Task :app:processDebugManifest
+> Task :app:preDebugUnitTestBuild UP-TO-DATE
 > Task :app:processDebugManifestForPackage
 > Task :app:javaPreCompileDebug
+> Task :app:javaPreCompileDebugUnitTest
+> Task :app:mergeDebugNativeDebugMetadata NO-SOURCE
 > Task :app:mergeDebugShaders
 > Task :app:compileDebugShaders NO-SOURCE
 > Task :app:generateDebugAssets UP-TO-DATE
@@ -30,8 +32,8 @@ BUILD SUCCESSFUL in 9s
 > Task :app:desugarDebugFileDependencies
 > Task :app:mergeDebugJniLibFolders
 > Task :app:checkDebugDuplicateClasses
-> Task :app:mergeDebugNativeLibs
 > Task :app:processDebugResources
+> Task :app:mergeDebugNativeLibs
 > Task :app:mergeLibDexDebug
 
 > Task :app:stripDebugDebugSymbols
@@ -49,14 +51,19 @@ Unable to strip the following libraries, packaging them as they are: libandroidx
 Unable to strip the following libraries, packaging them as they are: libandroidx.graphics.path.so.
 
 > Task :app:checkReleaseDuplicateClasses
-> Task :app:extractReleaseNativeSymbolTables
 > Task :app:generateReleaseBuildConfig
+> Task :app:extractReleaseNativeSymbolTables
 > Task :app:mergeReleaseNativeDebugMetadata NO-SOURCE
-> Task :app:checkReleaseAarMetadata
 > Task :app:generateReleaseResValues
+> Task :app:checkReleaseAarMetadata
 > Task :app:mapReleaseSourceSetPaths
 > Task :app:generateReleaseResources
 > Task :app:packageReleaseResources
+
+> Task :app:compileDebugKotlin
+e: The daemon has terminated unexpectedly on startup attempt #1 with error code: 0. The daemon process output:
+    1. Kotlin compile daemon is ready
+
 > Task :app:parseReleaseLocalResources
 > Task :app:createReleaseCompatibleScreenManifests
 > Task :app:extractDeepLinksRelease
@@ -83,34 +90,34 @@ Unable to strip the following libraries, packaging them as they are: libandroidx
 > Task :app:writeReleaseAppMetadata
 > Task :app:writeReleaseSigningConfigVersions
 
-> Task :app:compileDebugKotlin FAILED
-e: file:///home/runner/work/SEGawaOS/SEGawaOS/app/src/main/java/com/mio/os/ui/MioRoot.kt:112:50 Unresolved reference 'BrowserScreen'.
-e: file:///home/runner/work/SEGawaOS/SEGawaOS/app/src/main/java/com/mio/os/ui/MioRoot.kt:113:53 Unresolved reference 'AutomationScreen'.
-e: file:///home/runner/work/SEGawaOS/SEGawaOS/app/src/main/java/com/mio/os/ui/MioRoot.kt:114:49 Unresolved reference 'BackupScreen'.
-e: file:///home/runner/work/SEGawaOS/SEGawaOS/app/src/main/java/com/mio/os/ui/MioRoot.kt:115:48 Unresolved reference 'StoreScreen'.
-e: file:///home/runner/work/SEGawaOS/SEGawaOS/app/src/main/java/com/mio/os/ui/apps/BrowserScreen.kt:215:34 Unresolved reference 'javaScriptEnabled'.
-e: file:///home/runner/work/SEGawaOS/SEGawaOS/app/src/main/java/com/mio/os/ui/apps/BrowserScreen.kt:216:34 Unresolved reference 'domStorageEnabled'.
-e: file:///home/runner/work/SEGawaOS/SEGawaOS/app/src/main/java/com/mio/os/ui/apps/BrowserScreen.kt:217:34 Unresolved reference 'loadWithOverviewMode'.
-e: file:///home/runner/work/SEGawaOS/SEGawaOS/app/src/main/java/com/mio/os/ui/apps/BrowserScreen.kt:218:34 Unresolved reference 'useWideViewPort'.
-e: file:///home/runner/work/SEGawaOS/SEGawaOS/app/src/main/java/com/mio/os/ui/apps/BrowserScreen.kt:219:34 Unresolved reference 'builtInZoomControls'.
-e: file:///home/runner/work/SEGawaOS/SEGawaOS/app/src/main/java/com/mio/os/ui/apps/BrowserScreen.kt:220:34 Unresolved reference 'displayZoomControls'.
-e: file:///home/runner/work/SEGawaOS/SEGawaOS/app/src/main/java/com/mio/os/ui/apps/MusicScreen.kt:319:33 No value passed for parameter 'onClick'.
-e: file:///home/runner/work/SEGawaOS/SEGawaOS/app/src/main/java/com/mio/os/ui/apps/MusicScreen.kt:320:31 Too many arguments for 'fun TrackRow(track: Track, selected: Boolean, playing: Boolean, onClick: () -> Unit, onAdd: (() -> Unit)? = ...): Unit'.
-
 > Task :app:compileReleaseKotlin FAILED
 e: file:///home/runner/work/SEGawaOS/SEGawaOS/app/src/main/java/com/mio/os/ui/MioRoot.kt:112:50 Unresolved reference 'BrowserScreen'.
 e: file:///home/runner/work/SEGawaOS/SEGawaOS/app/src/main/java/com/mio/os/ui/MioRoot.kt:113:53 Unresolved reference 'AutomationScreen'.
 e: file:///home/runner/work/SEGawaOS/SEGawaOS/app/src/main/java/com/mio/os/ui/MioRoot.kt:114:49 Unresolved reference 'BackupScreen'.
 e: file:///home/runner/work/SEGawaOS/SEGawaOS/app/src/main/java/com/mio/os/ui/MioRoot.kt:115:48 Unresolved reference 'StoreScreen'.
-e: file:///home/runner/work/SEGawaOS/SEGawaOS/app/src/main/java/com/mio/os/ui/apps/BrowserScreen.kt:215:34 Unresolved reference 'javaScriptEnabled'.
-e: file:///home/runner/work/SEGawaOS/SEGawaOS/app/src/main/java/com/mio/os/ui/apps/BrowserScreen.kt:216:34 Unresolved reference 'domStorageEnabled'.
-e: file:///home/runner/work/SEGawaOS/SEGawaOS/app/src/main/java/com/mio/os/ui/apps/BrowserScreen.kt:217:34 Unresolved reference 'loadWithOverviewMode'.
-e: file:///home/runner/work/SEGawaOS/SEGawaOS/app/src/main/java/com/mio/os/ui/apps/BrowserScreen.kt:218:34 Unresolved reference 'useWideViewPort'.
-e: file:///home/runner/work/SEGawaOS/SEGawaOS/app/src/main/java/com/mio/os/ui/apps/BrowserScreen.kt:219:34 Unresolved reference 'builtInZoomControls'.
-e: file:///home/runner/work/SEGawaOS/SEGawaOS/app/src/main/java/com/mio/os/ui/apps/BrowserScreen.kt:220:34 Unresolved reference 'displayZoomControls'.
+e: file:///home/runner/work/SEGawaOS/SEGawaOS/app/src/main/java/com/mio/os/ui/apps/BrowserScreen.kt:216:34 Unresolved reference 'javaScriptEnabled'.
+e: file:///home/runner/work/SEGawaOS/SEGawaOS/app/src/main/java/com/mio/os/ui/apps/BrowserScreen.kt:217:34 Unresolved reference 'domStorageEnabled'.
+e: file:///home/runner/work/SEGawaOS/SEGawaOS/app/src/main/java/com/mio/os/ui/apps/BrowserScreen.kt:218:34 Unresolved reference 'loadWithOverviewMode'.
+e: file:///home/runner/work/SEGawaOS/SEGawaOS/app/src/main/java/com/mio/os/ui/apps/BrowserScreen.kt:219:34 Unresolved reference 'useWideViewPort'.
+e: file:///home/runner/work/SEGawaOS/SEGawaOS/app/src/main/java/com/mio/os/ui/apps/BrowserScreen.kt:220:34 Unresolved reference 'builtInZoomControls'.
+e: file:///home/runner/work/SEGawaOS/SEGawaOS/app/src/main/java/com/mio/os/ui/apps/BrowserScreen.kt:221:34 Unresolved reference 'displayZoomControls'.
 e: file:///home/runner/work/SEGawaOS/SEGawaOS/app/src/main/java/com/mio/os/ui/apps/MusicScreen.kt:319:33 No value passed for parameter 'onClick'.
 e: file:///home/runner/work/SEGawaOS/SEGawaOS/app/src/main/java/com/mio/os/ui/apps/MusicScreen.kt:320:31 Too many arguments for 'fun TrackRow(track: Track, selected: Boolean, playing: Boolean, onClick: () -> Unit, onAdd: (() -> Unit)? = ...): Unit'.
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/assemble-1794188276222.json
+
+> Task :app:compileDebugKotlin FAILED
+e: file:///home/runner/work/SEGawaOS/SEGawaOS/app/src/main/java/com/mio/os/ui/MioRoot.kt:112:50 Unresolved reference 'BrowserScreen'.
+e: file:///home/runner/work/SEGawaOS/SEGawaOS/app/src/main/java/com/mio/os/ui/MioRoot.kt:113:53 Unresolved reference 'AutomationScreen'.
+e: file:///home/runner/work/SEGawaOS/SEGawaOS/app/src/main/java/com/mio/os/ui/MioRoot.kt:114:49 Unresolved reference 'BackupScreen'.
+e: file:///home/runner/work/SEGawaOS/SEGawaOS/app/src/main/java/com/mio/os/ui/MioRoot.kt:115:48 Unresolved reference 'StoreScreen'.
+e: file:///home/runner/work/SEGawaOS/SEGawaOS/app/src/main/java/com/mio/os/ui/apps/BrowserScreen.kt:216:34 Unresolved reference 'javaScriptEnabled'.
+e: file:///home/runner/work/SEGawaOS/SEGawaOS/app/src/main/java/com/mio/os/ui/apps/BrowserScreen.kt:217:34 Unresolved reference 'domStorageEnabled'.
+e: file:///home/runner/work/SEGawaOS/SEGawaOS/app/src/main/java/com/mio/os/ui/apps/BrowserScreen.kt:218:34 Unresolved reference 'loadWithOverviewMode'.
+e: file:///home/runner/work/SEGawaOS/SEGawaOS/app/src/main/java/com/mio/os/ui/apps/BrowserScreen.kt:219:34 Unresolved reference 'useWideViewPort'.
+e: file:///home/runner/work/SEGawaOS/SEGawaOS/app/src/main/java/com/mio/os/ui/apps/BrowserScreen.kt:220:34 Unresolved reference 'builtInZoomControls'.
+e: file:///home/runner/work/SEGawaOS/SEGawaOS/app/src/main/java/com/mio/os/ui/apps/BrowserScreen.kt:221:34 Unresolved reference 'displayZoomControls'.
+e: file:///home/runner/work/SEGawaOS/SEGawaOS/app/src/main/java/com/mio/os/ui/apps/MusicScreen.kt:319:33 No value passed for parameter 'onClick'.
+e: file:///home/runner/work/SEGawaOS/SEGawaOS/app/src/main/java/com/mio/os/ui/apps/MusicScreen.kt:320:31 Too many arguments for 'fun TrackRow(track: Track, selected: Boolean, playing: Boolean, onClick: () -> Unit, onAdd: (() -> Unit)? = ...): Unit'.
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/assemble-1794188412560.json
 
 FAILURE: Build completed with 2 failures.
 
@@ -360,37 +367,6 @@ org.gradle.api.tasks.TaskExecutionException: Execution failed for task ':app:com
 	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$BuildOperationAwareExecutionAction.execute(DefaultTaskExecutionGraph.java:303)
 	at org.gradle.execution.plan.DefaultPlanExecutor$ExecutorWorker.execute(DefaultPlanExecutor.java:459)
 	at org.gradle.execution.plan.DefaultPlanExecutor$ExecutorWorker.run(DefaultPlanExecutor.java:376)
-	at org.gradle.execution.plan.DefaultPlanExecutor.process(DefaultPlanExecutor.java:111)
-	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph.executeWithServices(DefaultTaskExecutionGraph.java:138)
-	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph.execute(DefaultTaskExecutionGraph.java:123)
-	at org.gradle.execution.SelectedTaskExecutionAction.execute(SelectedTaskExecutionAction.java:35)
-	at org.gradle.execution.DryRunBuildExecutionAction.execute(DryRunBuildExecutionAction.java:51)
-	at org.gradle.execution.BuildOperationFiringBuildWorkerExecutor$ExecuteTasks.call(BuildOperationFiringBuildWorkerExecutor.java:54)
-	at org.gradle.execution.BuildOperationFiringBuildWorkerExecutor$ExecuteTasks.call(BuildOperationFiringBuildWorkerExecutor.java:43)
-	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:209)
-	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:204)
-	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:66)
-	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:59)
-	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:166)
-	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:59)
-	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:53)
-	at org.gradle.execution.BuildOperationFiringBuildWorkerExecutor.execute(BuildOperationFiringBuildWorkerExecutor.java:40)
-	at org.gradle.internal.build.DefaultBuildLifecycleController.lambda$executeTasks$10(DefaultBuildLifecycleController.java:313)
-	at org.gradle.internal.model.StateTransitionController.doTransition(StateTransitionController.java:266)
-	at org.gradle.internal.model.StateTransitionController.lambda$tryTransition$8(StateTransitionController.java:177)
-	at org.gradle.internal.work.DefaultSynchronizer.withLock(DefaultSynchronizer.java:44)
-	at org.gradle.internal.model.StateTransitionController.tryTransition(StateTransitionController.java:177)
-	at org.gradle.internal.build.DefaultBuildLifecycleController.executeTasks(DefaultBuildLifecycleController.java:304)
-	at org.gradle.internal.build.DefaultBuildWorkGraphController$DefaultBuildWorkGraph.runWork(DefaultBuildWorkGraphController.java:220)
-	at org.gradle.internal.work.DefaultWorkerLeaseService.withLocks(DefaultWorkerLeaseService.java:267)
-	at org.gradle.internal.work.DefaultWorkerLeaseService.runAsWorkerThread(DefaultWorkerLeaseService.java:131)
-	at org.gradle.composite.internal.DefaultBuildController.doRun(DefaultBuildController.java:181)
-	at org.gradle.composite.internal.DefaultBuildController.access$000(DefaultBuildController.java:50)
-	at org.gradle.composite.internal.DefaultBuildController$BuildOpRunnable.lambda$run$0(DefaultBuildController.java:198)
-	at org.gradle.internal.operations.CurrentBuildOperationRef.with(CurrentBuildOperationRef.java:85)
-	at org.gradle.composite.internal.DefaultBuildController$BuildOpRunnable.run(DefaultBuildController.java:198)
-	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:539)
-	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264)
 	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:64)
 	at org.gradle.internal.concurrent.AbstractManagedExecutor$1.run(AbstractManagedExecutor.java:48)
 	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
@@ -520,37 +496,6 @@ Caused by: org.gradle.workers.internal.DefaultWorkerExecutor$WorkExecutionExcept
 	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$BuildOperationAwareExecutionAction.execute(DefaultTaskExecutionGraph.java:303)
 	at org.gradle.execution.plan.DefaultPlanExecutor$ExecutorWorker.execute(DefaultPlanExecutor.java:459)
 	at org.gradle.execution.plan.DefaultPlanExecutor$ExecutorWorker.run(DefaultPlanExecutor.java:376)
-	at org.gradle.execution.plan.DefaultPlanExecutor.process(DefaultPlanExecutor.java:111)
-	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph.executeWithServices(DefaultTaskExecutionGraph.java:138)
-	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph.execute(DefaultTaskExecutionGraph.java:123)
-	at org.gradle.execution.SelectedTaskExecutionAction.execute(SelectedTaskExecutionAction.java:35)
-	at org.gradle.execution.DryRunBuildExecutionAction.execute(DryRunBuildExecutionAction.java:51)
-	at org.gradle.execution.BuildOperationFiringBuildWorkerExecutor$ExecuteTasks.call(BuildOperationFiringBuildWorkerExecutor.java:54)
-	at org.gradle.execution.BuildOperationFiringBuildWorkerExecutor$ExecuteTasks.call(BuildOperationFiringBuildWorkerExecutor.java:43)
-	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:209)
-	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:204)
-	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:66)
-	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:59)
-	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:166)
-	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:59)
-	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:53)
-	at org.gradle.execution.BuildOperationFiringBuildWorkerExecutor.execute(BuildOperationFiringBuildWorkerExecutor.java:40)
-	at org.gradle.internal.build.DefaultBuildLifecycleController.lambda$executeTasks$10(DefaultBuildLifecycleController.java:313)
-	at org.gradle.internal.model.StateTransitionController.doTransition(StateTransitionController.java:266)
-	at org.gradle.internal.model.StateTransitionController.lambda$tryTransition$8(StateTransitionController.java:177)
-	at org.gradle.internal.work.DefaultSynchronizer.withLock(DefaultSynchronizer.java:44)
-	at org.gradle.internal.model.StateTransitionController.tryTransition(StateTransitionController.java:177)
-	at org.gradle.internal.build.DefaultBuildLifecycleController.executeTasks(DefaultBuildLifecycleController.java:304)
-	at org.gradle.internal.build.DefaultBuildWorkGraphController$DefaultBuildWorkGraph.runWork(DefaultBuildWorkGraphController.java:220)
-	at org.gradle.internal.work.DefaultWorkerLeaseService.withLocks(DefaultWorkerLeaseService.java:267)
-	at org.gradle.internal.work.DefaultWorkerLeaseService.runAsWorkerThread(DefaultWorkerLeaseService.java:131)
-	at org.gradle.composite.internal.DefaultBuildController.doRun(DefaultBuildController.java:181)
-	at org.gradle.composite.internal.DefaultBuildController.access$000(DefaultBuildController.java:50)
-	at org.gradle.composite.internal.DefaultBuildController$BuildOpRunnable.lambda$run$0(DefaultBuildController.java:198)
-	at org.gradle.internal.operations.CurrentBuildOperationRef.with(CurrentBuildOperationRef.java:85)
-	at org.gradle.composite.internal.DefaultBuildController$BuildOpRunnable.run(DefaultBuildController.java:198)
-	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:539)
-	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264)
 	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:64)
 	at org.gradle.internal.concurrent.AbstractManagedExecutor$1.run(AbstractManagedExecutor.java:48)
 	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
@@ -587,9 +532,11 @@ Caused by: org.jetbrains.kotlin.gradle.tasks.CompilationErrorException: Compilat
 	at org.gradle.internal.work.DefaultWorkerLeaseService.runAsWorkerThread(DefaultWorkerLeaseService.java:136)
 	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.runBatch(DefaultConditionalExecutionQueue.java:165)
 	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.run(DefaultConditionalExecutionQueue.java:134)
-	... 7 more
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:539)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264)
+	... 5 more
 
 ==============================================================================
 
-BUILD FAILED in 23s
-64 actionable tasks: 64 executed
+BUILD FAILED in 39s
+65 actionable tasks: 65 executed
