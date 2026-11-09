@@ -12,8 +12,8 @@ Physical density: 160
 Override density: 270
 RAM cap (emulator -memory 2048):
 MemTotal:        2013352 kB
-MemFree:          138956 kB
-MemAvailable:     710252 kB
+MemFree:          196020 kB
+MemAvailable:     756932 kB
 
 === 1. Install the debug APK ===
 APK: app/build/outputs/apk/debug/app-debug.apk
@@ -36,15 +36,17 @@ PASS: HOME intent filter with CATEGORY_HOME is registered
 
 === 3. Set SEGAWA OS as the default home app (system command) ===
 Success
-attempt 1: Launcher: ComponentInfo{com.mio.os.debug/com.mio.os.MainActivity}
+attempt 1: Launcher: ComponentInfo{com.google.android.apps.nexuslauncher/com.google.android.apps.nexuslauncher.NexusLauncherActivity}
+Success
+attempt 2: Launcher: ComponentInfo{com.mio.os.debug/com.mio.os.MainActivity}
 Success
 PASS: Android resolves SEGAWA OS as the default launcher
 waiting for the HOME key to be routed to SEGAWA OS...
-home attempt 1:   mCurrentFocus=Window{889c4b3 u0 com.mio.os.debug/com.mio.os.MainActivity}
+home attempt 1:   mCurrentFocus=Window{15efad1 u0 com.mio.os.debug/com.mio.os.MainActivity}
 PASS: HOME is routed to SEGAWA OS
           Category: "android.intent.category.HOME"
           Category: "android.intent.category.DEFAULT"
-        d85f768 com.mio.os.debug/com.mio.os.MainActivity filter 6732026
+        36de459 com.mio.os.debug/com.mio.os.MainActivity filter 99e48ff
 
 === 4. Cold start (setup flow) + screenshot ===
 Starting: Intent { cmp=com.mio.os.debug/com.mio.os.MainActivity }
@@ -55,14 +57,14 @@ Starting: Intent { flg=0x10000000 cmp=com.mio.os.debug/com.mio.os.MainActivity (
 Status: ok
 LaunchState: COLD
 Activity: com.mio.os.debug/com.mio.os.MainActivity
-TotalTime: 3405
-WaitTime: 3467
+TotalTime: 3331
+WaitTime: 3339
 Complete
-  mCurrentFocus=Window{f48a9e2 u0 com.mio.os.debug/com.mio.os.MainActivity}
+  mCurrentFocus=Window{bc70e66 u0 com.mio.os.debug/com.mio.os.MainActivity}
 PASS: Home screen is in the foreground
 
 === 6. Physical HOME key must return to SEGAWA OS ===
-  mCurrentFocus=Window{8c1653a u0 com.mio.os.debug/com.mio.os.MainActivity}
+  mCurrentFocus=Window{bd31e56 u0 com.mio.os.debug/com.mio.os.MainActivity}
 PASS: HOME key opens SEGAWA OS instead of another launcher
 
 === 7. App drawer (swipe up from the home grid) ===
@@ -83,15 +85,17 @@ screen 720x1600
 === 12. Music player ===
 
 === 12b. Start playback (tap the play button) ===
-      state=PlaybackState {state=7, position=0, buffered position=0, speed=0.0, updated=28182, actions=0, custom actions=[], active item id=-1, error=Bluetooth audio disconnected}
-      state=PlaybackState {state=7, position=0, buffered position=0, speed=0.0, updated=28193, actions=0, custom actions=[], active item id=-1, error=Bluetooth audio disconnected}
-      state=PlaybackState {state=7, position=0, buffered position=0, speed=0.0, updated=30574, actions=0, custom actions=[], active item id=-1, error=Bluetooth audio disconnected}
+      state=PlaybackState {state=7, position=0, buffered position=0, speed=0.0, updated=29578, actions=0, custom actions=[], active item id=-1, error=Bluetooth audio disconnected}
+      state=PlaybackState {state=7, position=0, buffered position=0, speed=0.0, updated=29586, actions=0, custom actions=[], active item id=-1, error=Bluetooth audio disconnected}
+      state=PlaybackState {state=7, position=0, buffered position=0, speed=0.0, updated=32614, actions=0, custom actions=[], active item id=-1, error=Bluetooth audio disconnected}
 PASS: Media session active (lock-screen controls available)
 
 === 13. Themed apps: themes, files, gallery, notes, calendar, clock, calculator, weather, gaming ===
 
+=== 13b. v2.0 screens: search, browser, arrange, icons, automation, backup, store ===
+
 === 14. Launch a real third-party app from the drawer, then press Home ===
-  mCurrentFocus=Window{44d8df8 u0 com.mio.os.debug/com.mio.os.MainActivity}
+  mCurrentFocus=Window{a0d4fff u0 com.mio.os.debug/com.mio.os.MainActivity}
 PASS: Returning from an app lands on the SEGAWA OS home screen
 
 === 15. Performance snapshot (frame stats, memory) ===
@@ -99,50 +103,50 @@ NOTE: the emulator renders with swiftshader (no GPU), so absolute frame
 times are CPU-rasterisation bound and much worse than on real hardware.
 Total frames rendered: 0
 --- home-screen interaction frames only (gfxinfo reset before the swipes) ---
-Total frames rendered: 79
-Janky frames: 34 (43.04%)
-Janky frames (legacy): 78 (98.73%)
+Total frames rendered: 80
+Janky frames: 27 (33.75%)
+Janky frames (legacy): 79 (98.75%)
 50th percentile: 38ms
-90th percentile: 69ms
-95th percentile: 89ms
-99th percentile: 125ms
+90th percentile: 65ms
+95th percentile: 97ms
+99th percentile: 150ms
 
 === 15b. Baseline: the platform Settings app measured identically ===
 (if a stock AOSP app also renders at ~100 ms/frame here, the emulator's
  software rasteriser — not SEGAWA OS — is the bottleneck)
-Total frames rendered: 156
-Janky frames: 22 (14.10%)
-Janky frames (legacy): 72 (46.15%)
-50th percentile: 16ms
-90th percentile: 44ms
+Total frames rendered: 153
+Janky frames: 21 (13.73%)
+Janky frames (legacy): 112 (73.20%)
+50th percentile: 20ms
+90th percentile: 46ms
 --- CPU rasterisation proof ---
 emulation
 [graphics.gpu.profiler.support]: [true]
 [init.svc.gpu]: [running]
 --- SEGAWA after the home-screen interaction pass ---
-Total frames rendered: 83
-50th percentile: 40ms
-90th percentile: 61ms
+Total frames rendered: 78
+50th percentile: 44ms
+90th percentile: 69ms
 --- pipeline breakdown (Draw/Prepare are CPU, GPU is the rasteriser) ---
 --- memory ---
-  Native Heap    33605    33544       40       21    34656    44144    35294     4137
-           Java Heap:    12940                          24164
-         Native Heap:    33544                          34656
-           TOTAL PSS:   137289            TOTAL RSS:   206504       TOTAL SWAP PSS:      167
+  Native Heap    33665    33588       52       20    34764    44144    35350     4326
+           Java Heap:    12988                          23912
+         Native Heap:    33588                          34764
+           TOTAL PSS:   135704            TOTAL RSS:   206648       TOTAL SWAP PSS:      163
 --- app startup ---
-TotalTime: 1571
-WaitTime: 1572
-wall clock start: 1622 ms
+TotalTime: 1831
+WaitTime: 1834
+wall clock start: 1883 ms
 
 === 16. Stability: 500 random UI events ===
-pid: 8180
+pid: 9079
 PASS: Launcher still alive after 500 random events
 
 === 17. Reboot – the default home app must survive ===
 Launcher: ComponentInfo{com.mio.os.debug/com.mio.os.MainActivity}
 Success
 PASS: Default launcher survives a reboot
-  mCurrentFocus=Window{8d18a11 u0 com.mio.os.debug/com.mio.os.MainActivity}
+  mCurrentFocus=Window{8a5694c u0 com.mio.os.debug/com.mio.os.MainActivity}
 PASS: HOME after reboot opens SEGAWA OS
 
 === 18. Release APK smoke test (R8-minified build) ===
@@ -152,7 +156,7 @@ Success
 PASS: R8-minified release APK installs
 Success
 Starting: Intent { cmp=com.mio.os/.MainActivity (has extras) }
-  mCurrentFocus=Window{d8ba52c u0 com.mio.os/com.mio.os.MainActivity}
+  mCurrentFocus=Window{41ae05f u0 com.mio.os/com.mio.os.MainActivity}
 PASS: Release build launches as the home screen
 Launcher: ComponentInfo{com.mio.os/com.mio.os.MainActivity}
 Success
@@ -172,399 +176,56 @@ RESULT: 16 passed, 0 failed
 === workflow outcome ===
 emulator step: success
 screenshots:
-total 49348
-drwxr-xr-x 2 runner runner    4096 Nov  8 05:34 .
-drwxr-xr-x 3 runner runner    4096 Nov  8 05:34 ..
--rw-r--r-- 1 runner runner       0 Nov  8 05:34 .keep
--rw-r--r-- 1 runner runner 1404061 Nov  8 05:38 01-onboarding-welcome.png
--rw-r--r-- 1 runner runner   55750 Nov  8 05:34 01-welcome.png
--rw-r--r-- 1 runner runner 1404048 Nov  8 05:38 02-home.png
--rw-r--r-- 1 runner runner 2897277 Nov  8 05:34 03-after-home-key.png
--rw-r--r-- 1 runner runner 1403624 Nov  8 05:39 03-home-after-home-key.png
--rw-r--r-- 1 runner runner  806531 Nov  8 05:39 04-app-drawer.png
--rw-r--r-- 1 runner runner 1725305 Nov  8 05:34 04-drawer.png
--rw-r--r-- 1 runner runner 1816577 Nov  8 05:34 05-control-center.png
--rw-r--r-- 1 runner runner  539356 Nov  8 05:39 05-drawer-search.png
--rw-r--r-- 1 runner runner 1815603 Nov  8 05:34 06-control-center-torch.png
--rw-r--r-- 1 runner runner  863903 Nov  8 05:39 06-control-center.png
--rw-r--r-- 1 runner runner   23949 Nov  8 05:39 07-control-center-torch.png
--rw-r--r-- 1 runner runner   88393 Nov  8 05:34 07-drawer-launch.png
--rw-r--r-- 1 runner runner 2896129 Nov  8 05:34 08-home-return.png
--rw-r--r-- 1 runner runner  982868 Nov  8 05:39 08-settings.png
--rw-r--r-- 1 runner runner  934976 Nov  8 05:39 09-appearance.png
--rw-r--r-- 1 runner runner 2896355 Nov  8 05:34 09-settings.png
--rw-r--r-- 1 runner runner 1778567 Nov  8 05:34 10-ai.png
--rw-r--r-- 1 runner runner  945859 Nov  8 05:39 10-privacy.png
--rw-r--r-- 1 runner runner  926362 Nov  8 05:39 11-about.png
--rw-r--r-- 1 runner runner 2893419 Nov  8 05:34 11-after-monkey.png
--rw-r--r-- 1 runner runner 2896054 Nov  8 05:34 12-after-reboot.png
--rw-r--r-- 1 runner runner  816114 Nov  8 05:40 12-ai.png
--rw-r--r-- 1 runner runner  815230 Nov  8 05:40 13-ai-reply.png
--rw-r--r-- 1 runner runner  653234 Nov  8 05:40 14-music.png
--rw-r--r-- 1 runner runner  653234 Nov  8 05:40 15-music-playing.png
--rw-r--r-- 1 runner runner 1386431 Nov  8 05:40 16-themes.png
--rw-r--r-- 1 runner runner  885379 Nov  8 05:40 17-files.png
--rw-r--r-- 1 runner runner  734410 Nov  8 05:40 18-gallery.png
--rw-r--r-- 1 runner runner  735621 Nov  8 05:40 19-notes.png
--rw-r--r-- 1 runner runner  784574 Nov  8 05:40 20-calendar.png
--rw-r--r-- 1 runner runner  756797 Nov  8 05:41 21-clock.png
--rw-r--r-- 1 runner runner  785060 Nov  8 05:41 22-calculator.png
--rw-r--r-- 1 runner runner  866590 Nov  8 05:41 23-weather.png
--rw-r--r-- 1 runner runner  742515 Nov  8 05:41 24-gaming.png
--rw-r--r-- 1 runner runner 1335155 Nov  8 05:41 25-lock-screen.png
--rw-r--r-- 1 runner runner 1401636 Nov  8 05:41 26-home-final.png
--rw-r--r-- 1 runner runner  833720 Nov  8 05:42 27-after-monkey.png
--rw-r--r-- 1 runner runner 1739164 Nov  8 05:44 28-after-reboot.png
--rw-r--r-- 1 runner runner 1257632 Nov  8 05:44 29-release-home.png
--rw-r--r-- 1 runner runner 1257585 Nov  8 05:44 30-release-drawer.png
-report bytes: 9418
-
-=== workflow outcome ===
-emulator step: skipped
-screenshots:
-total 49348
-drwxr-xr-x 2 runner runner    4096 Nov  8 06:26 .
-drwxr-xr-x 3 runner runner    4096 Nov  8 06:26 ..
--rw-r--r-- 1 runner runner       0 Nov  8 06:26 .keep
--rw-r--r-- 1 runner runner 1404061 Nov  8 06:26 01-onboarding-welcome.png
--rw-r--r-- 1 runner runner   55750 Nov  8 06:26 01-welcome.png
--rw-r--r-- 1 runner runner 1404048 Nov  8 06:26 02-home.png
--rw-r--r-- 1 runner runner 2897277 Nov  8 06:26 03-after-home-key.png
--rw-r--r-- 1 runner runner 1403624 Nov  8 06:26 03-home-after-home-key.png
--rw-r--r-- 1 runner runner  806531 Nov  8 06:26 04-app-drawer.png
--rw-r--r-- 1 runner runner 1725305 Nov  8 06:26 04-drawer.png
--rw-r--r-- 1 runner runner 1816577 Nov  8 06:26 05-control-center.png
--rw-r--r-- 1 runner runner  539356 Nov  8 06:26 05-drawer-search.png
--rw-r--r-- 1 runner runner 1815603 Nov  8 06:26 06-control-center-torch.png
--rw-r--r-- 1 runner runner  863903 Nov  8 06:26 06-control-center.png
--rw-r--r-- 1 runner runner   23949 Nov  8 06:26 07-control-center-torch.png
--rw-r--r-- 1 runner runner   88393 Nov  8 06:26 07-drawer-launch.png
--rw-r--r-- 1 runner runner 2896129 Nov  8 06:26 08-home-return.png
--rw-r--r-- 1 runner runner  982868 Nov  8 06:26 08-settings.png
--rw-r--r-- 1 runner runner  934976 Nov  8 06:26 09-appearance.png
--rw-r--r-- 1 runner runner 2896355 Nov  8 06:26 09-settings.png
--rw-r--r-- 1 runner runner 1778567 Nov  8 06:26 10-ai.png
--rw-r--r-- 1 runner runner  945859 Nov  8 06:26 10-privacy.png
--rw-r--r-- 1 runner runner  926362 Nov  8 06:26 11-about.png
--rw-r--r-- 1 runner runner 2893419 Nov  8 06:26 11-after-monkey.png
--rw-r--r-- 1 runner runner 2896054 Nov  8 06:26 12-after-reboot.png
--rw-r--r-- 1 runner runner  816114 Nov  8 06:26 12-ai.png
--rw-r--r-- 1 runner runner  815230 Nov  8 06:26 13-ai-reply.png
--rw-r--r-- 1 runner runner  653234 Nov  8 06:26 14-music.png
--rw-r--r-- 1 runner runner  653234 Nov  8 06:26 15-music-playing.png
--rw-r--r-- 1 runner runner 1386431 Nov  8 06:26 16-themes.png
--rw-r--r-- 1 runner runner  885379 Nov  8 06:26 17-files.png
--rw-r--r-- 1 runner runner  734410 Nov  8 06:26 18-gallery.png
--rw-r--r-- 1 runner runner  735621 Nov  8 06:26 19-notes.png
--rw-r--r-- 1 runner runner  784574 Nov  8 06:26 20-calendar.png
--rw-r--r-- 1 runner runner  756797 Nov  8 06:26 21-clock.png
--rw-r--r-- 1 runner runner  785060 Nov  8 06:26 22-calculator.png
--rw-r--r-- 1 runner runner  866590 Nov  8 06:26 23-weather.png
--rw-r--r-- 1 runner runner  742515 Nov  8 06:26 24-gaming.png
--rw-r--r-- 1 runner runner 1335155 Nov  8 06:26 25-lock-screen.png
--rw-r--r-- 1 runner runner 1401636 Nov  8 06:26 26-home-final.png
--rw-r--r-- 1 runner runner  833720 Nov  8 06:26 27-after-monkey.png
--rw-r--r-- 1 runner runner 1739164 Nov  8 06:26 28-after-reboot.png
--rw-r--r-- 1 runner runner 1257632 Nov  8 06:26 29-release-home.png
--rw-r--r-- 1 runner runner 1257585 Nov  8 06:26 30-release-drawer.png
-report bytes: 12367
-
-=== workflow outcome ===
-emulator step: skipped
-screenshots:
-total 49348
-drwxr-xr-x 2 runner runner    4096 Nov  8 06:32 .
-drwxr-xr-x 3 runner runner    4096 Nov  8 06:32 ..
--rw-r--r-- 1 runner runner       0 Nov  8 06:32 .keep
--rw-r--r-- 1 runner runner 1404061 Nov  8 06:32 01-onboarding-welcome.png
--rw-r--r-- 1 runner runner   55750 Nov  8 06:32 01-welcome.png
--rw-r--r-- 1 runner runner 1404048 Nov  8 06:32 02-home.png
--rw-r--r-- 1 runner runner 2897277 Nov  8 06:32 03-after-home-key.png
--rw-r--r-- 1 runner runner 1403624 Nov  8 06:32 03-home-after-home-key.png
--rw-r--r-- 1 runner runner  806531 Nov  8 06:32 04-app-drawer.png
--rw-r--r-- 1 runner runner 1725305 Nov  8 06:32 04-drawer.png
--rw-r--r-- 1 runner runner 1816577 Nov  8 06:32 05-control-center.png
--rw-r--r-- 1 runner runner  539356 Nov  8 06:32 05-drawer-search.png
--rw-r--r-- 1 runner runner 1815603 Nov  8 06:32 06-control-center-torch.png
--rw-r--r-- 1 runner runner  863903 Nov  8 06:32 06-control-center.png
--rw-r--r-- 1 runner runner   23949 Nov  8 06:32 07-control-center-torch.png
--rw-r--r-- 1 runner runner   88393 Nov  8 06:32 07-drawer-launch.png
--rw-r--r-- 1 runner runner 2896129 Nov  8 06:32 08-home-return.png
--rw-r--r-- 1 runner runner  982868 Nov  8 06:32 08-settings.png
--rw-r--r-- 1 runner runner  934976 Nov  8 06:32 09-appearance.png
--rw-r--r-- 1 runner runner 2896355 Nov  8 06:32 09-settings.png
--rw-r--r-- 1 runner runner 1778567 Nov  8 06:32 10-ai.png
--rw-r--r-- 1 runner runner  945859 Nov  8 06:32 10-privacy.png
--rw-r--r-- 1 runner runner  926362 Nov  8 06:32 11-about.png
--rw-r--r-- 1 runner runner 2893419 Nov  8 06:32 11-after-monkey.png
--rw-r--r-- 1 runner runner 2896054 Nov  8 06:32 12-after-reboot.png
--rw-r--r-- 1 runner runner  816114 Nov  8 06:32 12-ai.png
--rw-r--r-- 1 runner runner  815230 Nov  8 06:32 13-ai-reply.png
--rw-r--r-- 1 runner runner  653234 Nov  8 06:32 14-music.png
--rw-r--r-- 1 runner runner  653234 Nov  8 06:32 15-music-playing.png
--rw-r--r-- 1 runner runner 1386431 Nov  8 06:32 16-themes.png
--rw-r--r-- 1 runner runner  885379 Nov  8 06:32 17-files.png
--rw-r--r-- 1 runner runner  734410 Nov  8 06:32 18-gallery.png
--rw-r--r-- 1 runner runner  735621 Nov  8 06:32 19-notes.png
--rw-r--r-- 1 runner runner  784574 Nov  8 06:32 20-calendar.png
--rw-r--r-- 1 runner runner  756797 Nov  8 06:32 21-clock.png
--rw-r--r-- 1 runner runner  785060 Nov  8 06:32 22-calculator.png
--rw-r--r-- 1 runner runner  866590 Nov  8 06:32 23-weather.png
--rw-r--r-- 1 runner runner  742515 Nov  8 06:32 24-gaming.png
--rw-r--r-- 1 runner runner 1335155 Nov  8 06:32 25-lock-screen.png
--rw-r--r-- 1 runner runner 1401636 Nov  8 06:32 26-home-final.png
--rw-r--r-- 1 runner runner  833720 Nov  8 06:32 27-after-monkey.png
--rw-r--r-- 1 runner runner 1739164 Nov  8 06:32 28-after-reboot.png
--rw-r--r-- 1 runner runner 1257632 Nov  8 06:32 29-release-home.png
--rw-r--r-- 1 runner runner 1257585 Nov  8 06:32 30-release-drawer.png
-report bytes: 15317
-
-=== workflow outcome ===
-emulator step: skipped
-screenshots:
-total 49348
-drwxr-xr-x 2 runner runner    4096 Nov  8 06:38 .
-drwxr-xr-x 3 runner runner    4096 Nov  8 06:38 ..
--rw-r--r-- 1 runner runner       0 Nov  8 06:38 .keep
--rw-r--r-- 1 runner runner 1404061 Nov  8 06:38 01-onboarding-welcome.png
--rw-r--r-- 1 runner runner   55750 Nov  8 06:38 01-welcome.png
--rw-r--r-- 1 runner runner 1404048 Nov  8 06:38 02-home.png
--rw-r--r-- 1 runner runner 2897277 Nov  8 06:38 03-after-home-key.png
--rw-r--r-- 1 runner runner 1403624 Nov  8 06:38 03-home-after-home-key.png
--rw-r--r-- 1 runner runner  806531 Nov  8 06:38 04-app-drawer.png
--rw-r--r-- 1 runner runner 1725305 Nov  8 06:38 04-drawer.png
--rw-r--r-- 1 runner runner 1816577 Nov  8 06:38 05-control-center.png
--rw-r--r-- 1 runner runner  539356 Nov  8 06:38 05-drawer-search.png
--rw-r--r-- 1 runner runner 1815603 Nov  8 06:38 06-control-center-torch.png
--rw-r--r-- 1 runner runner  863903 Nov  8 06:38 06-control-center.png
--rw-r--r-- 1 runner runner   23949 Nov  8 06:38 07-control-center-torch.png
--rw-r--r-- 1 runner runner   88393 Nov  8 06:38 07-drawer-launch.png
--rw-r--r-- 1 runner runner 2896129 Nov  8 06:38 08-home-return.png
--rw-r--r-- 1 runner runner  982868 Nov  8 06:38 08-settings.png
--rw-r--r-- 1 runner runner  934976 Nov  8 06:38 09-appearance.png
--rw-r--r-- 1 runner runner 2896355 Nov  8 06:38 09-settings.png
--rw-r--r-- 1 runner runner 1778567 Nov  8 06:38 10-ai.png
--rw-r--r-- 1 runner runner  945859 Nov  8 06:38 10-privacy.png
--rw-r--r-- 1 runner runner  926362 Nov  8 06:38 11-about.png
--rw-r--r-- 1 runner runner 2893419 Nov  8 06:38 11-after-monkey.png
--rw-r--r-- 1 runner runner 2896054 Nov  8 06:38 12-after-reboot.png
--rw-r--r-- 1 runner runner  816114 Nov  8 06:38 12-ai.png
--rw-r--r-- 1 runner runner  815230 Nov  8 06:38 13-ai-reply.png
--rw-r--r-- 1 runner runner  653234 Nov  8 06:38 14-music.png
--rw-r--r-- 1 runner runner  653234 Nov  8 06:38 15-music-playing.png
--rw-r--r-- 1 runner runner 1386431 Nov  8 06:38 16-themes.png
--rw-r--r-- 1 runner runner  885379 Nov  8 06:38 17-files.png
--rw-r--r-- 1 runner runner  734410 Nov  8 06:38 18-gallery.png
--rw-r--r-- 1 runner runner  735621 Nov  8 06:38 19-notes.png
--rw-r--r-- 1 runner runner  784574 Nov  8 06:38 20-calendar.png
--rw-r--r-- 1 runner runner  756797 Nov  8 06:38 21-clock.png
--rw-r--r-- 1 runner runner  785060 Nov  8 06:38 22-calculator.png
--rw-r--r-- 1 runner runner  866590 Nov  8 06:38 23-weather.png
--rw-r--r-- 1 runner runner  742515 Nov  8 06:38 24-gaming.png
--rw-r--r-- 1 runner runner 1335155 Nov  8 06:38 25-lock-screen.png
--rw-r--r-- 1 runner runner 1401636 Nov  8 06:38 26-home-final.png
--rw-r--r-- 1 runner runner  833720 Nov  8 06:38 27-after-monkey.png
--rw-r--r-- 1 runner runner 1739164 Nov  8 06:38 28-after-reboot.png
--rw-r--r-- 1 runner runner 1257632 Nov  8 06:38 29-release-home.png
--rw-r--r-- 1 runner runner 1257585 Nov  8 06:38 30-release-drawer.png
-report bytes: 18267
-
-=== workflow outcome ===
-emulator step: skipped
-screenshots:
-total 49348
-drwxr-xr-x 2 runner runner    4096 Nov  8 06:42 .
-drwxr-xr-x 3 runner runner    4096 Nov  8 06:42 ..
--rw-r--r-- 1 runner runner       0 Nov  8 06:42 .keep
--rw-r--r-- 1 runner runner 1404061 Nov  8 06:42 01-onboarding-welcome.png
--rw-r--r-- 1 runner runner   55750 Nov  8 06:42 01-welcome.png
--rw-r--r-- 1 runner runner 1404048 Nov  8 06:42 02-home.png
--rw-r--r-- 1 runner runner 2897277 Nov  8 06:42 03-after-home-key.png
--rw-r--r-- 1 runner runner 1403624 Nov  8 06:42 03-home-after-home-key.png
--rw-r--r-- 1 runner runner  806531 Nov  8 06:42 04-app-drawer.png
--rw-r--r-- 1 runner runner 1725305 Nov  8 06:42 04-drawer.png
--rw-r--r-- 1 runner runner 1816577 Nov  8 06:42 05-control-center.png
--rw-r--r-- 1 runner runner  539356 Nov  8 06:42 05-drawer-search.png
--rw-r--r-- 1 runner runner 1815603 Nov  8 06:42 06-control-center-torch.png
--rw-r--r-- 1 runner runner  863903 Nov  8 06:42 06-control-center.png
--rw-r--r-- 1 runner runner   23949 Nov  8 06:42 07-control-center-torch.png
--rw-r--r-- 1 runner runner   88393 Nov  8 06:42 07-drawer-launch.png
--rw-r--r-- 1 runner runner 2896129 Nov  8 06:42 08-home-return.png
--rw-r--r-- 1 runner runner  982868 Nov  8 06:42 08-settings.png
--rw-r--r-- 1 runner runner  934976 Nov  8 06:42 09-appearance.png
--rw-r--r-- 1 runner runner 2896355 Nov  8 06:42 09-settings.png
--rw-r--r-- 1 runner runner 1778567 Nov  8 06:42 10-ai.png
--rw-r--r-- 1 runner runner  945859 Nov  8 06:42 10-privacy.png
--rw-r--r-- 1 runner runner  926362 Nov  8 06:42 11-about.png
--rw-r--r-- 1 runner runner 2893419 Nov  8 06:42 11-after-monkey.png
--rw-r--r-- 1 runner runner 2896054 Nov  8 06:42 12-after-reboot.png
--rw-r--r-- 1 runner runner  816114 Nov  8 06:42 12-ai.png
--rw-r--r-- 1 runner runner  815230 Nov  8 06:42 13-ai-reply.png
--rw-r--r-- 1 runner runner  653234 Nov  8 06:42 14-music.png
--rw-r--r-- 1 runner runner  653234 Nov  8 06:42 15-music-playing.png
--rw-r--r-- 1 runner runner 1386431 Nov  8 06:42 16-themes.png
--rw-r--r-- 1 runner runner  885379 Nov  8 06:42 17-files.png
--rw-r--r-- 1 runner runner  734410 Nov  8 06:42 18-gallery.png
--rw-r--r-- 1 runner runner  735621 Nov  8 06:42 19-notes.png
--rw-r--r-- 1 runner runner  784574 Nov  8 06:42 20-calendar.png
--rw-r--r-- 1 runner runner  756797 Nov  8 06:42 21-clock.png
--rw-r--r-- 1 runner runner  785060 Nov  8 06:42 22-calculator.png
--rw-r--r-- 1 runner runner  866590 Nov  8 06:42 23-weather.png
--rw-r--r-- 1 runner runner  742515 Nov  8 06:42 24-gaming.png
--rw-r--r-- 1 runner runner 1335155 Nov  8 06:42 25-lock-screen.png
--rw-r--r-- 1 runner runner 1401636 Nov  8 06:42 26-home-final.png
--rw-r--r-- 1 runner runner  833720 Nov  8 06:42 27-after-monkey.png
--rw-r--r-- 1 runner runner 1739164 Nov  8 06:42 28-after-reboot.png
--rw-r--r-- 1 runner runner 1257632 Nov  8 06:42 29-release-home.png
--rw-r--r-- 1 runner runner 1257585 Nov  8 06:42 30-release-drawer.png
-report bytes: 21217
-
-=== workflow outcome ===
-emulator step: skipped
-screenshots:
-total 49348
-drwxr-xr-x 2 runner runner    4096 Nov  9 01:37 .
-drwxr-xr-x 3 runner runner    4096 Nov  9 01:37 ..
--rw-r--r-- 1 runner runner       0 Nov  9 01:37 .keep
--rw-r--r-- 1 runner runner 1404061 Nov  9 01:37 01-onboarding-welcome.png
--rw-r--r-- 1 runner runner   55750 Nov  9 01:37 01-welcome.png
--rw-r--r-- 1 runner runner 1404048 Nov  9 01:37 02-home.png
--rw-r--r-- 1 runner runner 2897277 Nov  9 01:37 03-after-home-key.png
--rw-r--r-- 1 runner runner 1403624 Nov  9 01:37 03-home-after-home-key.png
--rw-r--r-- 1 runner runner  806531 Nov  9 01:37 04-app-drawer.png
--rw-r--r-- 1 runner runner 1725305 Nov  9 01:37 04-drawer.png
--rw-r--r-- 1 runner runner 1816577 Nov  9 01:37 05-control-center.png
--rw-r--r-- 1 runner runner  539356 Nov  9 01:37 05-drawer-search.png
--rw-r--r-- 1 runner runner 1815603 Nov  9 01:37 06-control-center-torch.png
--rw-r--r-- 1 runner runner  863903 Nov  9 01:37 06-control-center.png
--rw-r--r-- 1 runner runner   23949 Nov  9 01:37 07-control-center-torch.png
--rw-r--r-- 1 runner runner   88393 Nov  9 01:37 07-drawer-launch.png
--rw-r--r-- 1 runner runner 2896129 Nov  9 01:37 08-home-return.png
--rw-r--r-- 1 runner runner  982868 Nov  9 01:37 08-settings.png
--rw-r--r-- 1 runner runner  934976 Nov  9 01:37 09-appearance.png
--rw-r--r-- 1 runner runner 2896355 Nov  9 01:37 09-settings.png
--rw-r--r-- 1 runner runner 1778567 Nov  9 01:37 10-ai.png
--rw-r--r-- 1 runner runner  945859 Nov  9 01:37 10-privacy.png
--rw-r--r-- 1 runner runner  926362 Nov  9 01:37 11-about.png
--rw-r--r-- 1 runner runner 2893419 Nov  9 01:37 11-after-monkey.png
--rw-r--r-- 1 runner runner 2896054 Nov  9 01:37 12-after-reboot.png
--rw-r--r-- 1 runner runner  816114 Nov  9 01:37 12-ai.png
--rw-r--r-- 1 runner runner  815230 Nov  9 01:37 13-ai-reply.png
--rw-r--r-- 1 runner runner  653234 Nov  9 01:37 14-music.png
--rw-r--r-- 1 runner runner  653234 Nov  9 01:37 15-music-playing.png
--rw-r--r-- 1 runner runner 1386431 Nov  9 01:37 16-themes.png
--rw-r--r-- 1 runner runner  885379 Nov  9 01:37 17-files.png
--rw-r--r-- 1 runner runner  734410 Nov  9 01:37 18-gallery.png
--rw-r--r-- 1 runner runner  735621 Nov  9 01:37 19-notes.png
--rw-r--r-- 1 runner runner  784574 Nov  9 01:37 20-calendar.png
--rw-r--r-- 1 runner runner  756797 Nov  9 01:37 21-clock.png
--rw-r--r-- 1 runner runner  785060 Nov  9 01:37 22-calculator.png
--rw-r--r-- 1 runner runner  866590 Nov  9 01:37 23-weather.png
--rw-r--r-- 1 runner runner  742515 Nov  9 01:37 24-gaming.png
--rw-r--r-- 1 runner runner 1335155 Nov  9 01:37 25-lock-screen.png
--rw-r--r-- 1 runner runner 1401636 Nov  9 01:37 26-home-final.png
--rw-r--r-- 1 runner runner  833720 Nov  9 01:37 27-after-monkey.png
--rw-r--r-- 1 runner runner 1739164 Nov  9 01:37 28-after-reboot.png
--rw-r--r-- 1 runner runner 1257632 Nov  9 01:37 29-release-home.png
--rw-r--r-- 1 runner runner 1257585 Nov  9 01:37 30-release-drawer.png
-report bytes: 24167
-
-=== workflow outcome ===
-emulator step: skipped
-screenshots:
-total 49348
-drwxr-xr-x 2 runner runner    4096 Nov  9 01:39 .
-drwxr-xr-x 3 runner runner    4096 Nov  9 01:39 ..
--rw-r--r-- 1 runner runner       0 Nov  9 01:39 .keep
--rw-r--r-- 1 runner runner 1404061 Nov  9 01:39 01-onboarding-welcome.png
--rw-r--r-- 1 runner runner   55750 Nov  9 01:39 01-welcome.png
--rw-r--r-- 1 runner runner 1404048 Nov  9 01:39 02-home.png
--rw-r--r-- 1 runner runner 2897277 Nov  9 01:39 03-after-home-key.png
--rw-r--r-- 1 runner runner 1403624 Nov  9 01:39 03-home-after-home-key.png
--rw-r--r-- 1 runner runner  806531 Nov  9 01:39 04-app-drawer.png
--rw-r--r-- 1 runner runner 1725305 Nov  9 01:39 04-drawer.png
--rw-r--r-- 1 runner runner 1816577 Nov  9 01:39 05-control-center.png
--rw-r--r-- 1 runner runner  539356 Nov  9 01:39 05-drawer-search.png
--rw-r--r-- 1 runner runner 1815603 Nov  9 01:39 06-control-center-torch.png
--rw-r--r-- 1 runner runner  863903 Nov  9 01:39 06-control-center.png
--rw-r--r-- 1 runner runner   23949 Nov  9 01:39 07-control-center-torch.png
--rw-r--r-- 1 runner runner   88393 Nov  9 01:39 07-drawer-launch.png
--rw-r--r-- 1 runner runner 2896129 Nov  9 01:39 08-home-return.png
--rw-r--r-- 1 runner runner  982868 Nov  9 01:39 08-settings.png
--rw-r--r-- 1 runner runner  934976 Nov  9 01:39 09-appearance.png
--rw-r--r-- 1 runner runner 2896355 Nov  9 01:39 09-settings.png
--rw-r--r-- 1 runner runner 1778567 Nov  9 01:39 10-ai.png
--rw-r--r-- 1 runner runner  945859 Nov  9 01:39 10-privacy.png
--rw-r--r-- 1 runner runner  926362 Nov  9 01:39 11-about.png
--rw-r--r-- 1 runner runner 2893419 Nov  9 01:39 11-after-monkey.png
--rw-r--r-- 1 runner runner 2896054 Nov  9 01:39 12-after-reboot.png
--rw-r--r-- 1 runner runner  816114 Nov  9 01:39 12-ai.png
--rw-r--r-- 1 runner runner  815230 Nov  9 01:39 13-ai-reply.png
--rw-r--r-- 1 runner runner  653234 Nov  9 01:39 14-music.png
--rw-r--r-- 1 runner runner  653234 Nov  9 01:39 15-music-playing.png
--rw-r--r-- 1 runner runner 1386431 Nov  9 01:39 16-themes.png
--rw-r--r-- 1 runner runner  885379 Nov  9 01:39 17-files.png
--rw-r--r-- 1 runner runner  734410 Nov  9 01:39 18-gallery.png
--rw-r--r-- 1 runner runner  735621 Nov  9 01:39 19-notes.png
--rw-r--r-- 1 runner runner  784574 Nov  9 01:39 20-calendar.png
--rw-r--r-- 1 runner runner  756797 Nov  9 01:39 21-clock.png
--rw-r--r-- 1 runner runner  785060 Nov  9 01:39 22-calculator.png
--rw-r--r-- 1 runner runner  866590 Nov  9 01:39 23-weather.png
--rw-r--r-- 1 runner runner  742515 Nov  9 01:39 24-gaming.png
--rw-r--r-- 1 runner runner 1335155 Nov  9 01:39 25-lock-screen.png
--rw-r--r-- 1 runner runner 1401636 Nov  9 01:39 26-home-final.png
--rw-r--r-- 1 runner runner  833720 Nov  9 01:39 27-after-monkey.png
--rw-r--r-- 1 runner runner 1739164 Nov  9 01:39 28-after-reboot.png
--rw-r--r-- 1 runner runner 1257632 Nov  9 01:39 29-release-home.png
--rw-r--r-- 1 runner runner 1257585 Nov  9 01:39 30-release-drawer.png
-report bytes: 27117
-
-=== workflow outcome ===
-emulator step: skipped
-screenshots:
-total 49348
-drwxr-xr-x 2 runner runner    4096 Nov  9 01:41 .
-drwxr-xr-x 3 runner runner    4096 Nov  9 01:41 ..
--rw-r--r-- 1 runner runner       0 Nov  9 01:41 .keep
--rw-r--r-- 1 runner runner 1404061 Nov  9 01:41 01-onboarding-welcome.png
--rw-r--r-- 1 runner runner   55750 Nov  9 01:41 01-welcome.png
--rw-r--r-- 1 runner runner 1404048 Nov  9 01:41 02-home.png
--rw-r--r-- 1 runner runner 2897277 Nov  9 01:41 03-after-home-key.png
--rw-r--r-- 1 runner runner 1403624 Nov  9 01:41 03-home-after-home-key.png
--rw-r--r-- 1 runner runner  806531 Nov  9 01:41 04-app-drawer.png
--rw-r--r-- 1 runner runner 1725305 Nov  9 01:41 04-drawer.png
--rw-r--r-- 1 runner runner 1816577 Nov  9 01:41 05-control-center.png
--rw-r--r-- 1 runner runner  539356 Nov  9 01:41 05-drawer-search.png
--rw-r--r-- 1 runner runner 1815603 Nov  9 01:41 06-control-center-torch.png
--rw-r--r-- 1 runner runner  863903 Nov  9 01:41 06-control-center.png
--rw-r--r-- 1 runner runner   23949 Nov  9 01:41 07-control-center-torch.png
--rw-r--r-- 1 runner runner   88393 Nov  9 01:41 07-drawer-launch.png
--rw-r--r-- 1 runner runner 2896129 Nov  9 01:41 08-home-return.png
--rw-r--r-- 1 runner runner  982868 Nov  9 01:41 08-settings.png
--rw-r--r-- 1 runner runner  934976 Nov  9 01:41 09-appearance.png
--rw-r--r-- 1 runner runner 2896355 Nov  9 01:41 09-settings.png
--rw-r--r-- 1 runner runner 1778567 Nov  9 01:41 10-ai.png
--rw-r--r-- 1 runner runner  945859 Nov  9 01:41 10-privacy.png
--rw-r--r-- 1 runner runner  926362 Nov  9 01:41 11-about.png
--rw-r--r-- 1 runner runner 2893419 Nov  9 01:41 11-after-monkey.png
--rw-r--r-- 1 runner runner 2896054 Nov  9 01:41 12-after-reboot.png
--rw-r--r-- 1 runner runner  816114 Nov  9 01:41 12-ai.png
--rw-r--r-- 1 runner runner  815230 Nov  9 01:41 13-ai-reply.png
--rw-r--r-- 1 runner runner  653234 Nov  9 01:41 14-music.png
--rw-r--r-- 1 runner runner  653234 Nov  9 01:41 15-music-playing.png
--rw-r--r-- 1 runner runner 1386431 Nov  9 01:41 16-themes.png
--rw-r--r-- 1 runner runner  885379 Nov  9 01:41 17-files.png
--rw-r--r-- 1 runner runner  734410 Nov  9 01:41 18-gallery.png
--rw-r--r-- 1 runner runner  735621 Nov  9 01:41 19-notes.png
--rw-r--r-- 1 runner runner  784574 Nov  9 01:41 20-calendar.png
--rw-r--r-- 1 runner runner  756797 Nov  9 01:41 21-clock.png
--rw-r--r-- 1 runner runner  785060 Nov  9 01:41 22-calculator.png
--rw-r--r-- 1 runner runner  866590 Nov  9 01:41 23-weather.png
--rw-r--r-- 1 runner runner  742515 Nov  9 01:41 24-gaming.png
--rw-r--r-- 1 runner runner 1335155 Nov  9 01:41 25-lock-screen.png
--rw-r--r-- 1 runner runner 1401636 Nov  9 01:41 26-home-final.png
--rw-r--r-- 1 runner runner  833720 Nov  9 01:41 27-after-monkey.png
--rw-r--r-- 1 runner runner 1739164 Nov  9 01:41 28-after-reboot.png
--rw-r--r-- 1 runner runner 1257632 Nov  9 01:41 29-release-home.png
--rw-r--r-- 1 runner runner 1257585 Nov  9 01:41 30-release-drawer.png
-report bytes: 30067
+total 53808
+drwxr-xr-x 2 runner runner    4096 Nov  9 01:52 .
+drwxr-xr-x 3 runner runner    4096 Nov  9 01:43 ..
+-rw-r--r-- 1 runner runner       0 Nov  9 01:43 .keep
+-rw-r--r-- 1 runner runner 1402296 Nov  9 01:48 01-onboarding-welcome.png
+-rw-r--r-- 1 runner runner   55750 Nov  9 01:43 01-welcome.png
+-rw-r--r-- 1 runner runner 1402296 Nov  9 01:48 02-home.png
+-rw-r--r-- 1 runner runner 2897277 Nov  9 01:43 03-after-home-key.png
+-rw-r--r-- 1 runner runner 1402296 Nov  9 01:48 03-home-after-home-key.png
+-rw-r--r-- 1 runner runner  806488 Nov  9 01:48 04-app-drawer.png
+-rw-r--r-- 1 runner runner 1725305 Nov  9 01:43 04-drawer.png
+-rw-r--r-- 1 runner runner 1816577 Nov  9 01:43 05-control-center.png
+-rw-r--r-- 1 runner runner  544186 Nov  9 01:48 05-drawer-search.png
+-rw-r--r-- 1 runner runner 1815603 Nov  9 01:43 06-control-center-torch.png
+-rw-r--r-- 1 runner runner  865417 Nov  9 01:49 06-control-center.png
+-rw-r--r-- 1 runner runner   23278 Nov  9 01:49 07-control-center-torch.png
+-rw-r--r-- 1 runner runner   88393 Nov  9 01:43 07-drawer-launch.png
+-rw-r--r-- 1 runner runner 2896129 Nov  9 01:43 08-home-return.png
+-rw-r--r-- 1 runner runner  981613 Nov  9 01:49 08-settings.png
+-rw-r--r-- 1 runner runner  934252 Nov  9 01:49 09-appearance.png
+-rw-r--r-- 1 runner runner 2896355 Nov  9 01:43 09-settings.png
+-rw-r--r-- 1 runner runner 1778567 Nov  9 01:43 10-ai.png
+-rw-r--r-- 1 runner runner  945254 Nov  9 01:49 10-privacy.png
+-rw-r--r-- 1 runner runner  976333 Nov  9 01:49 11-about.png
+-rw-r--r-- 1 runner runner 2893419 Nov  9 01:43 11-after-monkey.png
+-rw-r--r-- 1 runner runner 2896054 Nov  9 01:43 12-after-reboot.png
+-rw-r--r-- 1 runner runner  815183 Nov  9 01:49 12-ai.png
+-rw-r--r-- 1 runner runner  813420 Nov  9 01:49 13-ai-reply.png
+-rw-r--r-- 1 runner runner  662482 Nov  9 01:50 14-music.png
+-rw-r--r-- 1 runner runner  662506 Nov  9 01:50 15-music-playing.png
+-rw-r--r-- 1 runner runner 1386226 Nov  9 01:50 16-themes.png
+-rw-r--r-- 1 runner runner  885212 Nov  9 01:50 17-files.png
+-rw-r--r-- 1 runner runner  734256 Nov  9 01:50 18-gallery.png
+-rw-r--r-- 1 runner runner  740903 Nov  9 01:50 19-notes.png
+-rw-r--r-- 1 runner runner  785017 Nov  9 01:50 20-calendar.png
+-rw-r--r-- 1 runner runner  758803 Nov  9 01:50 21-clock.png
+-rw-r--r-- 1 runner runner  785229 Nov  9 01:50 22-calculator.png
+-rw-r--r-- 1 runner runner  866325 Nov  9 01:51 23-weather.png
+-rw-r--r-- 1 runner runner  742804 Nov  9 01:51 24-gaming.png
+-rw-r--r-- 1 runner runner 1334563 Nov  9 01:51 25-lock-screen.png
+-rw-r--r-- 1 runner runner 1402044 Nov  9 01:52 26-home-final.png
+-rw-r--r-- 1 runner runner  728208 Nov  9 01:53 27-after-monkey.png
+-rw-r--r-- 1 runner runner 1401652 Nov  9 01:54 28-after-reboot.png
+-rw-r--r-- 1 runner runner 1257707 Nov  9 01:55 29-release-home.png
+-rw-r--r-- 1 runner runner 1257921 Nov  9 01:55 30-release-drawer.png
+-rw-r--r-- 1 runner runner  727655 Nov  9 01:51 31-search.png
+-rw-r--r-- 1 runner runner   57773 Nov  9 01:51 32-browser.png
+-rw-r--r-- 1 runner runner  799870 Nov  9 01:51 33-arrange.png
+-rw-r--r-- 1 runner runner  838267 Nov  9 01:51 34-icon-studio.png
+-rw-r--r-- 1 runner runner  750207 Nov  9 01:51 35-automation.png
+-rw-r--r-- 1 runner runner  808656 Nov  9 01:51 36-backup.png
+-rw-r--r-- 1 runner runner  932548 Nov  9 01:52 37-store.png
+report bytes: 10092
