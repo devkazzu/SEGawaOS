@@ -60,11 +60,11 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release view v1.1.0 >/dev/null 2>&1 || gh release create v1.1.0 \
-            --title "SEGAWA OS v1.1.0 (Hiro) — Android launcher" \
-            --notes "Installable SEGAWA OS build. Debug APK is signed with the debug key and installs on any API 26+ device; release APK is signed with the same key so updates install over each other." \
-            --latest
-          gh release upload v1.1.0 dist/SEGAWA-OS-debug.apk dist/SEGAWA-OS-release.apk --clobber
+          gh release view v2.0.0 >/dev/null 2>&1 || gh release create v2.0.0 \
+            --title "SEGAWA OS v2.0.0 (Sakura) — Android launcher" \
+            --notes "Installable SEGAWA OS v2.0 build. Debug APK is signed with the debug key and installs on any API 26+ device; release APK is signed with the same key so updates install over each other. v1.0.0/v1.1.0 releases are left untouched." \
+            --prerelease
+          gh release upload v2.0.0 dist/SEGAWA-OS-debug.apk dist/SEGAWA-OS-release.apk --clobber
 
       - name: Publish outputs back to branch
         if: always()

@@ -15,7 +15,7 @@ object SegaBrand {
     const val MUSIC = "SEGAWA Music"
     const val DEVELOPER = "Raju Mahato"
     const val BRAND = "RJNX / Devkazzu"
-    const val VERSION = "1.1.0"
-    const val CODENAME = "Hiro"
-    const val VERSION_LABEL = "v1.1.0 (Hiro)"
+    const val VERSION = "2.0.0"
+    const val CODENAME = "Sakura"
+    const val VERSION_LABEL = "v2.0.0 (Sakura)"
 }

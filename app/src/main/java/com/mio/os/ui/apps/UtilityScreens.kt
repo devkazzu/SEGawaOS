@@ -65,6 +65,7 @@ import coil.compose.AsyncImage
 import com.mio.os.R
 import com.mio.os.core.DeviceStats
 import com.mio.os.core.Mio
+import com.mio.os.core.SegaBrand
 import com.mio.os.core.MioApp
 import com.mio.os.core.MioNav
 import com.mio.os.ui.components.AppIconView
@@ -501,7 +502,7 @@ fun AboutScreen() {
     val ram = remember { DeviceStats.ram(context) }
     val apps = LocalApps.current
 
-    MioScreenScaffold(title = "About SEGAWA OS", subtitle = "v1.1.0 (Hiro)") { m ->
+    MioScreenScaffold(title = "About SEGAWA OS", subtitle = SegaBrand.VERSION_LABEL) { m ->
         Column(m.padding(bottom = 28.dp), horizontalAlignment = Alignment.CenterHorizontally) {
             Spacer(Modifier.height(12.dp))
             Box(
@@ -517,7 +518,7 @@ fun AboutScreen() {
             }
             Spacer(Modifier.height(12.dp))
             Text("SEGAWA OS", style = MioType.h1.copy(fontSize = 24.sp, letterSpacing = 1.sp))
-            Text("v1.1.0 (Hiro)", style = MioType.micro.copy(fontSize = 10.5.sp))
+            Text(SegaBrand.VERSION_LABEL, style = MioType.micro.copy(fontSize = 10.5.sp))
             Spacer(Modifier.height(2.dp))
             Text(
                 "Your Anime. Your World. Your OS.",

@@ -72,6 +72,7 @@ import androidx.core.content.ContextCompat
 import com.mio.os.core.DeviceStats
 import com.mio.os.core.LauncherHelper
 import com.mio.os.core.Mio
+import com.mio.os.core.SegaBrand
 import com.mio.os.core.MioApp
 import com.mio.os.core.MioNav
 import com.mio.os.core.MioNotifications
@@ -360,7 +361,7 @@ fun SettingsScreen() {
             SettingsGroup {
                 GlassRow(
                     "About SEGAWA OS",
-                    "v1.1.0 (Hiro) · Android ${Build.VERSION.RELEASE}",
+                    "${SegaBrand.VERSION_LABEL} · Android ${Build.VERSION.RELEASE}",
                     leading = { SettingsIconBadge(Icons.Rounded.Info, MioColors.PurpleSoft) },
                     onClick = { MioNav.push(MioScreen.ABOUT) },
                     trailing = { Chevron() },

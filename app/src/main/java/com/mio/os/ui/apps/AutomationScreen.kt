@@ -161,7 +161,7 @@ fun AutomationScreen() {
             }
             Spacer(Modifier.height(8.dp))
             Text(
-                "Routines fire even when SEGAWA OS is closed. Exact-alarm permission is requested by Android on first schedule.",
+                "Routines fire even when SEGAWA OS is closed, using battery-friendly inexact alarms — they may drift a few minutes in Doze mode. Re-armed automatically after reboot.",
                 style = MioType.micro.copy(fontSize = 9.5.sp),
             )
         }
