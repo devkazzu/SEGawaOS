@@ -316,10 +316,9 @@ fun MusicScreen() {
                                 track = track,
                                 selected = track.id == current?.id,
                                 playing = playing && track.id == current?.id,
+                                onClick = { MioPlayer.enqueue(context, track, library) },
                                 onAdd = { addFor = track },
-                            ) {
-                                MioPlayer.enqueue(context, track, library)
-                            }
+                            )
                         }
                     }
                 }

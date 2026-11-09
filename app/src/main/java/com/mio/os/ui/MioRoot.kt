@@ -27,6 +27,9 @@ import com.mio.os.core.MioNav
 import com.mio.os.core.MioScreen
 import com.mio.os.ui.apps.AboutScreen
 import com.mio.os.ui.apps.AiScreen
+import com.mio.os.ui.apps.AutomationScreen
+import com.mio.os.ui.apps.BackupScreen
+import com.mio.os.ui.apps.BrowserScreen
 import com.mio.os.ui.apps.CalculatorScreen
 import com.mio.os.ui.apps.CalendarScreen
 import com.mio.os.ui.apps.ClockScreen
@@ -39,6 +42,7 @@ import com.mio.os.ui.apps.MusicScreen
 import com.mio.os.ui.apps.IconStudioScreen
 import com.mio.os.ui.apps.NotesScreen
 import com.mio.os.ui.apps.SearchScreen
+import com.mio.os.ui.apps.StoreScreen
 import com.mio.os.ui.apps.ThemesScreen
 import com.mio.os.ui.apps.WeatherScreen
 import com.mio.os.ui.control.ControlCenter

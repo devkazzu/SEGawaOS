@@ -213,12 +213,13 @@ fun BrowserScreen() {
             AndroidView(
                 factory = { ctx ->
                     WebView(ctx).apply {
-                        settings.javaScriptEnabled = true
-                        settings.domStorageEnabled = true
-                        settings.loadWithOverviewMode = true
-                        settings.useWideViewPort = true
-                        settings.builtInZoomControls = true
-                        settings.displayZoomControls = false
+                        // Qualified: the composable's MioSettings local shadows WebSettings here.
+                        this.settings.javaScriptEnabled = true
+                        this.settings.domStorageEnabled = true
+                        this.settings.loadWithOverviewMode = true
+                        this.settings.useWideViewPort = true
+                        this.settings.builtInZoomControls = true
+                        this.settings.displayZoomControls = false
                         webViewClient = object : WebViewClient() {
                             override fun onPageFinished(view: WebView, url: String) {
                                 super.onPageFinished(view, url)
