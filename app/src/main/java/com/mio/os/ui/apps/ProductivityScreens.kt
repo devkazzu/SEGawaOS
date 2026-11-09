@@ -243,7 +243,7 @@ fun NotesScreen() {
                 val now = System.currentTimeMillis()
                 NotesRepo.upsert(
                     NotesRepo.Note(
-                        id = editing?.id ?: now,
+                        id = editing?.id ?: System.nanoTime(),
                         text = text.trim(),
                         created = editing?.created ?: now,
                         pinned = editing?.pinned ?: false,

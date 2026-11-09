@@ -179,7 +179,7 @@ fun AutomationScreen() {
             }),
             onSave = { draft ->
                 val list = if (editing == null) {
-                    routines + draft.copy(id = System.currentTimeMillis().toString())
+                    routines + draft.copy(id = java.util.UUID.randomUUID().toString())
                 } else {
                     routines.map { if (it.id == editing!!.id) draft.copy(id = it.id) else it }
                 }

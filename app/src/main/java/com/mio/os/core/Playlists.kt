@@ -2,6 +2,7 @@ package com.mio.os.core
 
 import org.json.JSONArray
 import org.json.JSONObject
+import java.util.UUID
 
 /** User playlists: an id, a display name and MediaStore audio ids. */
 data class Playlist(val id: String, val name: String, val songIds: List<Long>)
@@ -38,7 +39,7 @@ object Playlists {
 
     fun create(list: List<Playlist>, name: String): List<Playlist> =
         list + Playlist(
-            id = System.currentTimeMillis().toString(),
+            id = UUID.randomUUID().toString(),
             name = name.trim().take(40).ifBlank { "Playlist" },
             songIds = emptyList(),
         )

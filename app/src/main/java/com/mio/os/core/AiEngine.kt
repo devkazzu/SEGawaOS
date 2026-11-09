@@ -9,6 +9,7 @@ import java.io.OutputStreamWriter
 import java.net.HttpURLConnection
 import java.net.URL
 import java.util.Locale
+import java.util.UUID
 
 data class AiMessage(
     val role: String,
@@ -336,7 +337,7 @@ object NotesRepo {
     }
 
     fun add(context: Context, text: String) {
-        persist(listOf(Note(System.currentTimeMillis(), text, System.currentTimeMillis())) + all())
+        persist(listOf(Note(System.nanoTime(), text, System.currentTimeMillis())) + all())
     }
 
     fun delete(id: Long) = persist(all().filterNot { it.id == id })
@@ -536,6 +537,6 @@ object AiThreads {
     }
 
     fun fresh(): AiThread = AiThread(
-        System.currentTimeMillis().toString(), "New chat", emptyList(), System.currentTimeMillis(),
+        UUID.randomUUID().toString(), "New chat", emptyList(), System.currentTimeMillis(),
     )
 }
