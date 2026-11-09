@@ -38,12 +38,12 @@ jobs:
       - name: Generate Gradle wrapper
         run: gradle wrapper --gradle-version 8.9 --distribution-type bin 2>&1 | tee ci/build.log || true
 
-      - name: Assemble debug + release
+      - name: Unit tests + assemble debug + release
         id: assemble
         run: |
           mkdir -p ci dist
           set -o pipefail
-          gradle assembleDebug assembleRelease --stacktrace --warning-mode=summary 2>&1 | tee -a ci/build.log
+          gradle testDebugUnitTest assembleDebug assembleRelease --stacktrace --warning-mode=summary 2>&1 | tee -a ci/build.log
 
       - name: Collect APKs
         if: always()
