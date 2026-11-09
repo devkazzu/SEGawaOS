@@ -171,7 +171,7 @@ fun SettingsScreen() {
     val notifCount by MioNotifications.count.collectAsState()
     val battery by DeviceStats.battery.collectAsState()
 
-    MioScreenScaffold(title = "Settings", subtitle = "SEGAWA OS v1.1 · ${apps.size} apps") { m ->
+    MioScreenScaffold(title = "Settings", subtitle = "SEGAWA OS v${SegaBrand.VERSION} · ${apps.size} apps") { m ->
         Column(m.padding(bottom = 30.dp)) {
 
             // Default-launcher hero card

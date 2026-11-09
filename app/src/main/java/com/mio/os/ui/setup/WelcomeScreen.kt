@@ -50,6 +50,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mio.os.core.LauncherHelper
 import com.mio.os.core.Mio
+import com.mio.os.core.SegaBrand
 import com.mio.os.core.MioNav
 import com.mio.os.core.MioScreen
 import com.mio.os.ui.components.AmbientOrb
@@ -126,7 +127,7 @@ fun WelcomeScreen() {
                     Modifier.clip(RoundedCornerShape(50)).background(Color.White.copy(alpha = 0.10f))
                         .padding(horizontal = 8.dp, vertical = 3.dp)
                 ) {
-                    Text("v1.1", style = MioType.micro.copy(fontSize = 9.sp))
+                    Text("v" + SegaBrand.VERSION, style = MioType.micro.copy(fontSize = 9.sp))
                 }
             }
             Spacer(Modifier.height(6.dp))

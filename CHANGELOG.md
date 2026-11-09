@@ -41,7 +41,7 @@ releases are untouched.
   on-device/cloud source badges
 
 **Quality, security, release (Phases F–I)**
-- 45 JVM unit tests over 9 pure core modules, gating every CI build
+- 53 JVM unit tests over 9 pure core modules, gating every CI build
 - Security review: no hardcoded secrets, no cleartext traffic, permission-gated
   exported components; unused `RECORD_AUDIO` permission removed
 - `docs/SECURITY.md` documents the no-backend architecture and what hosted
