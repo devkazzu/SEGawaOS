@@ -68,7 +68,7 @@ import com.mio.os.ui.theme.MioType
 
 /**
  * SEGAWA Browser: a real single-tab WebView browser with a smart address
- * bar (URLs load directly, anything else searches DuckDuckGo), bookmarks
+ * bar (URLs load directly, anything else uses the selected search engine), bookmarks
  * and history stored on-device in [com.mio.os.core.MioSettings].
  */
 @Composable
@@ -88,7 +88,8 @@ fun BrowserScreen() {
         val t = input.trim()
         if (t.isEmpty()) return settings.browserHome
         if (t.contains(' ') || !t.contains('.')) {
-            return "https://duckduckgo.com/?q=" + Uri.encode(t)
+            val base = SearchEngines[settings.browserEngine] ?: "https://duckduckgo.com/?q="
+            return base + Uri.encode(t)
         }
         return if (t.startsWith("http://") || t.startsWith("https://")) t else "https://$t"
     }
@@ -271,6 +272,35 @@ fun BrowserScreen() {
                 Spacer(Modifier.height(10.dp))
                 val history = remember(settings.browserHistory) { parsePairs(settings.browserHistory) }
                 LazyColumn(Modifier.height(320.dp)) {
+                    item {
+                        Text("SEARCH ENGINE", style = MioType.micro.copy(fontSize = 9.sp, letterSpacing = 1.2.sp))
+                        Spacer(Modifier.height(6.dp))
+                    }
+                    items(SearchEngines.keys.toList()) { name ->
+                        Row(
+                            Modifier.fillMaxWidth()
+                                .bounceClick(scaleDown = 0.98f) {
+                                    Mio.prefs.edit { it.copy(browserEngine = name) }
+                                }
+                                .padding(vertical = 9.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Text(
+                                name,
+                                style = MioType.title.copy(
+                                    fontSize = 12.5.sp,
+                                    color = if (name == settings.browserEngine) LocalAccent.current else Color.White,
+                                ),
+                                modifier = Modifier.weight(1f),
+                            )
+                            if (name == settings.browserEngine) {
+                                Text(
+                                    "✓",
+                                    style = MioType.title.copy(fontSize = 14.sp, color = LocalAccent.current),
+                                )
+                            }
+                        }
+                    }
                     if (bookmarks.isNotEmpty()) {
                         item {
                             Text("★ BOOKMARKS", style = MioType.micro.copy(fontSize = 9.sp, letterSpacing = 1.2.sp))
@@ -324,6 +354,14 @@ fun BrowserScreen() {
         }
     }
 }
+
+/** Search engines offered in the library sheet (name -> query URL prefix). */
+private val SearchEngines = mapOf(
+    "DuckDuckGo" to "https://duckduckgo.com/?q=",
+    "Brave" to "https://search.brave.com/search?q=",
+    "Google" to "https://www.google.com/search?q=",
+    "Bing" to "https://www.bing.com/search?q=",
+)
 
 private fun parsePairs(raw: String): List<Pair<String, String>> {
     if (raw.isBlank()) return emptyList()
